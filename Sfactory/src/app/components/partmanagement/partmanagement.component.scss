@@ -1,0 +1,38 @@
+#autoscroll {
+    overflow:auto;
+}
+
+//mat button toggle condition
+.toggle_btn{
+    width: 38px;
+    height: 38px;
+}
+.mat-button-toggle-checked{
+    background-color:#ffe505;
+}
+.paginationbackground{
+    background-color: transparent;
+}
+.bordercolor{
+    border-bottom-left-radius: 25px;
+    border-top-right-radius:25px ;
+}
+.borderqty-1{
+    border-left-color:red ;
+    border-bottom-color:red ;
+    border-bottom-width: 4px;
+    border-left-width:4px ;
+}
+.borderqty-2{
+    border-left-color:rgb(4, 189, 4) ;
+    border-bottom-color:rgb(4, 189, 4) ;
+    border-bottom-width: 4px;
+    border-left-width:4px ;
+}
+
+.mat-paginator{
+    background-color: transparent!important;
+}
+.font-light-bold{
+    font-weight: 550;
+}

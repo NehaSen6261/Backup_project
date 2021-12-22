@@ -1,0 +1,2479 @@
+<sidebar></sidebar>
+<navbar></navbar>
+<div class="main-window ">
+
+    <!-- asset dropdown -->
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-2"></div>
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100   point-8 float-left">
+          <mat-label *ngIf="assetlist.length != 0">Choose an Asset</mat-label>
+          <mat-label *ngIf="assetlist.length == 0">No Asset's available !!</mat-label>
+          <mat-select [formControl]="selected_asset">
+            <mat-option *ngFor="let assets of assetlist" [value]="assets.sf_asset_id" (click)="setAssetanalysis(assets);">
+              {{assets.sf_asset_name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100   point-8 float-left">
+          <mat-label>Choose metrics type</mat-label>
+          <mat-select [formControl]="selected_metric_type">
+            <mat-option *ngFor="let metric_type of metrics_types" [value]="metric_type.value" (click)="todayAssetperformanceMetrics()">
+              {{metric_type.viewValue}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!--  Tabs section -->
+  <ul ngbNav #nav="ngbNav" class="nav-tabs">
+
+    <!-- TO DAY TAB -->
+    
+    <li ngbNavItem (click)="time_frame_clicked = '1D'; time_frame_fault= '1'; todayAssetperformanceMetrics(); ">
+      <a ngbNavLink>Today</a>
+
+      <ng-template ngbNavContent >
+
+        <!-- error msg 1 -->
+        <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="assetInternalError">
+          <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+            request please try after some time !!</small>
+        </div>
+        <!-- error msg 2 -->
+        <div class="text-center mt-5" *ngIf="(no_assets || no_current_analysis) && !assetInternalError">
+          <p><i class="fas fa-grip-horizontal mr-1 fa-3x opacity-point-3"></i></p>
+          <small class="point-8 "> No asset metrics available  to display !!</small>
+        </div>
+
+
+          <!-- ------------------------------------ -->
+            <!-- Performance based metrics -->
+          <!-- ------------------------------------ -->
+          <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0" *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'performance_based' " >
+            <!-- OEE CARD -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex">
+                    <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                      <div class="card-header bg-transparent ht-40">
+                        <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                      </div>
+                      <div class="card-body">
+                          <!-- Spinner -->
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="oee_spinner">
+                          <spinner></spinner>
+                        </div>
+                        <div *ngIf="!oee_spinner && !oee_error" class="mb-n4 mt-n4">
+                          <apx-chart [series]="today_oee_series" [chart]="Current_chartOptions.chart"
+                          [plotOptions]="Current_chartOptions.plotOptions" [labels]="['OEE']"
+                          [stroke]="Current_chartOptions.stroke" [fill]="Current_chartOptions.fill"></apx-chart>
+                       </div>
+                       <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="oee_error">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                          request please try after some time !!</small>
+                      </div>
+                      </div>
+                      <div class="card-footer  ht-40">
+                        <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_oee_received_on}}</p>
+                      </div>
+                    </div>
+              </div>
+              <!--Performance  -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body">
+                      <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="performance_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div *ngIf="!performance_spinner && !performance_error" class="mb-n4 mt-n4">
+                      <apx-chart [series]="today_performance_series" [chart]="Current_chartOptions.chart"
+                      [plotOptions]="Current_chartOptions.plotOptions" [labels]="['Performance']"
+                      [stroke]="Current_chartOptions.stroke" [fill]="Current_chartOptions.fill"></apx-chart>
+                   </div>
+                   <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="performance_error">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                      request please try after some time !!</small>
+                  </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_performance_received_on}}</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Availability -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body">
+                      <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="availability_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div *ngIf="!availability_spinner&&!availability_error" class="mb-n4 mt-n4">
+                      <apx-chart [series]="today_availability_series" [chart]="Current_chartOptions.chart"
+                      [plotOptions]="Current_chartOptions.plotOptions" [labels]="['Availability']"
+                      [stroke]="Current_chartOptions.stroke" [fill]="Current_chartOptions.fill"></apx-chart>
+                   </div>
+                   <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="availability_error">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                      request please try after some time !!</small>
+                  </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_availability_received_on}}</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Quality -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body">
+                      <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="qualiity_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div *ngIf="!qualiity_spinner&&!quality_error" class="mb-n4 mt-n4">
+                      <apx-chart [series]="today_quality_series" [chart]="Current_chartOptions.chart"
+                      [plotOptions]="Current_chartOptions.plotOptions" [labels]="['Quality']"
+                      [stroke]="Current_chartOptions.stroke" [fill]="Current_chartOptions.fill"></apx-chart>
+                   </div>
+                   <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="quality_error">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                      request please try after some time !!</small>
+                  </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_quality_received_on}}</p>
+                  </div>
+                </div>
+          </div>
+            <!-- Efficiency -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- text -->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body bg-transparent">
+                     <!-- Spinner -->
+                     <div class="d-flex justify-content-center mt-2 " *ngIf="slowCycleSpinner">
+                      <spinner></spinner>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="slowCycleError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                        request please try after some time !!</small>
+                    </div>
+                    <div *ngIf="!slowCycleSpinner && !slowCycleError">
+                      <p class="one-point text-center font-light-bold" style="color: blueviolet;">Efficiency</p>
+                      <h1 class="text-center" style="color: blueviolet;font-size: 50px;">{{efficiency}}<span style="font-size: 15px;">%</span></h1>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_quality_received_on}}</p>
+                  </div>
+      
+              </div>
+              </div>
+              <!-- Slow Cycle -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- text -->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body bg-transparent">
+                       <!-- Spinner -->
+                       <div class="d-flex justify-content-center mt-2 " *ngIf="slowCycleSpinner">
+                        <spinner></spinner>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="slowCycleError">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                          request please try after some time !!</small>
+                      </div>
+                    <div *ngIf="!slowCycleSpinner  && !slowCycleError">
+                      <p class="one-point text-center font-light-bold" style="color: rgb(0, 38, 255);">Slow Cycle</p>
+                      <h3 class="text-center" style="color: rgb(0, 38, 255);font-size: 50px;">{{slow_cycle}}<span style="font-size: 15px;">Mins</span></h3>
+                    </div>
+                   
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_quality_received_on}}</p>
+                  </div>
+      
+              </div>
+              </div>
+              <!-- Good Count -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- text -->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                   <div class="card-body bg-transparent">
+                       <!-- Spinner -->
+                       <div class="d-flex justify-content-center mt-2 " *ngIf="slowCycleSpinner">
+                        <spinner></spinner>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="slowCycleError">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                          request please try after some time !!</small>
+                      </div>
+                     <div *ngIf="!slowCycleSpinner && !slowCycleError">
+                      <p class="one-point text-center font-light-bold" style="color: rgb(12, 126, 6);">Good Count</p>
+                      <h3 class="text-center" style="color: rgb(12, 126, 6);font-size: 50px;">{{goodQuantity}}<span style="font-size: 15px;">/ {{totalQuantity}}</span></h3>
+                     </div>
+                   </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_quality_received_on}}</p>
+                  </div>
+      
+              </div>
+              </div> 
+              <!-- Rejection -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- text -->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body bg-transparent">
+                     <!-- Spinner -->
+                     <div class="d-flex justify-content-center mt-2 " *ngIf="slowCycleSpinner">
+                      <spinner></spinner>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="slowCycleError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                        request please try after some time !!</small>
+                    </div>
+                    <div *ngIf="!slowCycleSpinner && !slowCycleError">
+                      <p class="one-point text-center font-light-bold" style="color:rgba(238, 13, 111, 0.912);">Rejection Count</p>
+                      <h3 class="text-center" style="color:rgba(238, 13, 111, 0.912);font-size: 50px;">{{rejection}}</h3>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{today_quality_received_on}}</p>
+                  </div>
+      
+              </div>
+              </div>
+          </div>
+       
+          <!-------------------------------------- -->
+            <!-- Time based metrics -->
+          <!-- ------------------------------------ -->
+        <div  *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'time_based' " >
+          <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0">
+           <!-- Runtime/Planned Downtime Card / Unplanned Downtime  -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                      <div class="card-header bg-transparent ht-40">
+                        <p class="point-9 float-left"><span class="font-weight-bold"> Runtime </span>  vs <span class="font-weight-bold">Downtime</span></p>                        
+                        <button mat-icon-button [matMenuTriggerFor]="Crr_rundwn_time"
+                          class="float-right btn-focus-none card-menu-btn"
+                          (click)="metrics_type='runtime_downtime'; card_no='1D-1';setRuntimeDowntime();">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>                        
+                        <mat-menu #Crr_rundwn_time="matMenu">
+                          <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                            <mat-icon>settings</mat-icon>
+                            <span>Settings</span>
+                          </button>
+                        </mat-menu>                    
+                      </div>
+                      <div class="card-body">
+                          <!-- Spinner -->
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="runtime_downtime_spinner">
+                          <spinner></spinner>
+                        </div>
+                         <!-- data unavailable -->
+                         <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!runtime_downtime_spinner && rundown" style="margin-bottom: 65px;">
+                          <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                        <div *ngIf="!runtime_downtime_spinner && rundown == false" class="mb-n5">
+                          <apx-chart [series]="today_runtime_downtime_chartOptions.series" 
+                          [chart]="today_runtime_downtime_chartOptions.chart" 
+                          [xaxis]="today_runtime_downtime_chartOptions.xaxis"
+                          [stroke]="today_runtime_downtime_chartOptions.stroke" 
+                          [tooltip]="today_runtime_downtime_chartOptions.tooltip"
+                          [dataLabels]="today_runtime_downtime_chartOptions.dataLabels"
+                          [legend]="today_runtime_downtime_chartOptions.legend"
+                          [markers]="today_runtime_downtime_chartOptions.markers" 
+                          [grid]="today_runtime_downtime_chartOptions.grid"
+                          [yaxis]="today_runtime_downtime_chartOptions.yaxis"
+                          [title]="today_runtime_downtime_chartOptions.title"
+                          [fill]="today_runtime_downtime_chartOptions.fill"
+                          [colors]="today_runtime_downtime_chartOptions.colors"
+                          [plotOptions]="today_runtime_downtime_chartOptions.plotOptions"
+                          ></apx-chart>
+                      </div>
+                      </div>
+                      <div class="card-footer ht-40">
+                        <p class="float-left text-muted mb-n1 point-7"> {{asset_name}}</p>
+                        <p class="float-right text-muted mb-n1 point-7"> Updated on: {{timeshow}}</p>
+                      </div>
+                    </div>
+              </div>
+
+              <!-- Planned production time CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Planned Production </span> vs <span class="font-weight-bold"> Schedule Loss </span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="crr_planned_prod"
+                        class="float-right btn-focus-none card-menu-btn"
+                        (click)="metrics_type='plannedprod_scheduleloss'; card_no='1D-2';setPlannedprodSchedule();">
+                      <mat-icon>more_vert</mat-icon>
+                      </button>                      
+                      <mat-menu #crr_planned_prod="matMenu">
+                        <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                          <mat-icon>settings</mat-icon>
+                          <span>Settings</span>
+                        </button>
+                      </mat-menu>   
+                    </div>
+                    <div class="card-body">
+                          <!-- Spinner -->
+                          <div class="d-flex justify-content-center mt-2 " *ngIf="planned_prod_spinner">
+                            <spinner></spinner>
+                          </div>
+                           <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!planned_prod_spinner && plannedscheduledata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                        <div *ngIf="!planned_prod_spinner && plannedscheduledata == false" class="mb-n5" >              
+                          <apx-chart [series]="planned_prod_time_chartOptions.series" [chart]="planned_prod_time_chartOptions.chart"  [xaxis]="planned_prod_time_chartOptions.xaxis"
+                          [stroke]="planned_prod_time_chartOptions.stroke" [tooltip]="planned_prod_time_chartOptions.tooltip" [dataLabels]="planned_prod_time_chartOptions.dataLabels"
+                          [legend]="planned_prod_time_chartOptions.legend" [markers]="planned_prod_time_chartOptions.markers" [grid]="planned_prod_time_chartOptions.grid"
+                          [yaxis]="planned_prod_time_chartOptions.yaxis" [title]="planned_prod_time_chartOptions.title" [fill]="planned_prod_time_chartOptions.fill"
+                          [colors]="planned_prod_time_chartOptions.colors"
+                          [plotOptions]="planned_prod_time_chartOptions.plotOptions"
+                          ></apx-chart>
+                        </div>
+                    </div>
+                    <div class="card-footer  ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                      <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                    </div>
+                  </div>
+              </div>
+          </div>
+          <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0">
+              <!-- Net Runtime CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40" >
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Performance Loss  </span> vs <span class="font-weight-bold"> Net Runtime </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="crr_net_runtime"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='net_runtime'; card_no='1D-3';setNetRuntime();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>                    
+                    <mat-menu #crr_net_runtime="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>   
+                  </div>
+                  <div class="card-body">
+                        <!-- Spinner -->
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="netruntime_spinner">
+                          <spinner></spinner>
+                        </div>
+                         <!-- data unavailable -->
+                         <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!netruntime_spinner && runratedata" style="margin-bottom: 65px;">
+                          <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                      <div *ngIf="!netruntime_spinner && runratedata == false" class="mb-n5">                       
+                        <apx-chart [series]="net_runtime_chartOptions.series" [chart]="net_runtime_chartOptions.chart"  [xaxis]="net_runtime_chartOptions.xaxis"
+                          [stroke]="net_runtime_chartOptions.stroke" [tooltip]="net_runtime_chartOptions.tooltip" [dataLabels]="net_runtime_chartOptions.dataLabels"
+                          [legend]="net_runtime_chartOptions.legend" [markers]="net_runtime_chartOptions.markers" [grid]="net_runtime_chartOptions.grid"
+                          [yaxis]="net_runtime_chartOptions.yaxis" [title]="net_runtime_chartOptions.title" [fill]="net_runtime_chartOptions.fill"
+                          [colors]="net_runtime_chartOptions.colors"
+                          [plotOptions]="net_runtime_chartOptions.plotOptions"
+                          ></apx-chart>
+                      </div>
+                  </div>
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+                <!-- Fully Production VS Quality CARD -->
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Fully Production </span> vs <span class="font-weight-bold"> Quality </span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="crr_fpql_runtime"
+                        class="float-right btn-focus-none card-menu-btn"
+                        (click)="metrics_type='fpql_runtime';card_no='1D-4';setFullyProdQlyLoss();">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #crr_fpql_runtime="matMenu">
+                        <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                          <mat-icon>settings</mat-icon>
+                          <span>Settings</span>
+                        </button>
+                      </mat-menu> 
+                    </div>
+                    <div class="card-body">
+                          <!-- Spinner -->
+                          <div class="d-flex justify-content-center mt-2 " *ngIf="fully_prod_time_spinner">
+                            <spinner></spinner>
+                          </div>
+                           <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!fully_prod_time_spinner && productionqualitydata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                        <div *ngIf="!fully_prod_time_spinner && productionqualitydata == false" class="mb-n5">
+                          <apx-chart [series]="fully_prod_time_chartOptions.series" [chart]="fully_prod_time_chartOptions.chart"  [xaxis]="fully_prod_time_chartOptions.xaxis"
+                          [stroke]="fully_prod_time_chartOptions.stroke" [tooltip]="fully_prod_time_chartOptions.tooltip" [dataLabels]="fully_prod_time_chartOptions.dataLabels"
+                          [legend]="fully_prod_time_chartOptions.legend" [markers]="fully_prod_time_chartOptions.markers" [grid]="fully_prod_time_chartOptions.grid"
+                          [yaxis]="fully_prod_time_chartOptions.yaxis" [title]="fully_prod_time_chartOptions.title"
+                          [fill]="fully_prod_time_chartOptions.fill" [colors]="fully_prod_time_chartOptions.colors"
+                          [plotOptions]="fully_prod_time_chartOptions.plotOptions"
+                          ></apx-chart>
+                        </div>
+                    </div>
+                    <div class="card-footer ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                      <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </div>
+           <!-------------------------------------- -->
+            <!-- Loss based metrics -->
+          <!-------------------------------------- -->
+          <div  *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'loss_based' " >
+            <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0">
+              <!-- Availability loss CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Availability Loss </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_avail_loss"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='availability_loss';card_no='1D-1';setAvailabilityLoss();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                  <mat-menu #tr_avail_loss="matMenu">
+                    <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                  </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="availability_loss_spinner">
+                      <spinner></spinner>
+                    </div>
+                      <!-- data unavailable -->
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!availability_loss_spinner && !availability_loss_InternalError && avaliabilitylossdata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+                    <div *ngIf="!availability_loss_spinner && !availability_loss_InternalError && avaliabilitylossdata == false" class="mb-n5">
+                      <apx-chart [series]="availabilityLosschartOptions.series"
+                        [chart]="availabilityLosschartOptions.chart" [xaxis]="availabilityLosschartOptions.xaxis"
+                        [stroke]="availabilityLosschartOptions.stroke" [tooltip]="availabilityLosschartOptions.tooltip"
+                        [dataLabels]="availabilityLosschartOptions.dataLabels"
+                        [legend]="availabilityLosschartOptions.legend" [markers]="availabilityLosschartOptions.markers"
+                        [grid]="availabilityLosschartOptions.grid" [yaxis]="availabilityLosschartOptions.yaxis"
+                        [title]="availabilityLosschartOptions.title" [fill]="availabilityLosschartOptions.fill"
+                        [colors]="availabilityLosschartOptions.colors"
+                        [plotOptions]="availabilityLosschartOptions.plotOptions">
+                      </apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="availability_loss_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+  
+               <!-- Performance Loss CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Performance Loss</span> </p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_perf_loss"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='performance_loss';card_no='1D-2';setPerformanceLoss();">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #tr_perf_loss="matMenu">
+                    <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                  </mat-menu>
+                  </div>
+
+                  <div class="card-body">
+                    <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="performance_loss_spinner">
+                      <spinner></spinner>
+                    </div>
+                      <!-- data unavailable -->
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!performance_loss_spinner && !performance_loss_InternalError && performancelossdata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+                    <div *ngIf="!performance_loss_spinner && !performance_loss_InternalError && performancelossdata == false" class="mb-n5">
+                      <apx-chart [series]="performanceLosschartOptions.series" [chart]="performanceLosschartOptions.chart"
+                        [xaxis]="performanceLosschartOptions.xaxis" [stroke]="performanceLosschartOptions.stroke"
+                        [tooltip]="performanceLosschartOptions.tooltip"
+                        [dataLabels]="performanceLosschartOptions.dataLabels"
+                        [legend]="performanceLosschartOptions.legend" [markers]="performanceLosschartOptions.markers"
+                        [grid]="performanceLosschartOptions.grid" [yaxis]="performanceLosschartOptions.yaxis"
+                        [title]="performanceLosschartOptions.title" [fill]="performanceLosschartOptions.fill"
+                        [colors]="performanceLosschartOptions.colors"
+                        [plotOptions]="performanceLosschartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="performance_loss_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0 ml-3">              
+              <!-- Quality loss -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold">Quality Loss </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_qly_loss"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='quality_loss';card_no='1D-3';setQualityLoss();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_qly_loss="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner-->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="quality_loss_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <!-- data unavailable -->
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!quality_loss_spinner && !quality_loss_InternalError && qualitylossdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                    <div *ngIf="!quality_loss_spinner && !quality_loss_InternalError && qualitylossdata == false" class="mb-n5">
+                      <apx-chart [series]="qualityLosschartOptions.series" [chart]="qualityLosschartOptions.chart"
+                        [xaxis]="qualityLosschartOptions.xaxis" [stroke]="qualityLosschartOptions.stroke"
+                        [tooltip]="qualityLosschartOptions.tooltip" [dataLabels]="qualityLosschartOptions.dataLabels"
+                        [legend]="qualityLosschartOptions.legend" [markers]="qualityLosschartOptions.markers"
+                        [grid]="qualityLosschartOptions.grid" [yaxis]="qualityLosschartOptions.yaxis"
+                        [title]="qualityLosschartOptions.title" [fill]="qualityLosschartOptions.fill"
+                        [colors]="qualityLosschartOptions.colors"
+                        [plotOptions]="qualityLosschartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="quality_loss_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-------------------------------------- -->
+            <!-- KPI Maintenance -->
+          <!-------------------------------------- -->
+
+          <div  *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'maintenance_kpi' " >
+            
+            <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0">
+
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- TOTAL DOWNTIME  -->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body bg-transparent">
+                     <!-- Spinner -->
+                     <div class="d-flex justify-content-center mt-2 " *ngIf="mtbf_spinner">
+                      <spinner></spinner>
+                    </div>
+
+                    
+                    <div *ngIf="!mtbf_spinner && !mtbf_InternalError">
+                      <p class="one-point text-center font-light-bold" style="color: #D7263D;">Total Down Time</p>
+                      <h1 class="text-center" style="color: #D7263D;font-size: 50px;">{{total_downtime}}<span style="font-size: 15px;">{{total_downtime_unit}}</span></h1>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mtbf_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}} </p>
+                  </div>
+      
+              </div>
+              </div>
+         
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- MTTR-->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body bg-transparent">
+                     <!-- Spinner -->
+                     <div class="d-flex justify-content-center mt-2 " *ngIf="mttr_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div *ngIf="!mttr_spinner && !mttr_InternalError">
+                      <p class="one-point text-center font-light-bold" style="color: #13D8AA;">MTTR</p>
+                      <h1 class="text-center" style="color: #13D8AA;font-size: 50px;">{{mttr_value}}<span style="font-size: 15px;">{{mttr_unit}}</span></h1>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mttr_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}} </p>
+                  </div>
+      
+              </div>
+              </div>
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- MTBF -->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body bg-transparent">
+                     <!-- Spinner -->
+                     <div class="d-flex justify-content-center mt-2 " *ngIf="mtbf_spinner">
+                      <spinner></spinner>
+                    </div>
+                   
+                    <div *ngIf="!mtbf_spinner && !mtbf_InternalError">
+                      <p class="one-point text-center font-light-bold" style="color: #13D8AA;">MTBF</p>
+                      <h1 class="text-center" style="color: #13D8AA;font-size: 50px;">{{mtbf_value}}<span style="font-size: 15px;">{{mtbf_unit}}</span></h1>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mtbf_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}} </p>
+                  </div>
+      
+              </div>
+              </div>
+
+            
+
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <!-- TOTAL TIME SPENT -->
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="one-point text-dark font-light-bold">{{asset_name}}</p>
+                  </div>
+                  <div class="card-body bg-transparent">
+                     <!-- Spinner -->
+                     <div class="d-flex justify-content-center mt-2 " *ngIf="mtbf_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div *ngIf="!mtbf_spinner && !mtbf_InternalError">
+                      <p class="one-point text-center font-light-bold" style="color: #3F51B5;">Total Time Spent </p>
+                      <h1 class="text-center" style="color: #3F51B5;font-size: 50px;">{{total_time_spent}}<span style="font-size: 15px;">{{total_time_spent_unit}}</span></h1>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mtbf_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}} </p>
+                  </div>
+      
+              </div>
+              </div>
+
+
+            
+
+            </div>
+
+              <!-- Fault Trend -->
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Fault Trend</span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_fault_trend"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='Fault trend';card_no='1-3';setfaultTrend();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_fault_trend="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner-->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="faultTrend_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!faultTrend_spinner && faulttrenddata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+                    <div *ngIf="!faultTrend_spinner && !faultTrend_InternalError && faulttrenddata== false" class="mb-n5">
+                      <apx-chart [series]="faultTrendchartOption.series" [chart]="faultTrendchartOption.chart"
+                        [xaxis]="faultTrendchartOption.xaxis" [stroke]="faultTrendchartOption.stroke"
+                        [tooltip]="faultTrendchartOption.tooltip" [dataLabels]="faultTrendchartOption.dataLabels"
+                        [legend]="faultTrendchartOption.legend" [markers]="faultTrendchartOption.markers"
+                        [grid]="faultTrendchartOption.grid" [yaxis]="faultTrendchartOption.yaxis"
+                        [title]="faultTrendchartOption.title" [fill]="faultTrendchartOption.fill"
+                        [colors]="faultTrendchartOption.colors"
+                        [plotOptions]="faultTrendchartOption.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="faultTrend_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your request please try after some time !!</small>
+                    </div>
+                  </div>
+
+                  <div class="card-footer  ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+      </ng-template>
+    </li>
+
+    <!-- LAST 7 DAYS TAB -->
+    
+    <li ngbNavItem *ngIf="!no_current_analysis && !assetInternalError" (click)="time_frame_clicked = '7D'; time_frame_fault= '7'; l7DAssetperformanceMetrics();">
+      <a ngbNavLink>Last 7 days</a>
+      <ng-template ngbNavContent>
+
+        <!-- error msg 1 -->
+        <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="assetInternalError">
+          <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+            request please try after some time !!</small>
+        </div>
+        <!-- error msg 2 -->
+        <div class="text-center mt-5" *ngIf="(no_assets || no_current_analysis) && !assetInternalError">
+          <p><i class="fas fa-grip-horizontal mr-1 fa-3x opacity-point-3"></i></p>
+          <small class="point-8 "> No asset metrics available  to display !!</small>
+        </div>
+
+          <!-- ------------------------------------ -->
+            <!-- Performance metrics -->
+          <!-- ------------------------------------ -->
+          <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0" *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'performance_based' " >
+            <!-- OEE CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                      <div class="card-header bg-transparent ht-40">
+                        <p class="point-9 float-left"><span class="font-weight-bold"> OEE </span></p>
+                        <button mat-icon-button [matMenuTriggerFor]="tr_oee"
+                          class="float-right btn-focus-none card-menu-btn"
+                          (click)="metrics_type='oee'; card_no='7D-1';setoee();">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #tr_oee="matMenu">
+                          <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                            <mat-icon>settings</mat-icon>
+                            <span>Settings</span>
+                          </button>
+                        </mat-menu>
+                      </div>
+                      <div class="card-body">
+                          <!-- Spinner -->
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="oee_spinner">
+                          <spinner></spinner>
+                        </div>
+                        <!-- data unavailable -->
+                        <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!oee_spinner && !oee_error && oeeData" style="margin-bottom: 80px;">
+                          <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                        <div *ngIf="!oee_spinner&&!oee_error && oeeData == false " class="mb-n3">                        
+                        <apx-chart [series]="oee_chartOptions.series"
+                          [chart]="oee_chartOptions.chart"
+                          [xaxis]="oee_chartOptions.xaxis"
+                          [stroke]="oee_chartOptions.stroke"
+                          [tooltip]="oee_chartOptions.tooltip"
+                          [dataLabels]="oee_chartOptions.dataLabels"
+                          [legend]="oee_chartOptions.legend"
+                          [markers]="oee_chartOptions.markers"
+                          [grid]="oee_chartOptions.grid"
+                          [yaxis]="oee_chartOptions.yaxis"
+                          [title]="oee_chartOptions.title"
+                          [fill]="oee_chartOptions.fill"
+                          [colors]="oee_chartOptions.colors"
+                          [plotOptions]="oee_chartOptions.plotOptions">
+                        </apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="oee_error">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                        request please try after some time !!</small>
+                    </div>
+                      </div>
+                      <div class="card-footer ht-40">
+                        <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                        <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                      </div>
+                    </div>
+              </div>
+                <!-- Performance CARD -->
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Performance </span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="tr_performance"
+                          class="float-right btn-focus-none card-menu-btn"
+                          (click)="metrics_type='performance'; card_no='7D-2';setPerformance();">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #tr_performance="matMenu">
+                          <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                            <mat-icon>settings</mat-icon>
+                            <span>Settings</span>
+                          </button>
+                        </mat-menu>
+                    </div>
+                    <div class="card-body">
+                        <!-- Spinner -->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="performance_spinner">
+                        <spinner></spinner>
+                      </div>
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!performance_spinner && !performance_error && performancedata" style="margin-bottom: 80px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                      <div *ngIf="!performance_spinner&&!performance_error && performancedata == false"  class="mb-n3">                        
+                          <apx-chart [series]="performance_chartOptions.series"
+                            [chart]="performance_chartOptions.chart" 
+                            [xaxis]="performance_chartOptions.xaxis"
+                            [stroke]="performance_chartOptions.stroke" 
+                            [tooltip]="performance_chartOptions.tooltip" 
+                            [dataLabels]="performance_chartOptions.dataLabels"
+                            [legend]="performance_chartOptions.legend" 
+                            [markers]="performance_chartOptions.markers"
+                            [grid]="performance_chartOptions.grid"
+                            [yaxis]="performance_chartOptions.yaxis"
+                            [title]="performance_chartOptions.title"
+                            [fill]="performance_chartOptions.fill"
+                            [colors]="performance_chartOptions.colors"
+                            [plotOptions]="performance_chartOptions.plotOptions">
+                          </apx-chart>
+                  </div>
+                  <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="performance_error">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                      request please try after some time !!</small>
+                  </div>
+                    </div>
+                    <div class="card-footer ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                      <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                    </div>
+                  </div>
+                </div>
+                <!-- Availability CARD -->
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Availability </span> </p>
+                      <button mat-icon-button [matMenuTriggerFor]="tr_availability"
+                          class="float-right btn-focus-none card-menu-btn"
+                          (click)="metrics_type='availability'; card_no='7D-3';setAvailaibility();">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #tr_availability="matMenu">
+                          <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                            <mat-icon>settings</mat-icon>
+                            <span>Settings</span>
+                          </button>
+                        </mat-menu>
+                    </div>
+                    <div class="card-body">
+                        <!-- Spinner -->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="availability_spinner">
+                        <spinner></spinner>
+                      </div>
+                       <!-- data unavailable -->
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!availability_spinner && !availability_error && avaliabilitydata" style="margin-bottom: 80px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                      <div *ngIf="!availability_spinner&&!availability_error && avaliabilitydata == false"  class="mb-n3">                       
+                          <apx-chart [series]="availability_chartOptions.series"
+                          [chart]="availability_chartOptions.chart"
+                          [xaxis]="availability_chartOptions.xaxis"
+                          [stroke]="availability_chartOptions.stroke"
+                          [tooltip]="availability_chartOptions.tooltip" 
+                          [dataLabels]="availability_chartOptions.dataLabels"
+                          [legend]="availability_chartOptions.legend"
+                          [markers]="availability_chartOptions.markers"
+                          [grid]="availability_chartOptions.grid"
+                          [yaxis]="availability_chartOptions.yaxis"
+                          [title]="availability_chartOptions.title" 
+                          [fill]="availability_chartOptions.fill"
+                          [colors]="availability_chartOptions.colors"
+                          [plotOptions]="availability_chartOptions.plotOptions">
+                          </apx-chart>
+
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="availability_error">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                          request please try after some time !!</small>
+                      </div>
+                    </div>
+                    <div class="card-footer ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                      <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                    </div>
+                  </div>
+                </div>
+                <!-- Quality CARD -->
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Quality </span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="tr_quality"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='quality';card_no='7D-4';setQuality();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_quality="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+
+                    </div>
+                    <div class="card-body">
+                        <!-- Spinner -->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="qualiity_spinner">
+                        <spinner></spinner>
+                      </div>
+                        <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!qualiity_spinner && !quality_error && qualitydata" style="margin-bottom: 80px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                      <div *ngIf="!qualiity_spinner && !quality_error &&  qualitydata == false"  class="mb-n3">                        
+                        <apx-chart [series]="quality_chartOptions.series"
+                        [chart]="quality_chartOptions.chart"
+                        [xaxis]="quality_chartOptions.xaxis"
+                        [stroke]="quality_chartOptions.stroke"
+                        [tooltip]="quality_chartOptions.tooltip" 
+                        [dataLabels]="quality_chartOptions.dataLabels"
+                        [legend]="quality_chartOptions.legend"
+                        [markers]="quality_chartOptions.markers"
+                         [grid]="quality_chartOptions.grid"
+                        [yaxis]="quality_chartOptions.yaxis"
+                        [title]="quality_chartOptions.title" 
+                        [fill]="quality_chartOptions.fill"
+                        [colors]="quality_chartOptions.colors"
+                        [plotOptions]="quality_chartOptions.plotOptions">
+                      </apx-chart>
+                  </div>
+                  <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="quality_error">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+                      request please try after some time !!</small>
+                  </div>
+                    </div>
+                    <div class="card-footer ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                      <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                    </div>
+                  </div>
+                </div>
+          </div>
+
+          <!-- ------------------------------------ -->
+                  <!-- Time based metrics -->
+          <!-- ------------------------------------ -->
+        <div *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'time_based' " >
+          <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0" >
+            <!-- Runtime/Planned Downtime Card / Unplanned Downtime  -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                      <div class="card-header bg-transparent ht-40">
+                        <p class="point-9 float-left"><span class="font-weight-bold"> Runtime </span> vs <span class="font-weight-bold">Downtime</span></p>                        
+                         <button mat-icon-button [matMenuTriggerFor]="Crr_rundwn_time"
+                          class="float-right btn-focus-none card-menu-btn"
+                          (click)="metrics_type='runtime_downtime'; card_no='7D-1';setRuntimeDowntime();">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #Crr_rundwn_time="matMenu">
+                          <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                            <mat-icon>settings</mat-icon>
+                            <span>Settings</span>
+                          </button>
+                        </mat-menu> 
+                      </div>
+                      <div class="card-body">
+                          <!-- Spinner -->
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="runtime_downtime_spinner">
+                          <spinner></spinner>
+                        </div>
+                         <!-- data unavailable -->
+                         <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!runtime_downtime_spinner && rundown" style="margin-bottom: 65px;">
+                          <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                        <div *ngIf="!runtime_downtime_spinner && rundown == false"  class="mb-n5">
+                          <apx-chart [series]="today_runtime_downtime_chartOptions.series" 
+                          [chart]="today_runtime_downtime_chartOptions.chart"  
+                          [xaxis]="today_runtime_downtime_chartOptions.xaxis"
+                          [stroke]="today_runtime_downtime_chartOptions.stroke" 
+                          [tooltip]="today_runtime_downtime_chartOptions.tooltip"
+                          [dataLabels]="today_runtime_downtime_chartOptions.dataLabels"
+                          [legend]="today_runtime_downtime_chartOptions.legend"
+                          [markers]="today_runtime_downtime_chartOptions.markers" 
+                          [grid]="today_runtime_downtime_chartOptions.grid"
+                          [yaxis]="today_runtime_downtime_chartOptions.yaxis" 
+                          [title]="today_runtime_downtime_chartOptions.title" 
+                          [fill]="today_runtime_downtime_chartOptions.fill"
+                          [colors]="today_runtime_downtime_chartOptions.colors"
+                          [plotOptions]="today_runtime_downtime_chartOptions.plotOptions">
+                     
+                          </apx-chart>
+                    </div>
+
+                      </div>
+                      <div class="card-footer ht-40">
+                        <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                        <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                      </div>
+                    </div>
+              </div>
+            <!-- Planned production time CARD -->
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold"> Planned Production </span> vs <span class="font-weight-bold"> Schedule Loss </span></p>
+                  <button mat-icon-button [matMenuTriggerFor]="crr_planned_prod"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='plannedprod_scheduleloss'; card_no='7D-2';setPlannedprodSchedule();">
+                  <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #crr_planned_prod="matMenu">
+                    <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                  </mat-menu>   
+                </div>
+                <div class="card-body">
+                      <!-- Spinner -->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="planned_prod_spinner">
+                        <spinner></spinner>
+                      </div>
+                      <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!planned_prod_spinner && plannedscheduledata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                    <div *ngIf="!planned_prod_spinner && plannedscheduledata == false" class="mb-n5">                                  
+                        <apx-chart [series]="planned_prod_time_chartOptions.series" [chart]="planned_prod_time_chartOptions.chart"  [xaxis]="planned_prod_time_chartOptions.xaxis"
+                        [stroke]="planned_prod_time_chartOptions.stroke"
+                        [tooltip]="planned_prod_time_chartOptions.tooltip" 
+                        [dataLabels]="planned_prod_time_chartOptions.dataLabels"
+                        [legend]="planned_prod_time_chartOptions.legend"
+                        [markers]="planned_prod_time_chartOptions.markers"
+                        [grid]="planned_prod_time_chartOptions.grid"
+                        [yaxis]="planned_prod_time_chartOptions.yaxis" 
+                        [title]="planned_prod_time_chartOptions.title" 
+                        [fill]="planned_prod_time_chartOptions.fill"
+                        [colors]="planned_prod_time_chartOptions.colors"
+                        [plotOptions]="planned_prod_time_chartOptions.plotOptions"
+                        ></apx-chart>
+                    </div>
+                </div>
+                <div class="card-footer ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0" >
+              <!-- Net Runtime CARD -->
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold"> Performance Loss  </span> vs <span class="font-weight-bold"> Net Runtime </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="crr_net_runtime"
+                  class="float-right btn-focus-none card-menu-btn"
+                  (click)="metrics_type='net_runtime'; card_no='7D-3';setNetRuntime();">
+                  <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #crr_net_runtime="matMenu">
+                    <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                  </mat-menu>   
+                </div>
+                <div class="card-body">
+                      <!-- Spinner -->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="netruntime_spinner">
+                        <spinner></spinner>
+                      </div>
+                        <!-- data unavailable -->
+                        <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!netruntime_spinner && runratedata" style="margin-bottom: 65px;">
+                          <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                    <div *ngIf="!netruntime_spinner && runratedata == false" class="mb-n5">
+                      <apx-chart [series]="net_runtime_chartOptions.series" 
+                      [chart]="net_runtime_chartOptions.chart"
+                      [xaxis]="net_runtime_chartOptions.xaxis"
+                      [stroke]="net_runtime_chartOptions.stroke"
+                      [tooltip]="net_runtime_chartOptions.tooltip"
+                      [dataLabels]="net_runtime_chartOptions.dataLabels"
+                      [legend]="net_runtime_chartOptions.legend"
+                      [markers]="net_runtime_chartOptions.markers"
+                      [grid]="net_runtime_chartOptions.grid"
+                      [yaxis]="net_runtime_chartOptions.yaxis"
+                      [title]="net_runtime_chartOptions.title"
+                      [fill]="net_runtime_chartOptions.fill"
+                      [colors]="net_runtime_chartOptions.colors"
+                      [plotOptions]="net_runtime_chartOptions.plotOptions"
+                      ></apx-chart>
+                    </div>
+                </div>
+                <div class="card-footer ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+              <!-- Fully Production VS Quality CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Fully Production </span> vs <span class="font-weight-bold"> Quality </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="crr_fpql_runtime"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='fpql_runtime'; card_no='7D-4';setFullyProdQlyLoss();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #crr_fpql_runtime="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu> 
+                  </div>
+                  <div class="card-body">
+                        <!-- Spinner -->
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="fully_prod_time_spinner">
+                          <spinner></spinner>
+                        </div>
+                          <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!fully_prod_time_spinner && productionqualitydata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                      <div *ngIf="!fully_prod_time_spinner && productionqualitydata == false" class="mb-n5">
+                        <apx-chart [series]="fully_prod_time_chartOptions.series"
+                        [chart]="fully_prod_time_chartOptions.chart" 
+                        [xaxis]="fully_prod_time_chartOptions.xaxis"
+                        [stroke]="fully_prod_time_chartOptions.stroke"
+                        [tooltip]="fully_prod_time_chartOptions.tooltip"
+                        [dataLabels]="fully_prod_time_chartOptions.dataLabels"
+                        [legend]="fully_prod_time_chartOptions.legend"
+                        [markers]="fully_prod_time_chartOptions.markers"
+                        [grid]="fully_prod_time_chartOptions.grid"
+                        [yaxis]="fully_prod_time_chartOptions.yaxis"
+                        [title]="fully_prod_time_chartOptions.title"
+                        [fill]="fully_prod_time_chartOptions.fill"
+                        [colors]="fully_prod_time_chartOptions.colors"
+                        [plotOptions]="fully_prod_time_chartOptions.plotOptions"
+                        ></apx-chart>
+                      </div>
+                  </div>
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+
+          <!-------------------------------------- -->
+            <!-- Loss based metrics -->
+          <!-------------------------------------- -->
+          <div  *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'loss_based' " >
+            <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0">
+              <!-- Availability loss CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Availability Loss </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_avail_loss"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='availability_loss';card_no='7D-1';setAvailabilityLoss();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                  <mat-menu #tr_avail_loss="matMenu">
+                    <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                  </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="availability_loss_spinner">
+                      <spinner></spinner>
+                    </div>
+                      <!-- data unavailable -->
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!availability_loss_spinner && !availability_loss_InternalError && avaliabilitylossdata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+                    <div *ngIf="!availability_loss_spinner && !availability_loss_InternalError && avaliabilitylossdata == false" class="mb-n5">
+                      <apx-chart [series]="availabilityLosschartOptions.series"
+                        [chart]="availabilityLosschartOptions.chart"
+                        [xaxis]="availabilityLosschartOptions.xaxis"
+                        [stroke]="availabilityLosschartOptions.stroke"
+                        [tooltip]="availabilityLosschartOptions.tooltip"
+                        [dataLabels]="availabilityLosschartOptions.dataLabels"
+                        [legend]="availabilityLosschartOptions.legend"
+                        [markers]="availabilityLosschartOptions.markers"
+                        [grid]="availabilityLosschartOptions.grid" 
+                        [yaxis]="availabilityLosschartOptions.yaxis"
+                        [title]="availabilityLosschartOptions.title"
+                        [fill]="availabilityLosschartOptions.fill"
+                        [colors]="availabilityLosschartOptions.colors"
+                        [plotOptions]="availabilityLosschartOptions.plotOptions">
+                      </apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="availability_loss_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer  ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+  
+               <!-- Performance Loss CARD -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Performance Loss</span> </p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_perf_loss"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='performance_loss';card_no='7D-2';setPerformanceLoss();">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #tr_perf_loss="matMenu">
+                    <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                  </mat-menu>
+                  </div>
+
+                  <div class="card-body">
+                    <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="performance_loss_spinner">
+                      <spinner></spinner>
+                    </div>
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!performance_loss_spinner && !performance_loss_InternalError && performancelossdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                    <div *ngIf="!performance_loss_spinner && !performance_loss_InternalError && performancelossdata == false" class="mb-n5">
+                      <apx-chart [series]="performanceLosschartOptions.series"
+                        [chart]="performanceLosschartOptions.chart"
+                        [xaxis]="performanceLosschartOptions.xaxis"
+                        [stroke]="performanceLosschartOptions.stroke"
+                        [tooltip]="performanceLosschartOptions.tooltip"
+                        [dataLabels]="performanceLosschartOptions.dataLabels"
+                        [legend]="performanceLosschartOptions.legend"
+                        [markers]="performanceLosschartOptions.markers"
+                        [grid]="performanceLosschartOptions.grid"
+                        [yaxis]="performanceLosschartOptions.yaxis"
+                        [title]="performanceLosschartOptions.title"
+                        [fill]="performanceLosschartOptions.fill"
+                        [colors]="performanceLosschartOptions.colors"
+                        [plotOptions]="performanceLosschartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="performance_loss_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0 ml-3">              
+              <!-- Quality loss -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold">Quality Loss </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_qly_loss"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='quality_loss';card_no='7D-3';setQualityLoss();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_qly_loss="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner-->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="quality_loss_spinner">
+                      <spinner></spinner>
+                    </div>
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!quality_loss_spinner && !quality_loss_InternalError && qualitylossdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                    <div *ngIf="!quality_loss_spinner && !quality_loss_InternalError && qualitylossdata == false" class="mb-n5">
+                      <apx-chart [series]="qualityLosschartOptions.series"
+                        [chart]="qualityLosschartOptions.chart"
+                        [xaxis]="qualityLosschartOptions.xaxis"
+                        [stroke]="qualityLosschartOptions.stroke"
+                        [tooltip]="qualityLosschartOptions.tooltip"
+                        [dataLabels]="qualityLosschartOptions.dataLabels"
+                        [legend]="qualityLosschartOptions.legend"
+                        [markers]="qualityLosschartOptions.markers"
+                        [grid]="qualityLosschartOptions.grid"
+                        [yaxis]="qualityLosschartOptions.yaxis"
+                        [title]="qualityLosschartOptions.title"
+                        [fill]="qualityLosschartOptions.fill"
+                        [colors]="qualityLosschartOptions.colors"
+                        [plotOptions]="qualityLosschartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="quality_loss_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+
+             <!-- MTBF -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> MTBF</span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_mtbr"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='MTBF';card_no='7D-2';setmtbr();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_mtbr="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner-->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="mtbf_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!mtbf_spinner && mtbfdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+
+                    <div *ngIf="!mtbf_spinner && !mtbf_InternalError && mtbfdata==false" class="mb-n5">
+                      <apx-chart [series]="mtbfchartOptions.series" [chart]="mtbfchartOptions.chart"
+                        [xaxis]="mtbfchartOptions.xaxis" [stroke]="mtbfchartOptions.stroke"
+                        [tooltip]="mtbfchartOptions.tooltip" [dataLabels]="mtbfchartOptions.dataLabels"
+                        [legend]="mtbfchartOptions.legend" [markers]="mtbfchartOptions.markers"
+                        [grid]="mtbfchartOptions.grid" [yaxis]="mtbfchartOptions.yaxis"
+                        [title]="mtbfchartOptions.title" [fill]="mtbfchartOptions.fill"
+                        [colors]="mtbfchartOptions.colors"
+                        [plotOptions]="mtbfchartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mtbf_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+
+                  <div class="card-footer  ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated by: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+
+             
+                <!-- Fault Trend -->
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Fault Trend</span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="tr_fault_trend"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='Fault trend';card_no='7-3';setfaultTrend();">
+                      <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #tr_fault_trend="matMenu">
+                        <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                          <mat-icon>settings</mat-icon>
+                          <span>Settings</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                    <div class="card-body">
+                      <!-- Spinner-->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="faultTrend_spinner">
+                        <spinner></spinner>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!faultTrend_spinner && faulttrenddata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                      <div *ngIf="!faultTrend_spinner && !faultTrend_InternalError && faulttrenddata== false" class="mb-n5">
+                        <apx-chart [series]="faultTrendchartOption.series" [chart]="faultTrendchartOption.chart"
+                          [xaxis]="faultTrendchartOption.xaxis" [stroke]="faultTrendchartOption.stroke"
+                          [tooltip]="faultTrendchartOption.tooltip" [dataLabels]="faultTrendchartOption.dataLabels"
+                          [legend]="faultTrendchartOption.legend" [markers]="faultTrendchartOption.markers"
+                          [grid]="faultTrendchartOption.grid" [yaxis]="faultTrendchartOption.yaxis"
+                          [title]="faultTrendchartOption.title" [fill]="faultTrendchartOption.fill"
+                          [colors]="faultTrendchartOption.colors"
+                          [plotOptions]="faultTrendchartOption.plotOptions"></apx-chart>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="faultTrend_InternalError">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                          your
+                          request please try after some time !!</small>
+                      </div>
+                    </div>
+  
+                    <div class="card-footer  ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          
+          </div>
+
+           <!---------------------------------------->
+              <!-- KPI Maintenance -->
+          <!---------------------------------------->
+
+          <div  *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'maintenance_kpi' " >
+                <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0"> 
+                  
+                    <!-- MTTR -->
+               <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> MTTR</span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_mttr"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='MTTR';card_no='7D-1';setmttr();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_mttr="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner-->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="mttr_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!mttr_spinner && mttrdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+
+                    <div *ngIf="!mttr_spinner && !mttr_InternalError && mttrdata==false" class="mb-n5">
+                      <apx-chart [series]="mttrchartOptions.series" [chart]="mttrchartOptions.chart"
+                        [xaxis]="mttrchartOptions.xaxis" [stroke]="mttrchartOptions.stroke"
+                        [tooltip]="mttrchartOptions.tooltip" [dataLabels]="mttrchartOptions.dataLabels"
+                        [legend]="mttrchartOptions.legend" [markers]="mttrchartOptions.markers"
+                        [grid]="mttrchartOptions.grid" [yaxis]="mttrchartOptions.yaxis"
+                        [title]="mttrchartOptions.title" [fill]="mttrchartOptions.fill"
+                        [colors]="mttrchartOptions.colors"
+                        [plotOptions]="mttrchartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mttr_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+
+                  <div class="card-footer  ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+
+             <!-- MTBF -->
+              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> MTBF</span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_mtbr"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='MTBF';card_no='7D-2';setmtbr();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_mtbr="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner-->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="mtbf_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!mtbf_spinner && mtbfdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+
+                    <div *ngIf="!mtbf_spinner && !mtbf_InternalError && mtbfdata==false" class="mb-n5">
+                      <apx-chart [series]="mtbfchartOptions.series" [chart]="mtbfchartOptions.chart"
+                        [xaxis]="mtbfchartOptions.xaxis" [stroke]="mtbfchartOptions.stroke"
+                        [tooltip]="mtbfchartOptions.tooltip" [dataLabels]="mtbfchartOptions.dataLabels"
+                        [legend]="mtbfchartOptions.legend" [markers]="mtbfchartOptions.markers"
+                        [grid]="mtbfchartOptions.grid" [yaxis]="mtbfchartOptions.yaxis"
+                        [title]="mtbfchartOptions.title" [fill]="mtbfchartOptions.fill"
+                        [colors]="mtbfchartOptions.colors"
+                        [plotOptions]="mtbfchartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mtbf_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+
+                  <div class="card-footer  ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+
+             
+                <!-- Fault Trend -->
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Fault Trend</span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="tr_fault_trend"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='Fault trend';card_no='7-3';setfaultTrend();">
+                      <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #tr_fault_trend="matMenu">
+                        <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                          <mat-icon>settings</mat-icon>
+                          <span>Settings</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                    <div class="card-body">
+                      <!-- Spinner-->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="faultTrend_spinner">
+                        <spinner></spinner>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!faultTrend_spinner && faulttrenddata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                      <div *ngIf="!faultTrend_spinner && !faultTrend_InternalError && faulttrenddata== false" class="mb-n5">
+                        <apx-chart [series]="faultTrendchartOption.series" [chart]="faultTrendchartOption.chart"
+                          [xaxis]="faultTrendchartOption.xaxis" [stroke]="faultTrendchartOption.stroke"
+                          [tooltip]="faultTrendchartOption.tooltip" [dataLabels]="faultTrendchartOption.dataLabels"
+                          [legend]="faultTrendchartOption.legend" [markers]="faultTrendchartOption.markers"
+                          [grid]="faultTrendchartOption.grid" [yaxis]="faultTrendchartOption.yaxis"
+                          [title]="faultTrendchartOption.title" [fill]="faultTrendchartOption.fill"
+                          [colors]="faultTrendchartOption.colors"
+                          [plotOptions]="faultTrendchartOption.plotOptions"></apx-chart>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="faultTrend_InternalError">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                          your
+                          request please try after some time !!</small>
+                      </div>
+                    </div>
+  
+                    <div class="card-footer  ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          
+          </div>
+
+      </ng-template>
+    </li>
+
+    <!-- LAST 30 DAYS TAB -->
+    <li ngbNavItem *ngIf="!no_current_analysis && !assetInternalError" (click)="time_frame_clicked = '30D'; time_frame_fault= '30'; l30DAssetperformanceMetrics();">
+      <a ngbNavLink>Last 30 days</a>
+      <ng-template ngbNavContent>
+        <!-- error msg 1 -->
+        <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="assetInternalError">
+          <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+            request please try after some time !!</small>
+        </div>
+        <!-- error msg 2 -->
+        <div class="text-center mt-5" *ngIf="(no_assets || no_current_analysis) && !assetInternalError">
+          <p><i class="fas fa-grip-horizontal mr-1 fa-3x opacity-point-3"></i></p>
+          <small class="point-8 "> No asset metrics available  to display !!</small>
+        </div>
+      <!-- ------------------------------------ -->
+          <!-- Performance metrics -->
+      <!-- ------------------------------------ -->
+      <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0" *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'performance_based' " >
+        <!-- OEE CARD -->
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> OEE </span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_oee"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='oee'; card_no='30D-1';setoee();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_oee="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                      <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="oee_spinner">
+                      <spinner></spinner>
+                    </div>
+                    <!-- data unavailable -->
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!oee_spinner && oeeData" style="margin-bottom: 80px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                    <div *ngIf="!oee_spinner && oeeData == false"  class="mb-n3">
+                      <apx-chart [series]="oee_chartOptions.series"
+                          [chart]="oee_chartOptions.chart"
+                          [xaxis]="oee_chartOptions.xaxis"
+                          [stroke]="oee_chartOptions.stroke"
+                          [tooltip]="oee_chartOptions.tooltip"
+                          [dataLabels]="oee_chartOptions.dataLabels"
+                          [legend]="oee_chartOptions.legend"
+                          [markers]="oee_chartOptions.markers"
+                          [grid]="oee_chartOptions.grid"
+                          [yaxis]="oee_chartOptions.yaxis"
+                          [title]="oee_chartOptions.title"
+                          [fill]="oee_chartOptions.fill"
+                          [colors]="oee_chartOptions.colors"
+                          [plotOptions]="oee_chartOptions.plotOptions">
+                        </apx-chart>
+                </div>
+
+                  </div>
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+          </div>
+            <!-- Performance CARD -->
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold"> Performance </span></p>
+                  <button mat-icon-button [matMenuTriggerFor]="tr_performance"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='performance'; card_no='30D-2';setPerformance();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_performance="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                </div>
+                <div class="card-body">
+                    <!-- Spinner -->
+                  <div class="d-flex justify-content-center mt-2 " *ngIf="performance_spinner">
+                    <spinner></spinner>
+                  </div>
+                    <!-- data unavailable -->
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!performance_spinner && performancedata" style="margin-bottom: 80px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                  <div *ngIf="!performance_spinner  && performancedata == false"  class="mb-n3">
+                    <apx-chart [series]="performance_chartOptions.series"
+                        [chart]="performance_chartOptions.chart" 
+                        [xaxis]="performance_chartOptions.xaxis"
+                        [stroke]="performance_chartOptions.stroke" 
+                        [tooltip]="performance_chartOptions.tooltip" 
+                        [dataLabels]="performance_chartOptions.dataLabels"
+                        [legend]="performance_chartOptions.legend" 
+                        [markers]="performance_chartOptions.markers"
+                        [grid]="performance_chartOptions.grid"
+                        [yaxis]="performance_chartOptions.yaxis"
+                        [title]="performance_chartOptions.title"
+                        [fill]="performance_chartOptions.fill"
+                        [colors]="performance_chartOptions.colors"
+                        [plotOptions]="performance_chartOptions.plotOptions">
+                    </apx-chart>
+                  </div>
+
+                </div>
+                <div class="card-footer ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+            <!-- Availability CARD -->
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold"> Availability </span> </p>
+                  <button mat-icon-button [matMenuTriggerFor]="tr_availability"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='availability'; card_no='30D-3';setAvailaibility();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_availability="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                </div>
+                <div class="card-body">
+                    <!-- Spinner -->
+                  <div class="d-flex justify-content-center mt-2 " *ngIf="availability_spinner">
+                    <spinner></spinner>
+                  </div>
+                   <!-- data unavailable -->
+                   <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!availability_spinner && avaliabilitydata" style="margin-bottom: 80px;">
+                    <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                  </div>
+                  <div *ngIf="!availability_spinner && avaliabilitydata == false"  class="mb-n3">
+                    <apx-chart [series]="availability_chartOptions.series"
+                    [chart]="availability_chartOptions.chart"
+                    [xaxis]="availability_chartOptions.xaxis"
+                    [stroke]="availability_chartOptions.stroke"
+                    [tooltip]="availability_chartOptions.tooltip" 
+                    [dataLabels]="availability_chartOptions.dataLabels"
+                    [legend]="availability_chartOptions.legend"
+                    [markers]="availability_chartOptions.markers"
+                    [grid]="availability_chartOptions.grid"
+                    [yaxis]="availability_chartOptions.yaxis"
+                    [title]="availability_chartOptions.title" 
+                    [fill]="availability_chartOptions.fill"
+                    [colors]="availability_chartOptions.colors"
+                    [plotOptions]="availability_chartOptions.plotOptions">
+                    </apx-chart>
+              </div>
+
+                </div>
+                <div class="card-footer ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+            <!-- Quality CARD -->
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold"> Quality </span></p>
+                  <button mat-icon-button [matMenuTriggerFor]="tr_quality"
+                  class="float-right btn-focus-none card-menu-btn"
+                  (click)="metrics_type='quality';card_no='30D-4';setQuality();">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #tr_quality="matMenu">
+                  <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                  </button>
+                </mat-menu>
+
+                </div>
+                <div class="card-body">
+                    <!-- Spinner -->
+                  <div class="d-flex justify-content-center mt-2 " *ngIf="qualiity_spinner">
+                    <spinner></spinner>
+                  </div>
+                   <!-- data unavailable -->
+                   <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!qualiity_spinner && qualitydata" style="margin-bottom: 80px;">
+                    <p class="point-8 font-light-bold" style="margin-top: 51px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                  </div>
+                  <div *ngIf="!qualiity_spinner && qualitydata == false"  class="mb-n3">
+                    <apx-chart [series]="quality_chartOptions.series"
+                        [chart]="quality_chartOptions.chart"
+                        [xaxis]="quality_chartOptions.xaxis"
+                        [stroke]="quality_chartOptions.stroke"
+                        [tooltip]="quality_chartOptions.tooltip" 
+                        [dataLabels]="quality_chartOptions.dataLabels"
+                        [legend]="quality_chartOptions.legend"
+                        [markers]="quality_chartOptions.markers"
+                         [grid]="quality_chartOptions.grid"
+                        [yaxis]="quality_chartOptions.yaxis"
+                        [title]="quality_chartOptions.title" 
+                        [fill]="quality_chartOptions.fill"
+                        [colors]="quality_chartOptions.colors"
+                        [plotOptions]="availability_chartOptions.plotOptions">
+                      </apx-chart>
+              </div>
+
+                </div>
+                <div class="card-footer ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+      </div>
+        <!-- ------------------------------------ -->
+                <!-- Time based metrics -->
+        <!-- ------------------------------------ -->
+      <div *ngIf="!runtime_downtime_spinner && !no_current_analysis && !no_assets && !assetInternalError && asset_metrics_type == 'time_based' " >
+      <div class="row  m-xl-2 m-lg-2 m-md-0 m-sm-0" >
+        <!-- Runtime/Planned Downtime Card / Unplanned Downtime  -->
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> Runtime </span> vs <span class="font-weight-bold">Downtime</span></p>                        
+                    <button mat-icon-button [matMenuTriggerFor]="Crr_rundwn_time"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='runtime_downtime'; card_no='30D-1';setRuntimeDowntime();">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #Crr_rundwn_time="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu> 
+                  </div>
+                  <div class="card-body">
+                      <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="runtime_downtime_spinner">
+                      <spinner></spinner>
+                    </div>
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!runtime_downtime_spinner && rundown" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                    <div *ngIf="!runtime_downtime_spinner && rundown == false"  class="mb-n5">
+                      <apx-chart [series]="today_runtime_downtime_chartOptions.series" 
+                      [chart]="today_runtime_downtime_chartOptions.chart" 
+                      [xaxis]="today_runtime_downtime_chartOptions.xaxis"
+                      [stroke]="today_runtime_downtime_chartOptions.stroke" 
+                      [tooltip]="today_runtime_downtime_chartOptions.tooltip" 
+                      [dataLabels]="today_runtime_downtime_chartOptions.dataLabels"
+                      [legend]="today_runtime_downtime_chartOptions.legend"
+                      [markers]="today_runtime_downtime_chartOptions.markers"
+                      [grid]="today_runtime_downtime_chartOptions.grid"
+                      [yaxis]="today_runtime_downtime_chartOptions.yaxis"
+                      [title]="today_runtime_downtime_chartOptions.title"
+                      [fill]="today_runtime_downtime_chartOptions.fill"
+                      [colors]="today_runtime_downtime_chartOptions.colors"
+                      [plotOptions]="today_runtime_downtime_chartOptions.plotOptions"
+                      ></apx-chart>
+                </div>
+
+                  </div>
+                  <div class="card-footer ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+          </div>
+          <!-- Planned production time CARD -->
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+              <div class="card-header bg-transparent ht-40">
+                <p class="point-9 float-left"><span class="font-weight-bold"> Planned Production </span> vs <span class="font-weight-bold"> Schedule Loss </span></p>
+                <button mat-icon-button [matMenuTriggerFor]="crr_planned_prod"
+                  class="float-right btn-focus-none card-menu-btn"
+                  (click)="metrics_type='plannedprod_scheduleloss'; card_no='30D-2';setPlannedprodSchedule();">
+                <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #crr_planned_prod="matMenu">
+                  <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                  </button>
+                </mat-menu>   
+              </div>
+              <div class="card-body">
+                    <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="planned_prod_spinner">
+                      <spinner></spinner>
+                    </div>
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!planned_prod_spinner && plannedscheduledata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                  <div *ngIf="!planned_prod_spinner && plannedscheduledata == false" class="mb-n5">                             
+                      <apx-chart [series]="planned_prod_time_chartOptions.series" [chart]="planned_prod_time_chartOptions.chart"  [xaxis]="planned_prod_time_chartOptions.xaxis"
+                      [stroke]="planned_prod_time_chartOptions.stroke" [tooltip]="planned_prod_time_chartOptions.tooltip" [dataLabels]="planned_prod_time_chartOptions.dataLabels"
+                      [legend]="planned_prod_time_chartOptions.legend" [markers]="planned_prod_time_chartOptions.markers" [grid]="planned_prod_time_chartOptions.grid"
+                      [yaxis]="planned_prod_time_chartOptions.yaxis" 
+                      [title]="planned_prod_time_chartOptions.title" 
+                      [fill]="planned_prod_time_chartOptions.fill"
+                      [colors]="planned_prod_time_chartOptions.colors"
+                      [plotOptions]="planned_prod_time_chartOptions.plotOptions"
+                      ></apx-chart>
+                  </div>
+              </div>
+              <div class="card-footer ht-40">
+                <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0" >
+          <!-- Net Runtime CARD -->
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+              <div class="card-header bg-transparent ht-40">
+                <p class="point-9 float-left"><span class="font-weight-bold"> Performance Loss  </span> vs <span class="font-weight-bold"> Net Runtime </span></p>
+                     <button mat-icon-button [matMenuTriggerFor]="crr_net_runtime"
+                class="float-right btn-focus-none card-menu-btn"
+                (click)="metrics_type='net_runtime'; card_no='30D-3';setNetRuntime();">
+                <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #crr_net_runtime="matMenu">
+                  <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                  </button>
+                </mat-menu>   
+              </div>
+              <div class="card-body">
+                    <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="netruntime_spinner">
+                      <spinner></spinner>
+                    </div>
+                      <!-- data unavailable -->
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!netruntime_spinner && runratedata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+                  <div *ngIf="!netruntime_spinner && runratedata == false" class="mb-n5">
+                    <apx-chart [series]="net_runtime_chartOptions.series" [chart]="net_runtime_chartOptions.chart"  [xaxis]="net_runtime_chartOptions.xaxis"
+                    [stroke]="net_runtime_chartOptions.stroke" [tooltip]="net_runtime_chartOptions.tooltip" [dataLabels]="net_runtime_chartOptions.dataLabels"
+                    [legend]="net_runtime_chartOptions.legend" [markers]="net_runtime_chartOptions.markers" [grid]="net_runtime_chartOptions.grid"
+                    [yaxis]="net_runtime_chartOptions.yaxis" [title]="net_runtime_chartOptions.title"
+                    [fill]="net_runtime_chartOptions.fill"
+                    [colors]="net_runtime_chartOptions.colors"
+                    [plotOptions]="net_runtime_chartOptions.plotOptions"
+                    ></apx-chart>
+                  </div>
+              </div>
+              <div class="card-footer ht-40">
+                <p class="float-left text-muted mb-n1 point-7"> {{asset_name}}</p>
+                <p class="float-right text-muted mb-n1 point-7"> Updated on: {{timeshow}}</p>
+              </div>
+            </div>
+          </div>
+          <!-- Fully Production VS Quality CARD -->
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+              <div class="card-header bg-transparent ht-40">
+                <p class="point-9 float-left"><span class="font-weight-bold"> Fully Production </span> vs <span class="font-weight-bold"> Quality </span></p>
+                <button mat-icon-button [matMenuTriggerFor]="crr_fpql_runtime"
+                  class="float-right btn-focus-none card-menu-btn"
+                  (click)="metrics_type='fpql_runtime'; card_no='30D-4';setFullyProdQlyLoss();">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #crr_fpql_runtime="matMenu">
+                  <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                  </button>
+                </mat-menu> 
+              </div>
+              <div class="card-body">
+                    <!-- Spinner -->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="fully_prod_time_spinner">
+                      <spinner></spinner>
+                    </div>
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!fully_prod_time_spinner && productionqualitydata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                  <div *ngIf="!fully_prod_time_spinner && productionqualitydata == false" class="mb-n5">
+                    <apx-chart [series]="fully_prod_time_chartOptions.series" [chart]="fully_prod_time_chartOptions.chart"  [xaxis]="fully_prod_time_chartOptions.xaxis"
+                    [stroke]="fully_prod_time_chartOptions.stroke" [tooltip]="fully_prod_time_chartOptions.tooltip" [dataLabels]="fully_prod_time_chartOptions.dataLabels"
+                    [legend]="fully_prod_time_chartOptions.legend" [markers]="fully_prod_time_chartOptions.markers" [grid]="fully_prod_time_chartOptions.grid"
+                    [yaxis]="fully_prod_time_chartOptions.yaxis"
+                    [title]="fully_prod_time_chartOptions.title"
+                    [fill]="fully_prod_time_chartOptions.fill"
+                    [colors]="fully_prod_time_chartOptions.colors"
+                    [plotOptions]="fully_prod_time_chartOptions.plotOptions"
+                    ></apx-chart>
+                  </div>
+              </div>
+              <div class="card-footer ht-40">
+                <p class="float-left text-muted mb-n1 point-7"> {{asset_name}}</p>
+                <p class="float-right text-muted mb-n1 point-7"> Updated on: {{timeshow}}</p>
+              </div>
+            </div>
+          </div>
+      </div>
+      </div>
+        <!-------------------------------------- -->
+          <!-- Loss based metrics -->
+        <!-------------------------------------- -->
+        <div *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'loss_based' " >
+          <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0">
+            <!-- Availability loss CARD -->
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold"> Availability Loss </span></p>
+                  <button mat-icon-button [matMenuTriggerFor]="tr_avail_loss"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='availability_loss';card_no='30D-1';setAvailabilityLoss();">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                <mat-menu #tr_avail_loss="matMenu">
+                  <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                  </button>
+                </mat-menu>
+                </div>
+                <div class="card-body">
+                  <!-- Spinner -->
+                  <div class="d-flex justify-content-center mt-2 " *ngIf="availability_loss_spinner">
+                    <spinner></spinner>
+                  </div>
+                    <!-- data unavailable -->
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!availability_loss_spinner && !availability_loss_InternalError && avaliabilitylossdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                  <div *ngIf="!availability_loss_spinner && !availability_loss_InternalError && avaliabilitylossdata == false" class="mb-n5">
+                    <apx-chart [series]="availabilityLosschartOptions.series"
+                      [chart]="availabilityLosschartOptions.chart" [xaxis]="availabilityLosschartOptions.xaxis"
+                      [stroke]="availabilityLosschartOptions.stroke" [tooltip]="availabilityLosschartOptions.tooltip"
+                      [dataLabels]="availabilityLosschartOptions.dataLabels"
+                      [legend]="availabilityLosschartOptions.legend" [markers]="availabilityLosschartOptions.markers"
+                      [grid]="availabilityLosschartOptions.grid" [yaxis]="availabilityLosschartOptions.yaxis"
+                      [title]="availabilityLosschartOptions.title" [fill]="availabilityLosschartOptions.fill"
+                      [colors]="availabilityLosschartOptions.colors"
+                      [plotOptions]="availabilityLosschartOptions.plotOptions"
+                      >
+                    </apx-chart>
+                  </div>
+                  <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="availability_loss_InternalError">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                      your
+                      request please try after some time !!</small>
+                  </div>
+                </div>
+                <div class="card-footer  ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+
+              <!-- Performance Loss CARD -->
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold"> Performance Loss</span> </p>
+                  <button mat-icon-button [matMenuTriggerFor]="tr_perf_loss"
+                  class="float-right btn-focus-none card-menu-btn"
+                  (click)="metrics_type='performance_loss';card_no='30D-2';setPerformanceLoss();">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #tr_perf_loss="matMenu">
+                  <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                    <mat-icon>settings</mat-icon>
+                    <span>Settings</span>
+                  </button>
+                </mat-menu>
+                </div>
+
+                <div class="card-body">
+                  <!-- Spinner -->
+                  <div class="d-flex justify-content-center mt-2 " *ngIf="performance_loss_spinner">
+                    <spinner></spinner>
+                  </div>
+                     <!-- data unavailable -->
+                     <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!performance_loss_spinner && !performance_loss_InternalError && performancelossdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                    </div>
+                  <div *ngIf="!performance_loss_spinner && !performance_loss_InternalError && performancelossdata == false" class="mb-n5">
+                    <apx-chart [series]="performanceLosschartOptions.series" [chart]="performanceLosschartOptions.chart"
+                      [xaxis]="performanceLosschartOptions.xaxis" [stroke]="performanceLosschartOptions.stroke"
+                      [tooltip]="performanceLosschartOptions.tooltip"
+                      [dataLabels]="performanceLosschartOptions.dataLabels"
+                      [legend]="performanceLosschartOptions.legend" [markers]="performanceLosschartOptions.markers"
+                      [grid]="performanceLosschartOptions.grid" [yaxis]="performanceLosschartOptions.yaxis"
+                      [title]="performanceLosschartOptions.title" 
+                      [fill]="performanceLosschartOptions.fill"
+                      [colors]="performanceLosschartOptions.colors"
+                      [plotOptions]="performanceLosschartOptions.plotOptions"
+                      ></apx-chart>
+                  </div>
+                  <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="performance_loss_InternalError">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                      your
+                      request please try after some time !!</small>
+                  </div>
+                </div>
+                <div class="card-footer ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Quality loss -->
+          <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0 ml-3">                          
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                <div class="card-header bg-transparent ht-40">
+                  <p class="point-9 float-left"><span class="font-weight-bold">Quality Loss </span></p>
+                  <button mat-icon-button [matMenuTriggerFor]="tr_qly_loss"
+                  class="float-right btn-focus-none card-menu-btn"
+                  (click)="metrics_type='quality_loss';card_no='30D-3';setQualityLoss();">
+                  <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #tr_qly_loss="matMenu">
+                    <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                  </mat-menu>
+                </div>
+                <div class="card-body">
+                  <!-- Spinner-->
+                  <div class="d-flex justify-content-center mt-2 " *ngIf="quality_loss_spinner">
+                    <spinner></spinner>
+                  </div>
+                   <!-- data unavailable -->
+                   <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!quality_loss_spinner && !quality_loss_InternalError && qualitylossdata" style="margin-bottom: 65px;">
+                    <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                  </div>
+                  <div *ngIf="!quality_loss_spinner && !quality_loss_InternalError && qualitylossdata == false" class="mb-n5">
+                    <apx-chart [series]="qualityLosschartOptions.series" [chart]="qualityLosschartOptions.chart"
+                      [xaxis]="qualityLosschartOptions.xaxis" [stroke]="qualityLosschartOptions.stroke"
+                      [tooltip]="qualityLosschartOptions.tooltip" [dataLabels]="qualityLosschartOptions.dataLabels"
+                      [legend]="qualityLosschartOptions.legend" [markers]="qualityLosschartOptions.markers"
+                      [grid]="qualityLosschartOptions.grid" [yaxis]="qualityLosschartOptions.yaxis"
+                      [title]="qualityLosschartOptions.title" [fill]="qualityLosschartOptions.fill"
+                      [colors]="qualityLosschartOptions.colors"
+                      [colors]="qualityLosschartOptions.colors"
+                      [plotOptions]="qualityLosschartOptions.plotOptions"
+                      ></apx-chart>
+                  </div>
+                  <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="quality_loss_InternalError">
+                    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                      your request please try after some time !!</small>
+                  </div>
+                </div>
+
+                <div class="card-footer ht-40">
+                  <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                  <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+          <!---------------------------------------->
+                  <!-- KPI Maintenance -->
+          <!---------------------------------------->
+
+          <div  *ngIf="!no_assets && !no_current_analysis && !assetInternalError && asset_metrics_type == 'maintenance_kpi' " >
+            
+            <div class="row m-xl-2 m-lg-2 m-md-0 m-sm-0 ml-3"> 
+              
+                <!-- MTTR -->
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> MTTR</span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="tr_mttr"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='MTTR';card_no='30D-1';setmttr();">
+                      <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #tr_mttr="matMenu">
+                        <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                          <mat-icon>settings</mat-icon>
+                          <span>Settings</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                    <div class="card-body">
+                      <!-- Spinner-->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="mttr_spinner">
+                        <spinner></spinner>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!mttr_spinner && mttrdata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+  
+                      <div *ngIf="!mttr_spinner && !mttr_InternalError && mttrdata==false" class="mb-n5">
+                        <apx-chart [series]="mttrchartOptions.series" [chart]="mttrchartOptions.chart"
+                          [xaxis]="mttrchartOptions.xaxis" [stroke]="mttrchartOptions.stroke"
+                          [tooltip]="mttrchartOptions.tooltip" [dataLabels]="mttrchartOptions.dataLabels"
+                          [legend]="mttrchartOptions.legend" [markers]="mttrchartOptions.markers"
+                          [grid]="mttrchartOptions.grid" [yaxis]="mttrchartOptions.yaxis"
+                          [title]="mttrchartOptions.title" [fill]="mttrchartOptions.fill"
+                          [colors]="mttrchartOptions.colors"
+                          [plotOptions]="mttrchartOptions.plotOptions"></apx-chart>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mttr_InternalError">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                          your
+                          request please try after some time !!</small>
+                      </div>
+                    </div>
+  
+                    <div class="card-footer  ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                      <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                    </div>
+                  </div>
+                </div>
+
+             <!-- MTBF -->
+             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                  <div class="card-header bg-transparent ht-40">
+                    <p class="point-9 float-left"><span class="font-weight-bold"> MTBF</span></p>
+                    <button mat-icon-button [matMenuTriggerFor]="tr_mtbr"
+                    class="float-right btn-focus-none card-menu-btn"
+                    (click)="metrics_type='MTBF';card_no='30D-2';setmtbr();">
+                    <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #tr_mtbr="matMenu">
+                      <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                  <div class="card-body">
+                    <!-- Spinner-->
+                    <div class="d-flex justify-content-center mt-2 " *ngIf="mtbf_spinner">
+                      <spinner></spinner>
+                    </div>
+
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!mtbf_spinner && mtbfdata" style="margin-bottom: 65px;">
+                      <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                      </div>
+
+                    <div *ngIf="!mtbf_spinner && !mtbf_InternalError && mtbfdata==false" class="mb-n5">
+                      <apx-chart [series]="mtbfchartOptions.series" [chart]="mtbfchartOptions.chart"
+                        [xaxis]="mtbfchartOptions.xaxis" [stroke]="mtbfchartOptions.stroke"
+                        [tooltip]="mtbfchartOptions.tooltip" [dataLabels]="mtbfchartOptions.dataLabels"
+                        [legend]="mtbfchartOptions.legend" [markers]="mtbfchartOptions.markers"
+                        [grid]="mtbfchartOptions.grid" [yaxis]="mtbfchartOptions.yaxis"
+                        [title]="mtbfchartOptions.title" [fill]="mtbfchartOptions.fill"
+                        [colors]="mtbfchartOptions.colors"
+                        [plotOptions]="mtbfchartOptions.plotOptions"></apx-chart>
+                    </div>
+                    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="mtbf_InternalError">
+                      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                        your
+                        request please try after some time !!</small>
+                    </div>
+                  </div>
+
+                  <div class="card-footer  ht-40">
+                    <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    <p class="float-right text-muted mb-n1  point-7"> Updated on: {{timeshow}}</p>
+                  </div>
+                </div>
+              </div>
+
+              
+
+                <!-- Fault Trend -->
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                  <div class="card mt-5 flex-fill border-radius-point5 min-card-h40">
+                    <div class="card-header bg-transparent ht-40">
+                      <p class="point-9 float-left"><span class="font-weight-bold"> Fault Trend</span></p>
+                      <button mat-icon-button [matMenuTriggerFor]="tr_fault_trend"
+                      class="float-right btn-focus-none card-menu-btn"
+                      (click)="metrics_type='Fault trend';card_no='30-3';setfaultTrend();">
+                      <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #tr_fault_trend="matMenu">
+                        <button mat-menu-item class="btn-focus-none" data-toggle="modal" data-target="#MetricsModalTitle">
+                          <mat-icon>settings</mat-icon>
+                          <span>Settings</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                    <div class="card-body">
+                      <!-- Spinner-->
+                      <div class="d-flex justify-content-center mt-2 " *ngIf="faultTrend_spinner">
+                        <spinner></spinner>
+                      </div>
+
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="!faultTrend_spinner && faulttrenddata" style="margin-bottom: 65px;">
+                        <p class="point-8 font-light-bold" style="margin-top: 44px;"><i class="fas fa-chart-bar fa-lg ml-5"></i><br><p class="text-muted">Data unavailable &nbsp;&nbsp;</p></p>
+                        </div>
+                      <div *ngIf="!faultTrend_spinner && !faultTrend_InternalError && faulttrenddata== false" class="mb-n5">
+                        <apx-chart [series]="faultTrendchartOption.series" [chart]="faultTrendchartOption.chart"
+                          [xaxis]="faultTrendchartOption.xaxis" [stroke]="faultTrendchartOption.stroke"
+                          [tooltip]="faultTrendchartOption.tooltip" [dataLabels]="faultTrendchartOption.dataLabels"
+                          [legend]="faultTrendchartOption.legend" [markers]="faultTrendchartOption.markers"
+                          [grid]="faultTrendchartOption.grid" [yaxis]="faultTrendchartOption.yaxis"
+                          [title]="faultTrendchartOption.title" [fill]="faultTrendchartOption.fill"
+                          [colors]="faultTrendchartOption.colors"
+                          [plotOptions]="faultTrendchartOption.plotOptions"></apx-chart>
+                      </div>
+                      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="faultTrend_InternalError">
+                        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                          your
+                          request please try after some time !!</small>
+                      </div>
+                    </div>
+  
+                    <div class="card-footer  ht-40">
+                      <p class="float-left text-muted mb-n1  point-7"> {{asset_name}}</p>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+    </ng-template>
+    </li>
+
+
+  
+  </ul>
+
+  <div [ngbNavOutlet]="nav"></div>
+
+
+</div>
+
+
+
+
+
+
+
+<!--Attributes Modal -->
+<div class="modal fade" id="MetricsModalTitle"  data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+aria-labelledby="AttributesModalTitle" aria-hidden="true" cdkDrag>
+  <div class="modal-dialog " role="document">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header">
+        <p class="modal-title point-9" id="MetricsModalTitle">Metrics</p>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-8">
+        <div class="row">
+          <div class="col-md">
+            <mat-form-field appearance="outline" class="float-right w-100">
+              <mat-label>Chart type</mat-label>
+              <mat-select [formControl]="chart_type">
+                <mat-option value="column_chart">Column Chart</mat-option>
+                <mat-option value="area_chart">Area Chart</mat-option>
+
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-warning text-white point-8" (click)="clearall()">Clear all</button>
+        <button type="button" class="btn btn-secondary point-8" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn text-white point-8 dashb-save-btn bg-theme"   (click)="postAssetMetric();"
+        [hidden]="!is_save_btn"> Save</button>
+        <button type="submit" class="btn text-white point-8 dashb-save-btn bg-theme"   (click)="putAssetMetric();"
+        [hidden]="is_save_btn"> Update</button>
+      </div>
+    </div>
+  </div>
+</div>

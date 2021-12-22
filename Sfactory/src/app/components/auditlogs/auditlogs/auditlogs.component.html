@@ -1,0 +1,217 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor " ngbTooltip="Back" placement="right" routerLink="/settings">arrow_back
+  </mat-icon>
+
+  <div class="card border-radius-point5" style="min-height: 50vh;">
+
+    <div class="card-header bg-transparent">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="input-group input-group-flush rounded">
+            <input type="text" class="form-control point-8 border-radius-point5" (keyup)="search($event)"
+              [formControl]="filter" placeholder="Search" aria-describedby="basic-addon1">
+          </div>
+        </div>
+        <div class="col-md-9"></div>
+      </div>
+
+    </div>
+    <div class="table-responsive">
+      <mat-progress-bar mode="indeterminate" *ngIf="spinner"></mat-progress-bar>
+      <div class="vertical_line">
+        <ul class="tl">
+          <li class="tl-item" *ngFor="let auditlogs of obs | async ; let i = index;">
+            <div class="timestamp">
+              <ngb-highlight [result]="auditlogs.sf_event_time | date : 'MMM d, y h:mm a' " [term]="filter.value">
+              </ngb-highlight>
+            </div>
+            <div class="item-title point-8">
+              <strong>Source of activity is </strong> : <ngb-highlight [result]="auditlogs.sf_source_name"
+                [term]="filter.value"></ngb-highlight>, and the <strong>description
+                is</strong> : <ngb-highlight [result]="auditlogs.sf_event_description" [term]="filter.value">
+              </ngb-highlight>
+            </div>
+            <mat-accordion>
+              <mat-expansion-panel hideToggle (opened)="setOpened(i)" (closed)="setClosed(i)" class="shadow-none mt-2">
+                <mat-expansion-panel-header>
+                  <mat-panel-title class="point-8 text-primary">
+                    View {{ currentlyOpenedItemIndex === i ? 'less' : 'More' }}
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="row point-8 bg-light pt-3 border-radius-point5">
+                  <div class="col-md-6">
+
+                    <div *ngIf="auditlogs.sf_plant_name != null">
+                      <p *ngIf="auditlogs.sf_plant_name.length >15 "> <strong>Plant Name: </strong>
+                        <ngb-highlight [result]="auditlogs.sf_plant_name| slice:0:15" [term]="filter.value"
+                          ngbTooltip="{{auditlogs.sf_plant_name}}"></ngb-highlight>
+                      </p>
+                      <p *ngIf="auditlogs.sf_plant_name.length <=15"> <strong>Plant Name: </strong>
+                        <ngb-highlight [result]="auditlogs.sf_plant_name" [term]="filter.value"></ngb-highlight>
+                      </p>
+                    </div>
+                    <p *ngIf="auditlogs.sf_plant_name == null && auditlogs.sf_source_name != 'Part'"><strong>Plant Name:
+                      </strong>
+                      <ngb-highlight [result]="auditlogs.sf_plant_name||'NA'" [term]="filter.value"></ngb-highlight>
+                    </p>
+
+
+                    <div *ngIf="auditlogs.sf_work_centre_name != null">
+                      <p *ngIf="auditlogs.sf_work_centre_name.length >15"><strong>Work Center Name: </strong>
+                        <ngb-highlight [result]="auditlogs.sf_work_centre_name | slice:0:15" [term]="filter.value"
+                          ngbTooltip="{{auditlogs.sf_work_centre_name}}"></ngb-highlight>
+                      </p>
+                      <p *ngIf="auditlogs.sf_work_centre_name.length <=15"><strong>Work Center Name: </strong>
+                        <ngb-highlight [result]="auditlogs.sf_work_centre_name" [term]="filter.value"></ngb-highlight>
+                      </p>
+                    </div>
+
+                    <p *ngIf="auditlogs.sf_work_centre_name == null && auditlogs.sf_source_name != 'Part'"><strong>Work
+                        Center Name: </strong>
+                      <ngb-highlight [result]="auditlogs.sf_work_centre_name||'NA'" [term]="filter.value">
+                      </ngb-highlight>
+                    </p>
+
+
+
+                  </div>
+                  <div class="col-md-6">
+
+                    <div *ngIf="auditlogs.sf_asset_name != null">
+
+                      <p *ngIf="auditlogs.sf_asset_name.length >15"> <strong>Asset Name: </strong>
+                        <ngb-highlight [result]="auditlogs.sf_asset_name | slice:0:15" [term]="filter.value"
+                          ngbTooltip="{{auditlogs.sf_asset_name}}"></ngb-highlight>
+                      </p>
+                      <p *ngIf="auditlogs.sf_asset_name.length <=15"> <strong>Asset Name: </strong>
+                        <ngb-highlight [result]="auditlogs.sf_asset_name" [term]="filter.value"></ngb-highlight>
+                      </p>
+
+                    </div>
+
+                    <p *ngIf="auditlogs.sf_asset_name == null && auditlogs.sf_source_name != 'Part'"><strong>Asset Name:
+                      </strong>
+                      <ngb-highlight [result]="auditlogs.sf_asset_name||'NA'" [term]="filter.value"></ngb-highlight>
+                    </p>
+
+                    
+                    <p *ngIf="auditlogs.created_by_date.length >15 && auditlogs.sf_source_name != 'Part'">
+                      <strong>Created By: </strong>
+                      <ngb-highlight [result]=" auditlogs.created_by_date | slice:0:15" [term]="filter.value"
+                        ngbTooltip="{{auditlogs.created_by_date}}"></ngb-highlight>
+                    </p>
+                    <p *ngIf="auditlogs.created_by_date.length <=15 && auditlogs.sf_source_name != 'Part' ">
+                      <strong>Created By: </strong>
+                      <ngb-highlight [result]=" auditlogs.created_by_date" [term]="filter.value"></ngb-highlight>
+                    </p>
+
+
+                  </div>
+
+                  <div class="col-md-6" *ngIf="auditlogs.sf_source_name == 'Part'">
+                    <div *ngIf="auditlogs.part_name == null">
+
+                    <p><strong>Part Name: </strong>
+                      <ngb-highlight [result]="auditlogs.part_name||'NA'" [term]="filter.value"></ngb-highlight>
+                    </p>
+                    </div>
+
+                    <div *ngIf="auditlogs.part_name != null">
+
+                      <p *ngIf="auditlogs.part_name.length >15"> <strong>Part Name: </strong>
+                        <ngb-highlight [result]="auditlogs.part_name | slice:0:15" [term]="filter.value"
+                          ngbTooltip="{{auditlogs.part_name}}"></ngb-highlight>
+                      </p>
+                      <p *ngIf="auditlogs.part_name.length <=15"> <strong>Part Name: </strong>
+                        <ngb-highlight [result]="auditlogs.part_name" [term]="filter.value"></ngb-highlight>
+                      </p>
+
+                    </div>
+          
+
+                    <div *ngIf="auditlogs.part_name == null">
+
+                      <p><strong>Part Type:</strong>
+                        <ngb-highlight [result]="auditlogs.part_type||'NA'" [term]="filter.value"></ngb-highlight>
+                      </p>
+                      </div>
+  
+                      <div *ngIf="auditlogs.part_type != null">
+  
+                        <p *ngIf="auditlogs.part_type.length >15"> <strong>Part Type: </strong>
+                          <ngb-highlight [result]="auditlogs.part_type | slice:0:15" [term]="filter.value"
+                            ngbTooltip="{{auditlogs.part_type}}"></ngb-highlight>
+                        </p>
+                        <p *ngIf="auditlogs.part_type.length <=15"> <strong>Part Type: </strong>
+                          <ngb-highlight [result]="auditlogs.part_type" [term]="filter.value"></ngb-highlight>
+                        </p>
+  
+                      </div>
+                    
+
+                  </div>
+                  <div class="col-md-6" *ngIf="auditlogs.sf_source_name == 'Part'">
+                    <div *ngIf="auditlogs.part_code == null">
+
+                    <p><strong>Part Code: </strong>
+                      <ngb-highlight [result]="auditlogs.part_code||'NA'" [term]="filter.value"></ngb-highlight>
+                    </p>
+                    </div>
+
+                    <div *ngIf="auditlogs.part_code != null">
+
+                      <p *ngIf="auditlogs.part_code.length >15"> <strong>Part Code: </strong>
+                        <ngb-highlight [result]="auditlogs.part_code | slice:0:15" [term]="filter.value"
+                          ngbTooltip="{{auditlogs.part_code}}"></ngb-highlight>
+                      </p>
+                      <p *ngIf="auditlogs.part_code.length <=15"> <strong>Part Code: </strong>
+                        <ngb-highlight [result]="auditlogs.part_code" [term]="filter.value"></ngb-highlight>
+                      </p>
+
+                    </div>
+
+                    <p *ngIf="auditlogs.created_by_date.length >15" >
+                      <strong>Created By: </strong>
+                      <ngb-highlight [result]=" auditlogs.created_by_date | slice:0:15" [term]="filter.value"
+                        ngbTooltip="{{auditlogs.created_by_date}}"></ngb-highlight>
+                    </p>
+                    <p *ngIf="auditlogs.created_by_date.length <=15"  class="ml-md-6">
+                      <strong>Created By: </strong>
+                      <ngb-highlight [result]=" auditlogs.created_by_date" [term]="filter.value"></ngb-highlight>
+                    </p>
+                  </div>
+                 
+                </div>
+
+              </mat-expansion-panel>
+            </mat-accordion>
+          </li>
+        </ul>
+
+      </div>
+
+
+      <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+        <ngx-skeleton-loader class="w-150" count="5" animation="pulse"
+          [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+        </ngx-skeleton-loader>
+      </div>
+
+      <div class="text-center mt-5" *ngIf="displaydata">
+        <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+        <small class="point-8 "> No activity logs available to display !!</small>
+      </div>
+
+      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError">
+        <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process your
+          request please try after some time !!</small>
+      </div>
+      <mat-paginator [length]="150" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100]"
+        *ngIf="auditlogs.length !=0"></mat-paginator>
+    </div>
+
+  </div>
+</div>

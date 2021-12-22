@@ -1,0 +1,94 @@
+<sidebar></sidebar>
+<navbar ></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor "  ngbTooltip= "Back" placement="right" routerLink="/settings">arrow_back</mat-icon>
+
+  <div class="card border-radius-point5"  style="min-height: 50vh;">
+    <div class="card-header bg-transparent border-0">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="input-group input-group-flush rounded border-radius-point5">
+            <input type="text" class="form-control point-8" [formControl]="filter" placeholder="Search"   aria-describedby="basic-addon1">
+          </div>
+        </div>
+        <div class="col-md-6"></div>
+
+      </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover" matSort>
+      <thead class="point-8 cursor">
+        <tr>
+          <th scope="col" matColumnDef="sf_device_name" mat-sort-header>Device Name</th>
+          <th scope="col" matColumnDef="sf_application_name" mat-sort-header>Application Name</th>
+          <th scope="col" matColumnDef="sf_dev_eui" mat-sort-header>  EUI ID</th>
+          <th scope="col" matColumnDef="sf_device_status" mat-sort-header> Status</th>
+          <th scope="col" matColumnDef="sf_device_last_seen"> Last Seen</th>
+          <th scope="col" matColumnDef="sf_location">Location</th>
+        </tr>
+      </thead>
+      <tbody class="point-8 ">
+        <tr *ngFor="let devices of obs | async;index as i" (click) = "deviceanlysis(devices)" class="cursor">
+          <td>
+            <p class="max_wid" *ngIf = "devices.sf_device_name.length > 20" ngbTooltip = {{devices.sf_device_name}}>
+            <ngb-highlight [result]="devices.sf_device_name | slice:0:20" [term]="filter.value"></ngb-highlight>
+            </p>
+            <p class="max_wid"  *ngIf = "devices.sf_device_name.length <= 20">
+              <ngb-highlight [result]="devices.sf_device_name" [term]="filter.value"></ngb-highlight>
+              </p>
+          </td>
+          <td>
+            <p *ngIf = "devices.sf_application_name.length > 20" ngbTooltip = {{devices.sf_application_name}}  class="max_wid">
+              <ngb-highlight [result]="devices.sf_application_name | slice:0:20" [term]="filter.value"></ngb-highlight>
+            </p>
+            <p *ngIf = "devices.sf_application_name.length <= 20"  class="max_wid">
+              <ngb-highlight [result]="devices.sf_application_name " [term]="filter.value"></ngb-highlight>
+            </p>
+          </td>
+          <td>
+            <p  class="max_wid"> <ngb-highlight [result]="devices.sf_dev_eui" [term]="filter.value"></ngb-highlight> </p>
+          </td>
+          <td >
+            <p  class="max_wid" ngbTooltip = {{devices.sf_device_status}}> <i class="fas fa-circle fa-1x"
+            [class.dev_unconnected]="devices.sf_device_status=='unconnected'"
+            [class.dev_connected]="devices.sf_device_status == 'connected'"
+           [class.dev_disconnected]="devices.sf_device_status == 'disconnected'"></i></p>
+          </td>
+
+          <td>
+            <p *ngIf = "devices.sf_device_last_seen.length > 20" ngbTooltip = {{devices.sf_device_last_seen}}>  <ngb-highlight [result]="devices.sf_device_last_seen | slice:0:20" [term]="filter.value"></ngb-highlight></p>
+            <p *ngIf = "devices.sf_device_last_seen.length <= 20"> <ngb-highlight [result]="devices.sf_device_last_seen" [term]="filter.value"></ngb-highlight></p>
+          </td>
+
+          <td>
+            <p  class="max_wid"> <ngb-highlight [result]="devices.sf_location" [term]="filter.value"></ngb-highlight> </p>
+          </td>
+
+
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="(internalError && !devicesList)">
+      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your request please try after some time !!</small>
+    </div>
+
+
+    <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="devicesList">
+      <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>No devices available to display !!</small>
+    </div>
+
+
+    <div class="d-flex justify-content-center mt-5 "  *ngIf="spinner">
+      <ngx-skeleton-loader class="w-100" count="5" animation="pulse"
+      [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+    </ngx-skeleton-loader>
+    </div>
+
+    <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="[5, 10, 20, 50, 100]" *ngIf="!internalError || !spinner"></mat-paginator>
+
+  </div>
+</div>
+
+</div>

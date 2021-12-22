@@ -1,0 +1,85 @@
+.btn-focus-none:focus {
+  outline: none !important;
+}
+
+button:focus{
+  outline: none;
+  box-shadow: none!important;
+}
+
+
+.btn-save{
+  background: $nav-blue;
+  min-width: 80px;
+}
+
+.btn-save:hover{
+  background: $dark-grey;
+}
+
+.btn-clear{
+  background: $nav-blue;
+  min-width: 80px;
+}
+
+.btn-clear:hover{
+  background: $yellow;
+}
+
+
+.btn-back{
+  background: $nav-blue;
+  min-width: 80px;
+}
+
+.btn-back:hover{
+  background: $lite-grey;
+}
+
+.btn-delete{
+  background: $nav-blue;
+  min-width: 80px;
+}
+
+.btn-delete:hover{
+  background: $red;
+}
+
+
+.btn-delete-yes{
+  background: $nav-blue;
+  min-width: 60px;
+}
+
+.btn-delete-yes:hover{
+  background: $red;
+  border-color:$red;
+}
+
+.btn-delete-no{
+  background: $nav-blue;
+  min-width: 60px;
+}
+
+.btn-delete-no:hover, .btnview:hover{
+  background-color: $lite-grey;
+}
+
+.mat-fab-back-an-d{
+  width: 25px;
+  height: 25px;
+  margin-top: -5px !important;
+}
+.mat-fab-back-icon-an-d{
+  font-size: 16px;
+  margin-top: -8px;
+}
+.fullscreenbtn{
+  background:$nav-blue;
+  min-width: 50px;
+}
+.fullscreenbtn:hover{
+  background: $lite-grey;
+}
+
+

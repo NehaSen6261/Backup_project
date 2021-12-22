@@ -1,0 +1,134 @@
+.dp-item-hover:hover{
+  background-color:  #ebeff3!important;
+}
+
+.card-block {
+  height: 85vh;
+  overflow: auto;
+}
+
+.card-midwidth{
+  min-width: 450px !important;
+  max-width: 600px !important;
+}
+
+
+.btnclass{
+  text-align: center;
+  height: 80px;
+}
+.mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-outline {
+  opacity: 0!important;
+  }
+  /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+.calc_btn{
+  height: 60px;
+}
+.incrment_btn{
+  position: relative;
+  bottom: 8px;
+  left: 4px;
+}
+
+.align_resp{
+  position: relative;
+  right:10%;
+}
+.counter_size{
+  font-size: 38px;
+}
+// .customnavtab{
+//   width: 50%;
+//   text-align: center;
+//   border: none!important;
+//   background-color: #f1f1f1;
+// }
+
+// .nav-tabs {
+//   border: none!important;}
+
+// .nav-tabs .nav-link {
+//   border: none!important;
+// }
+
+  .alink{
+    color: rgb(17, 17, 17);
+    font-weight: 500;
+  }
+  .alink:hover {
+    color: rgb(17, 17, 17);
+    font-weight: 500;
+  }
+.button_style_sim{
+  height: 4em;
+    width: 8em;
+}
+
+
+.resetBtn{
+  height: 40px;
+  width: 100px;
+  margin-left: 20px;
+}
+.menu_header{
+  padding: 15px;
+  border-radius: 4px 4px 10px 10px;
+  color: rgb(32, 32, 32);
+  width: 17rem!important;
+  background-color:#FFDD00;
+  box-shadow: 2px 5px 10px 2px rgb(215 209 209 / 75%);
+  -webkit-box-shadow: 2px 5px 10px 2px rgb(215 209 209 / 75%);
+  -moz-box-shadow: 2px 5px 10px 2px rgb(215 209 209 / 75%);
+}
+.user_icon{
+padding: 10px 17px;
+  position: relative;
+  text-align: center;
+  top: 4px;
+  border-radius: 6px;
+  margin: 6px 9px;
+  background-color: #212122;
+  color: whitesmoke !important;
+}
+
+.containerbtn {
+  position: relative;
+  width: 136px;
+}
+
+
+.overlay {
+  bottom: 0; 
+  transition: .5s ease;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  pointer-events: none;
+  cursor:not-allowed;
+}
+.overlay:before{
+  background: #808080ad!important;
+}
+
+// .containerbtn:hover .overlay {
+//   opacity: 1;
+// }
+.image_res{
+  width:30%;
+}
+
+.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  color: grey!important;
+}

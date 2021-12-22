@@ -1,0 +1,372 @@
+
+<ng-template #prevButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9 "><i class="fas fa-backward"></i></button>
+</ng-template>
+<ng-template #nextButton>
+<button type="button" class="btn bg-theme text-white shadow point-9"><i class="fas fa-forward"></i></button>
+</ng-template>
+<ng-template #doneButton>
+<button type="button" class="btn bg-theme text-white shadow point-9" (click)="onLoad();">Completed</button>
+</ng-template>
+<ng-template #plant class="point-7"> 
+  First step towards setting up of the smart management of your factory !
+</ng-template>
+<ng-template #wrkcenter class="point-7">
+  Provides adequate orderly and definite structure in the process of intelligent monitoring !
+</ng-template>
+<ng-template #asset class="point-7">
+  Crucial aspects of manufacturing and are remarkable in creating / sustaining production !
+</ng-template>
+<ng-template #cuspage class="point-7">
+  Customers are an essential aspect in the creation and surveillance of the entire Digitization of operations management in factories !
+</ng-template>
+<ng-template #wrk_order class="point-7">
+  Work Orders are those business orders given by Customers that are to be completed for successful delivery of the product !
+</ng-template>
+<ng-template #job class="point-7">
+  Job refers to the tasks that are to be accomplished in order to complete a Work Order !
+</ng-template>
+<ng-template #frule class="point-7">
+  Allow you to create,edit,delete and update  Asset Rules!
+</ng-template>
+<ng-template #main_log class="point-7">
+  Allow you to create,edit,delete and update Maintenance Logs!
+</ng-template>
+<ng-template #assetnoti class="point-7">
+  Allow you to create,edit,delete and update Asset Notifications!
+</ng-template>
+<ng-template #activelog class="point-7">
+  You can track the activities happening in your application!
+</ng-template>
+<ng-template #dexplorer class="point-7">
+  You can get the asset performance , based on the specific time and get to its its performance!
+</ng-template>
+<ng-template #users class="point-7">
+  You can get the asset performance , based on the specific time and get to its its performance!
+</ng-template>
+<ng-template #userprofile class="point-7">
+ You can reset the password or view your profile and manage the account.
+</ng-template>
+<ng-template #prtmgmt class="point-7">
+  Allow you to create,edit,delete and update Parts!
+ </ng-template>
+
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <div class="container">
+    <div class=" mb-2">
+      <h6 class="font-weight-bold mb-3">Organization Settings</h6>
+      <div class="row mb-2">
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3">            
+              <div class="card cursor box-shadow border-radius-point5 flex-fill"   id="autoscroll"                
+                  (click)="router.navigate(['/plant'])"
+                  joyrideStep="plant"
+                  title="Plant"
+                  [stepContent]="plant"  
+                  [prevTemplate]="prevButton"
+                  [nextTemplate]="nextButton"
+                  [doneTemplate]="doneButton"
+                 >
+                  <div class="card-header text-center bg-transparent border-0 point-9">Plant</div>
+                  <div class="card-body text-center">
+                        <img [src]="imagePathPlant" alt="Plant" class="ch-img mt-n3" height="50" width="60" >
+                  </div>
+              </div>         
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3 mb-sm-2 mb-xs-2">            
+            <div class="card cursor box-shadow border-radius-point5 flex-fill"  id="autoscroll"  (click)="router.navigate(['/workcenter'])"
+             
+              joyrideStep="workcntr"
+              title="Work Center"
+              [stepContent]="wrkcenter"  
+              [prevTemplate]="prevButton"
+              [nextTemplate]="nextButton"
+              [doneTemplate]="doneButton">
+              <div class="card-header text-center bg-transparent border-0 point-9">Work Center</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathWorkCenter" alt="WC" class="ch-img mt-n3" height="50" width="60" >
+              </div>
+            </div>            
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3">            
+            <div class="card cursor box-shadow border-radius-point5 flex-fill flex-fill"  id="autoscroll"  (click)="router.navigate(['/asset'])"              
+              joyrideStep="asset"
+              title="Asset"
+              [stepContent]="asset"  
+              [prevTemplate]="prevButton"
+              [nextTemplate]="nextButton"
+              [doneTemplate]="doneButton"
+              >
+              <div class="card-header text-center bg-transparent border-0 point-9">Assets</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathAsset" alt="Assets"  class="ch-img mt-n3" height="50" width="60" >
+              </div>
+            </div>            
+          </div>
+
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3">            
+            <div class="card cursor box-shadow border-radius-point5 flex-fill flex-fill"  id="autoscroll"  (click)="router.navigate(['/parts'])"
+            joyrideStep="partmgmt"
+            title="Part / Item"
+            [stepContent]="prtmgmt"  
+            [prevTemplate]="prevButton"
+            [nextTemplate]="nextButton"
+            [doneTemplate]="doneButton" >
+              <div class="card-header text-center bg-transparent border-0 point-9">Part / Item</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathPart" alt="Part"  class="ch-img mt-n3" height="50" width="60" >
+              </div>
+            </div>            
+          </div>
+
+      <!-- Customers -->
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+        <div class="card cursor box-shadow border-radius-point5 flex-fill"  id="autoscroll"  (click)="router.navigate(['/customer'])"
+            joyrideStep="customerPg"
+            title="Customers"
+            [stepContent]="cuspage"  
+            [prevTemplate]="prevButton"
+            [nextTemplate]="nextButton"
+            [doneTemplate]="doneButton"            
+            >
+            <div class="card-header text-center bg-transparent border-0 point-9">Customers</div>
+            <div class="card-body text-center">
+                  <img [src]="imagePathCustomer" alt="AL" class="ch-img mt-n3" height="50" width="60">
+            </div>
+        </div>
+      
+      </div>
+      <!-- Account Info -->
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3 mb-sm-2  mb-xs-2">
+        <div class="card cursor box-shadow border-radius-point5 flex-fill locked_item" style="cursor: not-allowed;" >
+          <div class="card-header text-center bg-transparent border-0 point-9"><span class="lock"><i class="fas fa-lock"></i></span>Account Info</div>
+          <div class="card-body text-center">
+                <img [src]="imagePathAccountInfo" alt="AC" class="ch-img mt-n3"  height="50" width="60">
+          </div>
+          <span class="float-left point-7 p-2 cmgsoon">Coming Soon...</span>
+      </div>
+      </div>
+
+
+
+      </div>
+    </div>
+    <hr style="border-top: dotted 1px;" />
+    <div class=" mb-2">
+      <h6 class="font-weight-bold mb-3">Actions</h6>
+      <div class="row mb-2">
+
+
+      <!-- Work Orders -->
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+        <div class="card cursor box-shadow border-radius-point5 flex-fill"  id="autoscroll"  (click)="router.navigate(['/workorders'])"
+          joyrideStep="wrkOrder"
+          title="Work Order"
+          [stepContent]="wrk_order"  
+          [prevTemplate]="prevButton"
+          [nextTemplate]="nextButton"
+          [doneTemplate]="doneButton">
+            <div class="card-header text-center bg-transparent border-0 point-9">Work Orders</div>
+            <div class="card-body text-center">
+                  <img [src]="imagePathWorkOrder" alt="WO" class="ch-img mt-n3" height="50" width="60">
+            </div>
+        </div>
+      </div>
+
+        <!-- Jobs -->
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+          <div class="card cursor box-shadow border-radius-point5 flex-fill" id="autoscroll" (click)="router.navigate(['/jobs'])"
+            joyrideStep="jobs"
+            title="Jobs"
+            [stepContent]="job"  
+            [prevTemplate]="prevButton"
+            [nextTemplate]="nextButton"
+            [doneTemplate]="doneButton">
+              <div class="card-header text-center bg-transparent border-0 point-9">Jobs</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathJobs" alt="JOB" class="ch-img mt-n3" height="50" width="60">
+              </div>
+          </div>
+        </div>
+
+
+            <!-- Data Rules -->
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+          <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/rules'])">
+              <div class="card-header text-center bg-transparent border-0 point-9">Rules</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathDataRule" alt="DR" class="ch-img mt-n3" height="50" width="60">
+              </div>
+          </div>
+      </div>
+
+            <!-- Maintenance Log -->
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3">
+              <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/maintenancelog'])" >
+                <div class="card-header text-center bg-transparent border-0 point-9">Maintenance Register</div>
+                <div class="card-body text-center">
+                      <img [src]="imagePathMaintenance" alt="MR"  class="ch-img mt-n3" height="50" width="60" >
+                </div>
+            </div>
+            </div>
+
+                <!-- Reports -->
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+                  <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/reports'])">
+                      <div class="card-header text-center bg-transparent border-0 point-9">Reports</div>
+                      <div class="card-body text-center">
+                            <img [src]="imagePathReport" alt="REP" class="ch-img mt-n3" height="50" width="60">
+                      </div>
+                  </div>
+              </div>
+
+
+            <!-- Asset Notifications -->
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3" >
+          <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/notification'])">
+            <div class="card-header text-center bg-transparent border-0 point-9">Notifications</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathAssestNotification" alt="NS" class="ch-img mt-n3"  height="50" width="60">
+              </div>              
+          </div>
+      </div>
+
+      </div>
+
+    </div>
+
+    <hr style="border-top: dotted 1px;" />
+    <div class=" mb-2">
+      <h6 class="font-weight-bold mb-3">Log Management</h6>
+      <div class="row mb-2">
+        <!-- Activity log -->
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+          <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/activitylogs'])">
+              <div class="card-header text-center bg-transparent border-0 point-9">Activity Logs</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathLogManagment" alt="AL" class="ch-img mt-n3" height="50" width="60">
+              </div>
+          </div>
+      </div>
+      <!-- dataexplorer -->
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4  d-flex mb-md-3">
+        <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/dataexplorer'])">
+          <div class="card-header text-center bg-transparent border-0 point-9">Data Explorer</div>
+          <div class="card-body text-center">
+                <img [src]="imagePathPerformenceReport" alt="DE" class="ch-img mt-n3" height="50" width="60" >
+          </div>
+        </div>
+      </div>
+      </div>
+     </div>
+
+    <hr style="border-top: dotted 1px;" />
+    <div class=" mb-2">
+      <h6 class="font-weight-bold mb-3">Management Settings</h6>
+      <div class="row mb-2">
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3 mb-sm-2  mb-xs-2">
+            <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/users'])">
+              <div class="card-header text-center bg-transparent border-0 point-9">Users</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathUser" alt="US" class="ch-img mt-n3" height="50" width="60">
+              </div>
+          </div>
+          </div>
+
+
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3 mb-sm-2  mb-xs-2">
+            <div class="card cursor box-shadow border-radius-point5 flex-fill" (click)="router.navigate(['/userprofile'])">
+              <div class="card-header text-center bg-transparent border-0 point-9">User Profile</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathUserProfile" alt="USP"class="ch-img mt-n3"  height="50" width="60">
+              </div>
+          </div>
+          </div>
+
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3 mb-sm-2  mb-xs-2"
+          *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 2 || authService.currentUser['user_management'] == true ||authService.currentUser['role_id'] == 'MV1001'||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'PA1001'"
+          >
+            <div class="card cursor box-shadow border-radius-point5 flex-fill locked_item"style="cursor: not-allowed;">
+            <div class="card-header text-center bg-transparent border-0 point-9"><span class="lock"><i class="fas fa-lock"></i></span>Guest</div>
+            <div class="card-body text-center">
+            <img [src]="imagePathGuest"alt="GST"class="ch-img"class="ch-img mt-n3"height="50"width="60">
+            </div>
+            <span class="float-left point-7 p-2 cmgsoon">Coming Soon...</span>
+            </div>
+        </div>
+      </div>
+
+    </div>
+    <hr style="border-top: dotted 1px;" />
+    <div class=" mb-2">
+      <h6 class="font-weight-bold mb-3">IoT Device Management</h6>
+      <div class="row mb-2">
+        <!-- devices -->
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4  d-flex mb-md-3">
+          <div class="card  box-shadow border-radius-point5 flex-fill locked_item" style="cursor: not-allowed;" >
+            <div class="card-header text-center bg-transparent border-0 point-9">
+              <span class="lock" style=" background-color: #FFDD00!important;"><i class="fas fa-lock"></i></span>
+              IoT Devices</div>
+            <div class="card-body text-center">
+                  <img [src]="imagePathDevice" alt="Devices" class="ch-img mt-n3" height="50" width="60" >
+            </div>
+            <span class="float-left point-7 p-2 cmgsoon" style=" background-color: #FFDD00!important;">On Demand</span>
+        </div>
+        </div>
+        <!-- device deployment -->
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex mb-md-3">
+          <div class="card cursor box-shadow border-radius-point5 flex-fill locked_item" style="cursor: not-allowed;" >
+            <div class="card-header text-center bg-transparent border-0 point-9"><span class="lock"style=" background-color: #FFDD00!important;"><i class="fas fa-lock"></i></span>Deployment</div>
+            <div class="card-body text-center">
+                  <img [src]="imagePathMapper" alt="DP"  class="ch-img mt-n3" height="50" width="60" >
+            </div>
+            <span class="float-left point-7 p-2 cmgsoon" style=" background-color: #FFDD00!important;">On Demand</span>
+        </div>
+        </div>
+        <!-- Commands -->
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+          <div class="card cursor box-shadow border-radius-point5 flex-fill locked_item" style="cursor: not-allowed;" >
+              <div class="card-header text-center bg-transparent border-0 point-9"><span class="lock"style=" background-color: #FFDD00!important;"><i class="fas fa-lock"></i></span>Commands</div>
+              <div class="card-body text-center">
+                    <img [src]="imagePathCommand" alt="CMD" class="ch-img mt-n3" height="50" width="60">
+              </div>
+              <span class="float-left point-7 p-2 cmgsoon"style=" background-color: #FFDD00!important;">On Demand</span>
+          </div>
+      </div>
+      <!-- Device Rules -->
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-flex  mb-md-3" >
+        <div class="card cursor box-shadow border-radius-point5 flex-fill locked_item" style="cursor: not-allowed;" >
+            <div class="card-header text-center bg-transparent border-0 point-9"><span class="lock"style=" background-color: #FFDD00!important;"><i class="fas fa-lock"></i></span>Device Rules</div>
+            <div class="card-body text-center">
+                  <img [src]="imagePathDeviceRule" alt="DR" class="ch-img mt-n3" height="50" width="60">
+            </div>
+            <span class="float-left point-7 p-2 cmgsoon"style=" background-color: #FFDD00!important;">On Demand</span>
+        </div>
+    </div>
+      </div>
+    </div>
+    <hr style="border-top: dotted 1px;" />
+  </div>
+</div>
+
+
+<!--Tour Guide End  Modal -->
+<div class="modal fade" id="tourguideEnd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 20px;">
+      <div class="modal-header border-0 image_header">
+        <img [src]="img_tour_ends" class="img-fluid" style="margin: auto;">
+      </div>
+      <div class="modal-body">
+       <div class="p-2 text-center mt-3">
+          <h3 class="font-weight-bold ">You're all set!</h3>
+          <p class="point-9">Now your ready to configure your application. </p>
+          <button class="btn bg-theme text-white point-9" data-dismiss="modal" >Lets Start!</button>
+        </div>
+   
+      </div>
+    </div>
+  </div>
+</div>

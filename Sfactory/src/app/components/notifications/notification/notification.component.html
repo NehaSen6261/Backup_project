@@ -1,0 +1,348 @@
+<sidebar></sidebar>
+<navbar ></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor "  ngbTooltip= "Back" placement="right" routerLink="/settings">arrow_back</mat-icon>
+  <ngb-tabset [destroyOnHide]="false">
+    <!-- Alerts Configurations -->
+    <ngb-tab title="Alerts">
+      <ng-template ngbTabContent>
+             <!-- Charts -->
+            <div class="row mt-2 mb-2">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                  <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                    <div *ngIf="!spinner">
+                      <apx-chart #totalalerts
+                        [series]="totalAlertOptions.series"
+                        [chart]="totalAertsOptions.chart"
+                        [stroke]="totalAertsOptions.stroke"
+                        [yaxis]="totalAertsOptions.yaxis"
+                        [fill]="totalAertsOptions.fill"
+                        [colors]="totalAlertOptions.colors"
+                        [title]="totalAlertOptions.title"
+                        [subtitle]="totalAlertOptions.subtitle"
+                      ></apx-chart>
+                  </div>
+                  <div *ngIf="spinner">
+                    <spinner></spinner>
+                  </div>
+
+              </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                    <div class="float-right" *ngIf="!spinner">
+                     <apx-chart #infoalerts
+                            [series]="infoAlertOptions.series"
+                            [chart]="infoAertsOptions.chart"
+                            [stroke]="infoAertsOptions.stroke"
+                            [yaxis]="infoAertsOptions.yaxis"
+                            [fill]="infoAertsOptions.fill"
+                            [colors]="infoAlertOptions.colors"
+                            [title]="infoAlertOptions.title"
+                            [subtitle]="infoAlertOptions.subtitle"
+                          ></apx-chart> 
+                  </div>
+                  <div *ngIf="spinner">
+                    <spinner></spinner>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                    <div class="float-right" *ngIf="!spinner">
+                      <apx-chart #warningalerts
+                              [series]="warningAlertOptions.series"
+                              [chart]="warningAertsOptions.chart"
+                              [stroke]="warningAertsOptions.stroke"
+                              [yaxis]="warningAertsOptions.yaxis"
+                              [fill]="warningAertsOptions.fill"
+                              [colors]="warningAlertOptions.colors"
+                              [title]="warningAlertOptions.title"
+                              [subtitle]="warningAlertOptions.subtitle"
+                            ></apx-chart>
+                  </div>
+                  <div *ngIf="spinner">
+                    <spinner></spinner>
+                  </div>
+                </div>
+            </div>
+
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+                <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                    <div class="float-right" *ngIf="!spinner">
+                        <apx-chart #criticalalerts
+                        [series]="criticalAlertOptions.series"
+                        [chart]="criticalAertsOptions.chart"
+                        [stroke]="criticalAertsOptions.stroke"
+                        [yaxis]="criticalAertsOptions.yaxis"
+                        [fill]="criticalAertsOptions.fill"
+                        [colors]="criticalAlertOptions.colors"
+                        [title]="criticalAlertOptions.title"
+                        [subtitle]="criticalAlertOptions.subtitle"
+                      ></apx-chart>
+                  </div>
+                  <div *ngIf="spinner">
+                    <spinner></spinner>
+                  </div>
+                </div>
+            </div>
+
+            </div>
+
+            <!-- table -->
+            <div class="row">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                    <div  class="card  border-0  border-radius-point5">
+                      <div class="row mt-2" >
+                          <div class="col-xl-9 col-lg-9 col-md-8 col-sm-12">
+                              <h6 class="point-9 ml-3 mt-2">Notifications List view </h6>
+                          </div>
+                          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12">
+                              <div class="input-group input-group-flush rounded  mt-2 border-radius-point5">
+                                <input type="text" class="form-control point-8 mr-3" [(ngModel)]="filter" placeholder="Search"   aria-describedby="basic-addon1">
+                              </div>
+                        </div>
+                      </div>
+                      <div class="card-body notification-container">
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="list_spinner">
+                          <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+                              [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+                        </ngx-skeleton-loader>
+                        </div>
+
+                        <div class=" align-items-center d-flex justify-content-center">
+                          <span class="point-8 cursor" *ngIf="no_notis"><i class="fas fa-exclamation-triangle text-warning mr-1"></i>  No notifications available</span>
+                          <span class="point-8 cursor" *ngIf="list_internalError"><i class="fas fa-exclamation-triangle text-warning mr-1"></i>  Unable to process your request, please try after some time</span>
+                        </div>
+                        <ul class="list-group list-group-flush"  *ngIf="!no_notis">
+                              <li  class="list-group-item" *ngFor="let notis of obs | async  | filter:filter">
+                              <mat-accordion >
+                                <mat-expansion-panel hideToggle class="mat-elevation-z0"
+                                      (click)="message_id=notis.messagelog_id;">
+                                  <mat-expansion-panel-header [collapsedHeight]="'auto'" [expandedHeight]="'auto'">
+                                    <mat-panel-title class="mb-3 ">
+                                      <span class="text-muted point-9"
+                                                [ngClass]="{'warningicon': notis.event_name == 'Warning', 'criticalicon':notis.event_name == 'Critical' , 'infoicon':notis.event_name == 'Info'}" >{{notis.event_name[0]}}</span>
+                                    </mat-panel-title>
+                                    <mat-panel-description class="mt-2">
+                                      <p class="point-9 mb-n1">{{notis.gateway_name}} <span class="text-primary cursor" >
+                                          {{notis.inbound_data}}  alert value is  {{notis.value}}  but live value is  {{notis.live_value}},</span>
+                                          <span  class="font-weight-bold text-uppercase point-8">  {{notis.event_name}} NOTICE </span>
+                                          <span  class="float-right ml-5 point-9"> Resolution Type:
+                                            <span class="badge point-8"  [ngClass]="{'badge-success': notis.resolution_type != null, 'badge-danger':notis.resolution_type == null }" > {{notis.resolution_type || 'Pending'}}</span>
+                                            <span class="text-bold ml-2"> Resolution: <span class="point-9"> {{notis.resolution || "NA"}}</span></span>
+                                          </span>
+                                        </p>
+                                        <p>   <small class=" text-muted point-7 ml-2"> {{notis.message_received_time | date:"short"}}</small></p>
+                                    </mat-panel-description>
+                                  </mat-expansion-panel-header>
+                                  <div class="row mt-3 point-9">
+                                    <div class="col-md-6">
+                                      <p ><strong>Application name :</strong> {{notis.app_name}}</p>
+                                      <p><strong>Device name :</strong> {{notis.gateway_name}}</p>
+                                      <p><strong>Inbound data key : </strong> {{notis.inbound_data}}</p>
+                                      <p><strong>Data rule : </strong>{{notis.data_rule}} {{notis.value}}</p>
+                                      <p><strong>Live Value : </strong> {{notis.live_value}}</p>
+                                      <p><strong>Event name : </strong> {{notis.event_name}}</p>
+                                      <p><strong>Received On:</strong> {{notis.message_received_time |date:"medium"}}</p>
+                                    </div>
+                                    <div class="col-md-6" *ngIf="authService.currentUser['role_id'] == 1">
+                                      <mat-form-field appearance="outline">
+                                        <mat-label>Resolution Type</mat-label>
+                                        <input matInput  [formControl]="resolution_type">
+                                      </mat-form-field><br>
+                                      <mat-form-field appearance="outline" class="mt-n1 w-100">
+                                        <mat-label>Resolution</mat-label>
+                                        <textarea matInput   cdkTextareaAutosize  cdkAutosizeMinRows="5" cdkAutosizeMaxRows="8"
+                                              [formControl]="resolution" (blur)="Setresolution()" required>
+                                          </textarea>
+                                          </mat-form-field>
+                                        </div>
+                                    </div>
+                                </mat-expansion-panel>
+                              </mat-accordion>
+                            </li>
+
+                        </ul>
+                        <div class="d-flex justify-content-center mt-2 " *ngIf="list_spinner">
+                          <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+                              [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+                        </ngx-skeleton-loader>
+                        </div>
+
+                      </div>
+                    </div>
+              </div>
+            </div>
+
+      </ng-template>
+    </ngb-tab>
+
+    <!--Commands Configurations -->
+
+    <ngb-tab title="Commands">
+      <ng-template ngbTabContent>
+            <!-- Charts -->
+            <div class="row mt-2 mb-2">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+              <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                <div  *ngIf="!spinner">
+                  <apx-chart #totalcommands
+                    [series]="totalcommandOption.series"
+                    [chart]="totalcommandsOptions.chart"
+                    [stroke]="totalcommandsOptions.stroke"
+                    [yaxis]="totalcommandsOptions.yaxis"
+                    [fill]="totalcommandsOptions.fill"
+                    [colors]="totalcommandOption.colors"
+                    [title]="totalcommandOption.title"
+                    [subtitle]="totalcommandOption.subtitle"
+                  ></apx-chart>
+              </div>
+              <div *ngIf="spinner">
+                <spinner></spinner>
+              </div>
+          </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+            <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                <div class="float-right"  *ngIf="!spinner">
+                  <apx-chart #rBcommands
+                        [series]="rBcommandOption.series"
+                        [chart]="rBcommandsOptions.chart"
+                        [stroke]="rBcommandsOptions.stroke"
+                        [yaxis]="rBcommandsOptions.yaxis"
+                        [fill]="rBcommandsOptions.fill"
+                        [colors]="rBcommandOption.colors"
+                        [title]="rBcommandOption.title"
+                        [subtitle]="rBcommandOption.subtitle"
+                      ></apx-chart>
+              </div>
+              <div *ngIf="spinner">
+                <spinner></spinner>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+            <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                <div class="float-right" *ngIf="!spinner">
+                  <apx-chart #sCcommands
+                          [series]="sCcommandOption.series"
+                          [chart]="sCcommandsOptions.chart"
+                          [stroke]="sCcommandsOptions.stroke"
+                          [yaxis]="sCcommandsOptions.yaxis"
+                          [fill]="sCcommandsOptions.fill"
+                          [colors]="sCcommandOption.colors"
+                          [title]="sCcommandOption.title"
+                          [subtitle]="sCcommandOption.subtitle"
+                        ></apx-chart>
+              </div>
+              <div *ngIf="spinner">
+                <spinner></spinner>
+              </div>
+            </div>
+        </div>
+
+          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+            <div class="card flex-fill box-shadow border-radius-point5 minh-130">
+                <div class="float-right"  *ngIf="!spinner">
+                  <apx-chart #oDcommands
+                          [series]="oDcommandOption.series"
+                          [chart]="oDcommandsOptions.chart"
+                          [stroke]="oDcommandsOptions.stroke"
+                          [yaxis]="oDcommandsOptions.yaxis"
+                          [fill]="oDcommandsOptions.fill"
+                          [colors]="oDcommandOption.colors"
+                          [title]="oDcommandOption.title"
+                          [subtitle]="oDcommandOption.subtitle"
+                        ></apx-chart>
+              </div>
+              <div *ngIf="spinner">
+                <spinner></spinner>
+              </div>
+            </div>
+        </div>
+
+            </div>
+
+                    <!-- table -->
+                    <div class="row">
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                            <div  class="card  border-0  border-radius-point5">
+                              <div class="row mt-2" >
+                                  <div class="col-xl-9 col-lg-9 col-md-8 col-sm-12">
+                                      <h6 class="point-9 ml-3 mt-2">Commands List view </h6>
+                                  </div>
+                                  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12">
+                                      <div class="input-group input-group-flush rounded  mt-2 border-radius-point5">
+                                        <input type="text" class="form-control point-8 mr-3" [(ngModel)]="filter" placeholder="Search"   aria-describedby="basic-addon1">
+                                      </div>
+                                </div>
+                              </div>
+                              <div class="card-body notification-container">
+                                <div class="d-flex justify-content-center mt-2 " *ngIf="list_spinner">
+                                  <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+                                      [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+                                </ngx-skeleton-loader>
+                                </div>
+
+                                <div class=" align-items-center d-flex justify-content-center">
+                                  <span class="point-8 cursor" *ngIf="no_commands"><i class="fas fa-exclamation-triangle text-warning mr-1"></i>  No commands available</span>
+                                  <span class="point-8 cursor" *ngIf="list_internalError"><i class="fas fa-exclamation-triangle text-warning mr-1"></i>  Unable to process your request, please try after some time</span>
+                                </div>
+                                <ul class="list-group list-group-flush"  *ngIf="!no_commands">
+                                      <li  class="list-group-item" *ngFor="let commands_list of cmds_obs | async  | filter:filter">
+                                      <mat-accordion >
+                                        <mat-expansion-panel hideToggle class="mat-elevation-z0">
+                                          <mat-expansion-panel-header [collapsedHeight]="'auto'" [expandedHeight]="'auto'">
+                                            <mat-panel-title class="mb-3 ">
+                                              <span class="text-muted point-9"
+                                                        [ngClass]="{'scheduledicon': commands_list.execution_mode == 'Scheduled', 'rulebasedicon':commands_list.execution_mode == 'Rule Based' , 'ondemandicon':commands_list.execution_mode == 'On Demand'}" >{{commands_list.execution_mode[0]}}</span>
+                                            </mat-panel-title>
+                                            <mat-panel-description class="mt-2">
+                                              <p class="point-9 mb-n1">{{commands_list.gateway_name}}  is triggered by  a command <span class="text-primary cursor" >
+                                                  {{commands_list.command_name || "NA"}} </span>  and payload is  <span class="text-primary cursor" >{{commands_list.command_payload | json}}</span>  on
+                                                  <span class="font-weight-bold text-uppercase point-8">  {{commands_list.execution_mode}} Mode </span>
+                                                </p>
+                                                <p><small class=" text-muted point-7 ml-2"> {{commands_list.message_received_time | date:"short"}}</small></p>
+                                            </mat-panel-description>
+                                          </mat-expansion-panel-header>
+                                          <div class="row mt-3 point-9">
+                                            <div class="col-md-6">
+                                              <p ><strong>Application name :</strong> {{commands_list.app_name}}</p>
+                                              <p><strong>Device name :</strong> {{commands_list.gateway_name}}</p>
+                                              <p><strong>Command Name : </strong> {{commands_list.command_name}}</p>
+                                              <p><strong>Excecution Mode : </strong>{{commands_list.execution_mode}}</p>
+                                              <p><strong>Received On:</strong> {{commands_list.message_received_time |date:"medium"}}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                              <p >Command Payload: </p>
+                                              <textarea class="form-control" id="exampleFormControlTextarea1" rows="6" disabled>{{  commands_list.command_payload | json }}</textarea>
+                                                </div>
+                                            </div>
+                                        </mat-expansion-panel>
+                                      </mat-accordion>
+                                    </li>
+
+                                </ul>
+                                <div class="d-flex justify-content-center mt-2 " *ngIf="list_spinner">
+                                  <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+                                      [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+                                </ngx-skeleton-loader>
+                                </div>
+                              </div>
+                            </div>
+                      </div>
+                    </div>
+      </ng-template>
+    </ngb-tab>
+
+
+
+
+  </ngb-tabset>
+ <mat-paginator  [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
+
+</div>

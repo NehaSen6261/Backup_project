@@ -1,0 +1,163 @@
+<div class="container-fluid  h-100 d-flex flex-column maincontainer">
+  <div class="row flex-fill" style="min-height:0">
+    <!-- First Half -->
+    <div
+      class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 order-xl-1 order-lg-1 order-md-2 order-sm-2 order-xs-2 p-0  info_area overlay mh-100">
+      <div class=" content">
+        <div class="card bg-transparent border-0 h-100">
+          <div class="card-body">
+            <div style="margin-top: 114px;">
+              <h3 class="text-white font-weight-bold ml-3 mb-5">Adopt Digital; Optimize Factory Performance!</h3>
+              <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6  col-sm-12 ">
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Workorder Management</p>
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Job Management </p>
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Performance Monitoring</p>
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Machine Monitoring </p>
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Downtime Alert </p>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6  col-sm-12 mb-4">
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Preventive Maintenance</p>
+                  <!-- <p class="text-white truncating ml-3 point-9 mb-3" ><span ><i class="fas fa-spinner"></i></span>&nbsp; OEE, OOE, TEEP Metrics</p> -->
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    OEE and OOE Metrics</p>
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Realtime Monitoring with IoT</p>
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    Maintenance Recorder</p>
+                  <p class="text-white truncating ml-3 point-9 mb-3"><span><i class="fas fa-spinner"></i></span>&nbsp;
+                    User Management</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-white footerLogo point-8">
+        <span class="ml-3 text-white">With <i class="fas fa-heart text-danger"></i> from </span>
+        <span class="ml-1 "> <a target="_blank" href="https://factana.com/" class="text-white font-weight-bold"> Factana
+          </a> </span>
+      </div>
+
+
+    </div>
+
+    <!-- Second Half -->
+    <div
+      class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 order-first order-xl-2 order-lg-2 order-md-1 order-sm-1 order-xs-1 bg-white login_area  mh-100"
+      style="overflow-y: scroll;">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <div class="card bg-transparent border-0 ">
+            <div class="card-header bg-transparent border-0 text-center ">
+              <img [src]="img_logo_color" width="240" alt="SFactrix">
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>First Name</mat-label>
+                    <input matInput [formControl]="firstname" required>
+                    <mat-icon matSuffix>account_circle</mat-icon>
+                    <mat-error *ngIf="firstname.touched">
+                      Please enter the First Name
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class=" w-100 point-8">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput [formControl]="lastname" required>
+                    <mat-icon matSuffix>account_circle</mat-icon>
+                    <mat-error *ngIf="lastname.touched ">
+                      Please enter the Last Name
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <mat-form-field appearance="outline" class=" w-100 point-8">
+                <mat-label>Organization Name</mat-label>
+                <input matInput [formControl]="orgname" required>
+                <mat-icon matSuffix>corporate_fare</mat-icon>
+                <mat-error *ngIf="orgname.touched ">
+                  Please enter the Organization Name
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class=" w-100 point-8">
+                <mat-label>Purpose</mat-label>
+                <input matInput [formControl]="purpose" required>
+                <mat-error *ngIf="purpose.touched">
+                  Please enter the Purpose
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class=" w-100 point-8">
+                <mat-label>Location</mat-label>
+                <input matInput [formControl]="location" required>
+                <mat-icon matSuffix>location_on</mat-icon>
+                <mat-error *ngIf="location.touched">
+                  Please enter the location
+                </mat-error>
+              </mat-form-field>
+              <div class="row">
+                <div class="col-md col-lg">
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>Email</mat-label>
+                    <input matInput [formControl]="email" (input)="emailValidation()" required>
+                    <mat-icon matSuffix>mail</mat-icon>
+                    <mat-error *ngIf="email.hasError('email') && !email.hasError('required')">
+                      Please enter valid email address !!
+                    </mat-error>
+                    <mat-error *ngIf="email.hasError('required')">Email is <strong>required</strong></mat-error>                    
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md col-lg" *ngIf="promCode">
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>Special Code</mat-label>
+                    <input matInput [formControl]="promocode" (blur)="promocodevalidations()">
+                    <mat-icon matSuffix ngbTooltip="Please contact sales@factana.com for special code !!">info</mat-icon>
+                   </mat-form-field>
+                </div>
+              </div>
+              <mat-form-field appearance="outline" class=" w-100 point-8">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hide ? 'password' : 'text'" required [formControl]="password">
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide">
+                  <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="password.hasError('required')">
+                  Please enter the Password
+                </mat-error>
+                <mat-error *ngIf="password.hasError('minlength') || password.touched">
+                  Password must contain (A-Z, a-z, 0-9, ~!@#$%^&*()_-+=) 8 character
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="card-footer border-0 bg-transparent mt-n4">
+              <mat-checkbox class="point-7" [formControl]="checkboxfromcontrol" color="primary">I agree  <a
+                  href="https://fogwing.io/terms-and-conditions/" target="_blank">the terms</a> of use and <a
+                  href="https://factana.com/privacy-policy/" target="_blank"> privacy policy</a></mat-checkbox>
+              <button type="submit" class="btn text-center rounded-pill w-100 shadow text-white btncolor mt-2"
+                (click)="signup()">Sign Up </button>
+              <div class="d-flex justify-content-center mt-2">
+                <p class="point-8 text-muted">You have account already? <a routerLink="/">Login</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

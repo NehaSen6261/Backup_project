@@ -1,0 +1,312 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor"  ngbTooltip= "Back" placement="right"  routerLink="/settings">arrow_back</mat-icon>
+  <div class="card border-radius-point5" style="min-height: 50vh;">
+    <div class="card-header bg-transparent">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="input-group input-group-flush rounded">
+            <input type="text" class="form-control point-8 border-radius-point5" (keyup)="search($event)" [formControl]="filter" placeholder="Search"
+              aria-describedby="basic-addon1">
+          </div>
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-3">
+          <button mat-button class="btn btn-sm text-white shadow mt-2  float-right btn-focus-none bg-theme2"
+            data-toggle="modal" data-target="#user"
+            *ngIf="authService.currentUser['role_id'] == 1 ||authService.currentUser['role_id'] == 'MV1001' || authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'ASA1001'|| (authService.currentUser['user_management'] == true && authService.currentUser['role_id'] == 1000 )"
+            (click)="cleardata();popup_title='Add User'"><i class="fas fa-plus"></i> Add User</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <mat-progress-bar mode="indeterminate" *ngIf="spinner"></mat-progress-bar>
+      <table class="table table-hover" matSort>
+        <thead class="point-8 cursor">
+          <tr>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="user_first_name" mat-sort-header> First Name</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="user_last_name" mat-sort-header> Last Name</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="role_name" mat-sort-header> Role</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="user_email_id" mat-sort-header>Email </th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="action"> Action</th>
+          </tr>
+        </thead>
+        <tbody class="point-8">
+          <tr *ngFor="let TenantUsers of obs | async">
+            <td>
+              <p class="max_wid" *ngIf="TenantUsers.user_first_name.length > 20"
+                ngbTooltip={{TenantUsers.user_first_name}}>
+                <ngb-highlight [result]="TenantUsers.user_first_name | slice:0:20" [term]="filter.value">
+                </ngb-highlight>
+              </p>
+              <p class="max_wid" *ngIf="TenantUsers.user_first_name.length <= 20">
+                <ngb-highlight [result]="TenantUsers.user_first_name " [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td>
+              <p *ngIf="TenantUsers.user_last_name.length > 20" ngbTooltip={{TenantUsers.user_last_name}}
+                class="max_wid">
+                <ngb-highlight [result]="TenantUsers.user_last_name | slice:0:20" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf="TenantUsers.user_last_name.length <= 20" class="max_wid">
+                <ngb-highlight [result]="TenantUsers.user_last_name" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == '1' "> Account Admin</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == '2' "> Account Viewer</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'MV1001' "> Executive</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'PA1001' "> Plant Manager</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'PV1001' "> Plant Viewer</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'WCA1001' "> Workcenter Manager</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'WCV1001' "> Workcenter Viewer</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'ASA1001' "> Asset Manager</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'ASV1001' "> Asset Viewer</p>
+              <p class="max_wid" *ngIf="TenantUsers.role_id == 'JB1001' "> Job Operator</p>
+
+            </td>
+            <td>
+              <p *ngIf="TenantUsers.user_email_id.length > 25" ngbTooltip={{TenantUsers.user_email_id}}>
+                <ngb-highlight [result]="TenantUsers.user_email_id | slice:0:25" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf="TenantUsers.user_email_id.length <= 25">
+                <ngb-highlight [result]="TenantUsers.user_email_id" [term]="filter.value"></ngb-highlight>
+            </td>
+            <td>
+              <span class="cursor" ngbTooltip="Edit" data-toggle="modal"  *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'MV1001' || authService.currentUser['role_id'] == 'PA1001'|| authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'ASA1001'" data-target="#user"
+                (click)="popup_title='Edit User';setUserdata(TenantUsers);"><i class="far fa-edit text-theme"></i></span>
+                <span class="cursor" ngbTooltip="View"  *ngIf="authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 'PV1001'|| authService.currentUser['role_id'] == 'ASV1001'|| authService.currentUser['role_id'] == 'WCV1001'" data-toggle="modal" data-target="#user"
+                (click)="setUserdata(TenantUsers)" ><i class="fas fa-eye fa-lg text-theme"></i></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+        <ngx-skeleton-loader class="w-100" count="5" animation="pulse"
+          [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+        </ngx-skeleton-loader>
+      </div>
+
+      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError">
+        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+          request please try after some time !!</small>
+      </div>
+
+      <div class="text-center mt-5" *ngIf="displaydata">
+        <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+        <small class="point-8 "> No users available to display !!</small>
+      </div>
+
+      <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="[5, 10, 20, 50, 100]" *ngIf="!internalError || !spinner">
+      </mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal left fade" id="user" tabindex="" role="dialog" aria-labelledby="userLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal_general_popup" role="document">
+    <button type="button" class="btn text-white modal-close-btn cursor bg-sidebar" data-dismiss="modal"><span
+     (click)="cleardata();" class="cursor" aria-hidden="true">&times;</span></button>
+
+    <div class="modal-content">
+      <div class="modal-header bg-white">
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'MV1001'|| authService.currentUser['role_id'] == 'PA1001'|| authService.currentUser['role_id'] == 'WCA1001'|| authService.currentUser['role_id'] == 'ASA1001'">{{popup_title}}</h5>
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 'ASV1001'|| authService.currentUser['role_id'] == 'WCV1001'|| authService.currentUser['role_id'] == 'PV1001'">View User</h5>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto;">
+      
+        <div class="row mb-2">
+          <div class="col-md">
+              <!-- First Name -->
+              <mat-form-field appearance="outline" class=" w-100 float-left point-8">
+                <mat-label>First Name</mat-label>
+                <input type="text" matInput [formControl]="usr_first_name" minlength="3" maxlength="40" id="auto_trigger"
+                  required>
+                  <mat-error *ngIf="usr_first_name.invalid">{{UsrFirstNameMessages()}}</mat-error>
+              </mat-form-field>
+          </div>
+          <div class="col-md">
+              <!-- Last Name -->
+              <mat-form-field appearance="outline" class="w-100 float-left point-8">
+                <mat-label>Last Name</mat-label>
+                <input type="text" matInput [formControl]="usr_last_name" minlength="3" maxlength="40" id="auto_trigger"
+                  required>
+                  <mat-error *ngIf="usr_last_name.invalid">{{UsrLastNameMessages()}}</mat-error>
+              </mat-form-field>
+          </div>
+        </div>
+       
+
+        <div class="row mb-2">
+          <div class="col-md">
+            <!-- Email -->
+            <mat-form-field appearance="outline" class="w-100 float-left point-8">
+              <mat-label>Email</mat-label>
+              <input type="text" matInput [formControl]="usr_email" minlength="3" maxlength="40" id="auto_trigger"
+                 required>
+                <mat-error *ngIf="usr_email.invalid">{{UsrEmailMessages()}}</mat-error>
+            </mat-form-field>
+      
+          </div>
+          <div class="col-md">
+             <!-- user type -->
+             <mat-form-field appearance="outline" id="width_exm" class="w-100 float-left point-8">
+              <mat-label>User Type</mat-label>
+              <mat-select (selectionChange)="userTypeChange($event)" [formControl]="usr_type" required >
+                <mat-option value="account_user" [disabled]="authService.currentUser['role_id'] != 1 || !is_acc_usr_enabled">Account User</mat-option>
+                <mat-option value="factory_user">Factory User</mat-option>
+              </mat-select>
+              <mat-error *ngIf="usr_type.invalid">{{UsrUsrTypeMessages()}}</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row mb-2" *ngIf="show_user">
+          <!-- Account user Role -->
+          <div class="col-md" *ngIf="selected_usertype == 'account_user' ">           
+           <mat-form-field appearance="outline" id="width_exm" class="w-100 float-left point-8">
+            <mat-label>User Role</mat-label>
+            <mat-select [formControl]="usr_role" required>
+              <mat-option *ngFor="let user_role_selects of user_role_select"
+              [value]="user_role_selects.value"  >
+                {{user_role_selects.viewValue}}
+              </mat-option>
+            </mat-select> 
+            <mat-error *ngIf="usr_role.invalid">{{UsrRoleTypeMessages()}}</mat-error>
+          </mat-form-field>                    
+          </div>
+          <!-- Factory User Role -->
+          <div class="col-md" *ngIf="selected_usertype == 'factory_user' ">           
+            <mat-form-field appearance="outline" class="w-100 float-left point-8">
+             <mat-label>User Role</mat-label>
+             <mat-select [formControl]="usr_role" (selectionChange)="facUserRoleChange($event)" required>
+                <mat-option value="MV1001" 
+                [disabled]="authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'WCA1001' 
+                || authService.currentUser['role_id'] == 'ASA1001' "> Executive </mat-option>
+                <mat-option value="PA1001"
+                [disabled]="authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'ASA1001' "
+                > Plant Manager </mat-option>
+                <mat-option value="PV1001"
+                [disabled]="authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'ASA1001' "
+                > Plant Viewer </mat-option>
+                <mat-option value="WCA1001"
+                [disabled]="authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'ASA1001' "
+                > Workcenter Manager </mat-option>
+                <mat-option value="WCV1001"
+                [disabled]="authService.currentUser['role_id'] == 'ASA1001' "
+                > Workcenter Viewer </mat-option>
+                <mat-option value="ASA1001" [disabled]="authService.currentUser['role_id'] == 'ASA1001' "> Asset Manager </mat-option>
+                <mat-option value="ASV1001"> Asset Viewer </mat-option>
+                <mat-option value="JB1001"> Job Operator </mat-option>
+             </mat-select> 
+             <mat-error *ngIf="usr_role.invalid">{{UsrRoleTypeMessages()}}</mat-error>
+           </mat-form-field>                    
+           </div>
+
+
+          <div class="col-md" *ngIf="is_plant_enabled">
+             <!-- Plant -->
+             <mat-form-field appearance="outline" id="width_exm" class="w-100 float-left point-8">
+              <mat-label *ngIf="plants.length != 0">Choose an plant</mat-label>
+              <mat-label *ngIf="plants.length == 0">No plant available</mat-label>
+               <mat-select [formControl]="fac_plant_id" required >
+                  <mat-option *ngFor="let plant of plants" [value]="plant.sf_plant_id" (click)="getplantWorkcenters()">
+                    {{plant.sf_plant_name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="usr_type.invalid">{{UsrUsrTypeMessages()}}</mat-error>
+            </mat-form-field>
+
+          </div>
+        </div>
+        
+        <div class="row mb-2"  *ngIf="show_user">
+          <!-- workcenter -->
+          <div class="col-md" *ngIf="is_wc_enabled">
+
+         
+
+            <mat-form-field appearance="outline" id="width_exm" class="w-100 float-left point-8" >
+              <mat-label *ngIf="plant_workcenters.length != 0">Choose Work Center</mat-label>
+              <mat-label *ngIf="plant_workcenters.length == 0">No work center available</mat-label>
+              <mat-select  [formControl]="fac_wc_id" #workcenter_select   multiple>
+                <mat-checkbox class="ml-3" color="primary" [(ngModel)]="alldev_Selected_workcenter" [ngModelOptions]="{standalone: true}"
+                (change)="toggleAllSelectioWorkcenter();getMultiWCAssets(this.fac_wc_id.value)">Select All</mat-checkbox>
+              <mat-option *ngFor="let workcenter of plant_workcenters" [value]="workcenter.sf_work_centre_id"
+                (click)="getMultiWCAssets(workcenter.sf_work_centre_id)">
+                {{workcenter.sf_work_centre_name}}
+              </mat-option>
+            </mat-select>
+            </mat-form-field>
+          </div>
+          <!-- Assets -->
+          <div class="col-md" *ngIf="is_asset_enabled">
+           <mat-form-field appearance="outline" id="width_exm" class="w-100 float-left point-8" >
+              <mat-label *ngIf="multi_workcenter_assets.length != 0">Choose an Asset</mat-label>
+              <mat-label *ngIf="multi_workcenter_assets.length == 0">No asset available</mat-label>
+              <mat-select [formControl]="fac_asset_id" #select multiple required>
+                <mat-checkbox class="ml-3" color="primary" [(ngModel)]="alldev_Selected" [ngModelOptions]="{standalone: true}"
+                (change)="toggleAllSelection()">Select All</mat-checkbox>
+               <mat-option *ngFor="let multi_asset of multi_workcenter_assets"  [value]="multi_asset.sf_asset_id">
+                  {{multi_asset.sf_asset_name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+     </div>
+
+      <div class="modal-footer footer_btn w-100" *ngIf="popup_title== 'Add User'">
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-clear point-9 "
+          (click)="cleardata();"><i class="fas fa-undo"></i> Clear</button>
+        <button type="submit" *ngIf="!disabled_enable_button" class="btn btn-sm shadow text-white bg-theme btn-save point-9"
+          (click)="post_method()"><i class="far fa-check-circle"></i> Submit</button>
+          <button class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  type="button" disabled *ngIf="disabled_enable_button" >
+            <i class="fas fa-spinner fa-pulse"></i> Loading
+           </button>
+      </div>
+
+      <div class="modal-footer footer_btn w-100" *ngIf="popup_title== 'Edit User'">       
+          <button type="button" *ngIf="disableBtn"class="btn btn-sm float-right shadow text-white bg-theme btn-delete point-9 mr-1"data-toggle="modal"data-target="#user-delete"data-dismiss="modal"><i class="fas fa-trash-alt"></i> Delete</button>
+          <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" data-dismiss="modal" *ngIf="closebtn" ><i class="fas fa-times"></i> Close</button>
+          <button type="submit" class="btn btn-sm  shadow text-white bg-theme btn-save point-9"
+           (click)="update_method()" *ngIf="disableBtn"><i class="far fa-check-circle"></i> Update</button>
+      </div>
+      <div class="modal-footer footer_btn w-100" *ngIf="authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 'WCV1001'|| authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'ASV1001'" >
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" data-dismiss="modal" (click)="cleardata();" ><i class="fas fa-times"></i> Close</button>
+     </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- Delete users Modal -->
+<div class="modal fade" id="user-delete"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog border-radius-point5" role="document">
+    <div class="modal-content ">
+      <div class="modal-header bg-white border_top">
+        <h6 class="modal-title" id="exampleModalLongTitle">Delete</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-9">
+        Are you sure to delete <span class="text-danger">{{user_email}}</span> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-yes point-8"
+          data-dismiss="modal" (click)="deleteTenantUserInfo()"><i class="fas fa-check"></i> Yes</button>
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-no point-8" data-dismiss="modal"
+          data-toggle="modal" data-target="#user"><i class="fas fa-times"></i> No</button>
+      </div>
+    </div>
+  </div>
+</div>

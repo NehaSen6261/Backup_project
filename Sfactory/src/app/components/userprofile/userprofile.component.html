@@ -1,0 +1,126 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor" ngbTooltip= "Back" placement="right" (click)="backloc()">arrow_back</mat-icon>
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12  mb-md-2 mb-2 mb-sm-0">
+      <form (ngSubmit)="putUserprofile(usprofile.value)" #usprofile="ngForm">
+      <div class="card border-radius-point5">
+        <div class="card-header bg-transparent  ht-40">
+          <p class="float-left point-9">Profile Info</p>
+        </div>
+          <div class="card-body">
+            <div class="row mb-2">
+              <div class="col-md">
+                <mat-form-field appearance="outline" class=" w-100 float-left point-8">
+                  <mat-label>First Name</mat-label>
+                  <input [(ngModel)]="firstname" matInput name = "firstname" [(ngModel)]="firstname" required>
+                </mat-form-field>
+              </div>
+              <div class="col-md">
+                <mat-form-field appearance="outline" class="w-100 float-left point-8">
+                  <mat-label>Last Name</mat-label>
+                  <input [(ngModel)]="lastname" matInput name= "lastname" [(ngModel)]="lastname" required>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100 float-left point-8">
+                  <mat-label>Email</mat-label>
+                  <input name="email" [(ngModel)]="email" matInput disabled>
+                </mat-form-field>
+              </div>
+              <div class="col-md">
+                <mat-form-field appearance="outline" class="w-100 float-left point-8">
+                  <mat-label>Account Role</mat-label>
+                  <input name="accountRole" [(ngModel)]="account_role" matInput  disabled>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md">
+                <p class="mt-3 text-muted point-7"><strong class="text-info">Note: </strong>Please do re-login to see the changes !!</p>
+              </div>
+              <div class="col-md">
+                <button type="button" class="btn btn-sm mt-2  float-right text-white bg-theme hover-shadow" data-toggle="modal" data-target="#exampleModal" (click)="generateOTP()">Update Password</button>
+                <button type="submit" class="btn btn-sm mt-2 mr-2 float-right text-white bg-theme hover-shadow">Submit</button>
+              </div>
+            </div>
+          </div>
+      </div>
+    </form>
+    </div>
+</div>
+ </div>
+
+
+
+
+<!-- Modal(Update password) -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header">
+        <h5 class="modal-title float-left" id="exampleModalLabel">Update password</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <div class="row mb-2">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                  <mat-form-field appearance="outline" class="w-100 float-left point-8">
+                    <mat-label>Email</mat-label>
+                    <input name="email" [(ngModel)]="email" matInput disabled>
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 ">
+                    <mat-form-field appearance="outline" class="w-95 float-left  mr-3 point-8">
+                      <mat-label>OTP</mat-label>
+                      <input matInput [formControl]="otpFormControl" type="password" *ngIf="isOTPEnabled">
+                      <input matInput value="*********" disabled *ngIf="!isOTPEnabled">
+                    </mat-form-field>
+                    <button type="button" class="btn btn-primary mt-2" (click)="verifyOTP()" *ngIf="isOTPEnabled">Verify</button>
+                    <button type="button" class="btn btn-success mt-2" *ngIf="!isOTPEnabled" disabled>verified</button>
+                    <ngb-alert class="float-right mt-2 point-8 " *ngIf="!staticAlertClosed" (close)="staticAlertClosed = true">Wrong OTP Entered</ngb-alert>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                  <p class="point-8" *ngIf="isOTPEnabled">We have sent password reset instructions to the  above Email address !!</p>
+                  <p class="point-8" *ngIf="!isOTPEnabled"><strong>Instructions: </strong></p>
+                  <ul *ngIf="!isOTPEnabled" class="point-7">
+                    <li><p>Always keep your login credentials safe.</p></li>
+                    <li><p>Do not share your login credentials with any one.</p></li>
+                    <li><p>If you are facing any problem while verifying the OTP, please reach out to our support team.</p></li>
+                  </ul>
+
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="!isOTPEnabled">
+                  <form (ngSubmit)="updatepassword(new_psw_creation.value)" #new_psw_creation="ngForm">
+                      <mat-form-field appearance="outline" class="w-100 float-left mr-3 point-8">
+                        <mat-label>New Password</mat-label>
+                        <input matInput name="new_password" [(ngModel)]="new_password" type="password" required  *ngIf="!psw_success">
+                        <input matInput name="new_password"  value="***************************" disabled  *ngIf="psw_success">
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline" class="w-100 float-left  mr-3 point-8">
+                        <mat-label>Confirm Password</mat-label>
+                        <input matInput name="confirm_password" [(ngModel)]="confirm_password" required  *ngIf="!psw_success">
+                        <input matInput name="confirm_password" value="***************************" disabled  *ngIf="psw_success">
+                      </mat-form-field>
+                      <ngb-alert class="float-left mt-2 point-8" *ngIf="!pasw_unmatchAlert" (close)="pasw_unmatchAlert = true">New password and confirm password didn't matched !!</ngb-alert>
+                      <button type="submit" class="btn btn-primary mt-2 float-right" *ngIf="!psw_success"> Submit</button>
+                      <button type="submit" class="btn btn-secondary mt-2 float-right" data-dismiss="modal" *ngIf="psw_success">Close</button>
+                  </form>
+                </div>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>

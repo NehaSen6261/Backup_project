@@ -1,0 +1,71 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor "  ngbTooltip= "Back" placement="right" routerLink="/settings">arrow_back</mat-icon>
+  <div class="card border-radius-point5" style="min-height: 50vh;">
+      <div class="card-header bg-transparent">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="input-group input-group-flush rounded">
+
+              <input type="text" class="form-control point-8" [formControl]="filter" placeholder="Search"   aria-describedby="basic-addon1">
+            </div>
+          </div>
+          <div class="col-md-6"></div>
+          <div class="col-md-3">
+            <button mat-button class="btn btn-sm text-white shadow mt-2  float-right bg-theme2 text-white btn-focus-none"
+            routerLink="/command/create" *ngIf="authService.currentUser['role_id'] == 1"><i class="fas fa-plus"></i> Add Command</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover" matSort>
+          <thead class="point-8 cursor">
+            <tr>
+              <th scope="col" matColumnDef="gateway_name" mat-sort-header> Device Name</th>
+              <th scope="col" matColumnDef="dev_eui" mat-sort-header> EUI ID</th>
+              <th scope="col" matColumnDef="command_name" mat-sort-header> Command Name</th>
+              <th scope="col" matColumnDef="execution_mode" mat-sort-header> Execution Mode</th>
+              <th scope="col" matColumnDef="Action" mat-sort-header> Action</th>
+            </tr>
+          </thead>
+          <tbody class="point-8">
+            <tr *ngFor="let command of obs | async ; trackBy:trackById" >
+              <td> <ngb-highlight [result]="command.gateway_name" [term]="filter.value"></ngb-highlight></td>
+              <td><ngb-highlight [result]="command.dev_eui" [term]="filter.value"></ngb-highlight></td>
+              <td><ngb-highlight [result]="command.command_name" [term]="filter.value"></ngb-highlight></td>
+              <td><span class="badge badge-pill badge-primary" [ngClass]="{'badge-primary': command.execution_mode == 'On Demand', 'badge-info':command.execution_mode  == 'Scheduled' , 'badge-secondary':command.execution_mode == 'Rule Based' }">
+                   <ngb-highlight [result]="command.execution_mode" [term]="filter.value"></ngb-highlight></span></td>
+              <td>
+                <span  class="cursor" ngbTooltip="View" (click)="redirectToviewCommand(command)"><i class="fas fa-eye fa-lg text-theme" ></i></span>
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+        <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+          <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+              [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+        </ngx-skeleton-loader>
+        </div>
+
+        <div class="text-center mt-5" *ngIf="displaydata">
+          <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+          <small class="point-8 "> No Commands available to display !!</small>
+        </div>
+
+        <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError">
+          <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process your request please try after some time !!</small>
+        </div>
+
+        <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100]" *ngIf="commands.length !=0"></mat-paginator>
+
+      </div>
+
+  </div>
+
+
+</div>

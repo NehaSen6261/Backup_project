@@ -1,0 +1,55 @@
+.sidebar{
+    position:fixed;
+    min-width:60px;
+    font-size:1.0em;
+    background-color: #000410;
+    margin-top: -80px;
+  }
+
+  .sidebar a {
+    display:block;
+    color: $white;
+    padding:10px;
+    margin: 6px 0px;
+    text-decoration:none;
+  }
+  .sidebar a:hover{
+    background-color: #7283909e!important;
+    border-radius: 5px!important;
+  }
+
+  .side-li{
+    height: 45px;
+  }
+
+  .side-li-shadow{
+    background-color: #899ba1;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+
+
+
+  .sidebar_map a:hover{
+    background-color: #7283909e!important;
+    border-radius: 5px!important;
+  }
+
+.ngb_tooltip{
+  margin-left: -6px;
+}
+
+
+
+.favicon{
+  background-color: #FFDD00;
+  height: 55px;
+  width: 60px;
+  position: fixed;
+}
+
+.fvicon{
+  position: absolute;
+  left: 15px;
+  top: 13px;
+  width: 50%;
+}

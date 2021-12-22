@@ -1,0 +1,37 @@
+<div class="card border-0 card-midwidth">
+  <div class="card-header bg-transparent border-bottom">
+        <p class="float-left">Notifications</p>
+        <a class="float-right point-8 cursor"  routerLink="/notification">View all</a>
+        <!-- <p class="float-right point-8 text-primary mr-2 cursor ">Mark all as read</p> -->
+  </div>
+    <div class="card-block scroll-content">
+      <div class="text-center mt-5" *ngIf="no_notis">
+        <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+        <small class="point-8 "> No recent notifications available !!</small>
+      </div>
+
+      <div class=" align-items-center d-flex justify-content-center"  *ngIf="list_internalError">        
+        <span class="point-8 cursor"><i class="fas fa-exclamation-triangle text-warning mr-1"></i>  Unable to process your request !!</span>
+      </div>
+      <ul class="list-group" *ngFor="let notis of noti_lists" (click)="$event.stopPropagation()">
+        <li class="list-group-item point-8 bg-light">
+          <div class="row mt-2">
+            <div class="col-md-2 mt-2">
+              <span class="rounded-circle user_icon_badge" [ngClass]="{'info_icon': notis.event_name == 'Info','warning_icon': notis.event_name == 'Warning', 'critical_icon': notis.event_name == 'Critical'}">{{notis.event_name[0]}}</span>
+            </div>
+            <div class="col-md-10">
+              <p class="point-9 mb-n1 ml-n2">{{notis.sf_asset_name}} <span>
+                {{notis.sf_rule_data}}  alert value is  {{notis.sf_value}}  but live value is  {{notis.sf_live_value}},</span>
+               <span class="font-weight-bold text-uppercase point-8"  [ngClass]="{'text-info': notis.event_name == 'Info','text-warning': notis.event_name == 'Warning', 'text-danger': notis.event_name == 'Critical'}">&nbsp; {{notis.event_name}} NOTICE </span>  </p>
+            </div> 
+          </div> 
+          <div class="row ">
+            <div class="col-md-2"></div>
+            <div class="col-md-10 mb-n3">
+              <p class="ml-n2 mt-1"> <small class=" text-muted point-9 "><i class="far fa-comment-alt text-primary"></i>&nbsp; {{notis.received_on }}</small></p>
+            </div>
+            </div>
+        </li>
+      </ul>
+    </div>
+</div>

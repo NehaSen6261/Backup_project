@@ -1,0 +1,34 @@
+<div class="container-fluid maincontainer" >
+  <div class="row" style="height: 100vh;">
+<!-- First Half -->
+<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 order-xl-1 order-lg-1 order-md-2 order-sm-2 order-xs-2 p-0  info_area overlay">
+  <main-left-content></main-left-content>
+</div>
+
+   <!-- Second Half -->
+   <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 order-first order-xl-2 order-lg-2 order-md-1 order-sm-1 order-xs-1 bg-white login_area text-center ">
+      <div class="card bg-transparent border-0">
+             <div class="card-header bg-transparent border-0" style="margin-top: 160px;">
+              <img [src]="img_logo_color" width="240"  alt="SFactrix">
+             </div>
+             <div class="card-body">
+              <div class="align-items-center d-flex justify-content-center" >
+                <h6 class="text-danger display-2" >403</h6>
+            </div>
+            <div class="card-header bg-transparent border-0 d-flex justify-content-center">
+              <h6 class="text-danger h2" >This is a forbidden Area.</h6>
+            </div>
+            <small class="text-muted h6 d-flex justify-content-center" >
+                You don't have the access to page you are looking for.
+            </small>
+            <div class="align-items-center d-flex justify-content-center mt-5" >
+              <button type="button" class="btn btn-dark float-center" (click)="backloc()" >Back</button>
+          </div>
+             </div>
+
+      </div>
+   </div>
+ </div>
+ </div>
+
+

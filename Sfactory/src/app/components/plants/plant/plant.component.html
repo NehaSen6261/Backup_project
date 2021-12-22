@@ -1,0 +1,228 @@
+<ng-template #prevButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9 "><i class="fas fa-backward"></i></button>
+</ng-template>
+<ng-template #nextButton>
+<button type="button" class="btn bg-theme text-white shadow point-9" data-toggle="modal" data-target="#plant" (click)=" popup_title= 'Add Plant'; plant_view();"><i class="fas fa-forward"></i></button>
+</ng-template>
+<ng-template #doneButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9">Completed</button>
+</ng-template>
+<ng-template #addplant class="point-7">
+  Adding a Plant would represent the physical whole of an Organization within the virtual realm !
+</ng-template>
+<ng-template #viewplant class="point-7">
+  Viewing a Plant would represent the physical whole of an Organization within the virtual realm !
+</ng-template>
+
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+ 
+  <mat-icon class="mr-5 btn-focus-none cursor " ngbTooltip= "Back" placement="right" routerLink="/settings">arrow_back</mat-icon>
+  <div class="row mb-1">
+    <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12">
+        <mat-form-field appearance="outline"class="w-100 point-8">
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="filter" (keyup)="search($event)" placeholder="Search">
+        </mat-form-field>
+    </div>
+    <div class="col-xl-9 col-lg-8 col-md-12 col-sm-12"  *ngIf="this.authService.currentUser['role_id'] == 1  || this.authService.currentUser['role_id'] == 'MV1001' ">
+        <button type="button"class="btn btn-sm fullscreenbtn bg-theme text-white shadow mt-2 btn-focus-none float-right point-9"
+        joyrideStep="add_plant"
+        title="Add Plant"
+        [stepContent]="addplant"  
+        [prevTemplate]="prevButton"
+        [nextTemplate]="nextButton"
+        [doneTemplate]="doneButton"           
+        data-toggle="modal" data-target="#plant" (click)="cleardata(); popup_title= 'Add Plant'"  id="autoscroll"
+       ><i class="fas fa-plus"></i> Add Plant
+       </button>
+
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError">
+    <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process your request please try after some time !!</small>
+  </div>
+
+
+  <div class="text-center mt-5" *ngIf="no_plants">
+    <p><i class="fas fa-grip-horizontal mr-1 fa-3x opacity-point-3"></i></p>
+    <small class="point-8 "> No plants available to display !!</small>
+  </div>
+
+
+  <div class="d-flex justify-content-center mt-5 "  *ngIf="spinner">
+    <ngx-skeleton-loader  count="4" appearance="circle" animation="progress"
+          [theme]="{  width: '150px', height: '150px',   'border-radius': '10px' }">
+  </ngx-skeleton-loader>
+  </div>
+
+
+  <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 d-flex mb-3 " *ngFor="let plants of obs | async ;trackBy:trackById">
+            <div class="card flex-fill hover-shadow border-radius border_bottom">
+              <div  class="card-header bg-transparent ht-40">
+                <p class="point-9 float-left font-weight-bold">
+                  <ngb-highlight [result]="plants.sf_plant_name | titlecase" [term]="filter.value"></ngb-highlight> </p>
+                 <p class="float-right" (click)="plant_info(plants); popup_title= 'Edit Plant'  " ngbTooltip="Edit" data-toggle="modal" data-target="#plant" 
+               >
+                  <i class="far fa-edit text-theme-black cursor"  *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'MV1001' "></i>
+                </p>
+                <p class="float-right" ngbTooltip="View" data-toggle="modal" data-target="#plant"  
+                (click)="plant_info(plants); " >
+                  <i class="fas fa-eye fa-md text-theme-black cursor" *ngIf="authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 'PA1001'||authService.currentUser['role_id'] == 'PV1001'|| authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'WCV1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'ASV1001'"
+                  joyrideStep="view_plant"
+                  title="View Plant"
+                  [stepContent]="viewplant"  
+                  [prevTemplate]="prevButton"
+                  [nextTemplate]="nextButton"
+                  [doneTemplate]="doneButton"  ></i>
+                </p>
+              </div>
+                  <div class="card-body ">
+                    <p class="point-8"><span class="font-weight-bold"> Identifier:  </span>
+                      <ngb-highlight [result]="plants.sf_plant_identifier || 'NA' " [term]="filter.value"></ngb-highlight>
+                     </p>
+                    <p class="point-8"  style="margin-top: -10px;"><span class="font-weight-bold"> Operation:  </span>
+                       <ngb-highlight [result]="plants.sf_plant_operation" [term]="filter.value"></ngb-highlight>
+                      </p>
+                    <p class="point-8" style="margin-top: -10px;"><span class="font-weight-bold"> Location:  </span>
+
+                       <ngb-highlight [result]="plants.sf_plant_location" [term]="filter.value"></ngb-highlight>
+                       </p>
+                    <p class="point-8" style="margin-top: -10px;"><span class="font-weight-bold"> Monthly Capacity:  </span>
+                       <ngb-highlight [result]="plants.sf_plant_month_capacity" [term]="filter.value"></ngb-highlight>
+                    </p>
+                    <p class="point-8" style="margin-top: -10px;"><span class="font-weight-bold"> UoM:  </span>
+                      <ngb-highlight [result]="plants.sf_capacity_uom || 'NA'" [term]="filter.value"></ngb-highlight>
+                   </p>
+                    <p class="point-8 mb-n1" style="margin-top: -10px;"><span class="font-weight-bold"> Work Centers:  </span>
+                       <ngb-highlight [result]="plants.work_centers" [term]="filter.value"></ngb-highlight> &nbsp;<span *ngIf="plants.work_centers == 0 && (authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'MV1001')"><a  (click)="redirectWorkcenter()"  class="point-8 cursor">  Add Workcenter</a></span>
+                      </p>
+            </div>
+      </div>
+  </div>
+ </div>
+
+
+
+<!-- side panel  for Add and Edit Plant-->
+<div class="modal left fade" id="plant" tabindex="" role="dialog" aria-labelledby="plantLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
+  <div class="modal-dialog modal_general_popup" role="document">
+    <button type="button" class="btn text-white modal-close-btn cursor bg-sidebar" data-dismiss="modal"><span class="cursor"
+        aria-hidden="true">&times;</span></button>
+    <div class="modal-content">
+      <div class="modal-header bg-white">
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 1  || authService.currentUser['role_id'] == 'MV1001'" >{{popup_title}}</h5>
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 2  || authService.currentUser['role_id'] == 'PA1001'||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'WCV1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'ASV1001'" >View Plant</h5>
+
+      </div>
+      <div class="modal-body" style="overflow-y: auto;">
+        <!-- plant name -->
+        <mat-form-field  appearance="outline" class="w-100 point-8">
+          <mat-label>Plant Name</mat-label>
+          <input matInput maxlength="40" [formControl]="sf_plant_name" id="auto_trigger" required >
+          <mat-error *ngIf="sf_plant_name.invalid">{{UnitErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- Operation -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Operation</mat-label>
+          <input matInput maxlength="40" [formControl]="unit_operation" required>
+          <mat-error *ngIf="unit_operation.invalid">{{OperationErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- Capacity -->
+        <mat-form-field  appearance="outline" class="w-100 point-8">
+          <mat-label>Monthly capacity of production</mat-label>
+          <input matInput  maxlength="40" [formControl]="capacity" type="number" min="0" oninput="this.value=Math.abs(this.value)"  required>
+          <mat-error *ngIf="capacity.invalid">{{CapacityErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+          <!-- UOM -->
+          <mat-form-field  appearance="outline" class="w-100 point-8">
+          <mat-label>UoM</mat-label>
+          <input matInput  maxlength="10" [formControl]="uom"  >
+          <mat-error *ngIf="uom.invalid">{{UOMErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- location -->
+        <mat-form-field  appearance="outline" class="w-100 point-8">
+          <mat-label>Location</mat-label>
+          <input matInput maxlength="40" [formControl]="location" required>
+          <mat-error *ngIf="location.invalid">{{LocationErrorMessages()}}</mat-error>
+        </mat-form-field>
+        <!-- Time Zone -->
+        <mat-form-field appearance="outline" class="w-100 point-8" >
+          <mat-label>Time Zone</mat-label>
+          <mat-select [formControl]="t_zone" required>
+            <div class="fixed_search">
+              <input type="text" class="form-control" [(ngModel)]="filter_tzone" placeholder="Search">
+              </div>
+            <mat-option  *ngFor="let timezone of time_zone_list | filter:filter_tzone;"  [value]="timezone.value">
+              {{timezone.label}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="t_zone.invalid">{{timeZoneerror()}}</mat-error>
+        </mat-form-field>
+        <!-- latitude -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Latitude</mat-label>
+          <input matInput maxlength="40" [formControl]="latitude">
+          <mat-error *ngIf="latitude.invalid">{{LatitudeErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- Longitude -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Longitude</mat-label>
+          <input matInput maxlength="40"  [formControl]="longitude">
+          <mat-error *ngIf="longitude.invalid">{{LongitudeErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+      
+      </div>
+      <div class="modal-footer footer_btn w-100"  *ngIf=" popup_title== 'Add Plant' && (authService.currentUser['role_id'] == 1  || authService.currentUser['role_id'] == 'MV1001')" [hidden]="!addplant" >
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-clear point-9 mr-1"  (click)="cleardata()"><i class="fas fa-undo" ></i> Clear</button>
+        <button type="submit" *ngIf="!disabled_enable_button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" [disabled]="disabled_enable_button"  (click)="saveplant()" 
+       ><i class="far fa-check-circle" ></i> Submit</button>
+        <button class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  type="button" disabled *ngIf="disabled_enable_button" >
+         <i class="fas fa-spinner fa-pulse"></i> Loading
+        </button>
+    </div>
+    <div class="modal-footer footer_btn w-100" *ngIf="popup_title== 'Edit Plant' &&  (authService.currentUser['role_id'] == 1  || authService.currentUser['role_id'] == 'MV1001') "   [hidden]="!addplant">
+      <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-delete point-9 mr-1" data-toggle="modal" data-target="#exampleModalCenter" data-dismiss="modal"   
+      > <i class="fas fa-trash-alt"></i> Delete</button>
+      <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  (click)="updatePlant()" ><i class="far fa-check-circle"></i>  Update</button>
+  </div>
+  <div class="modal-footer footer_btn w-100" *ngIf="authService.currentUser['role_id'] == 2  || authService.currentUser['role_id'] == 'PA1001'||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'WCV1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'ASV1001'">
+    <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" data-dismiss="modal"><i class="fas fa-times"></i>   Close</button>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Delete plant Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog " role="document">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header bg-white">
+        <h6 class="modal-title" id="exampleModalLongTitle">Delete</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-9">
+        Are you sure to delete <span class="text-danger">{{sf_plant_name.value}}</span> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-yes point-8" data-dismiss="modal" (click)="deletePlant()" ><i class="fas fa-check"></i> Yes</button>
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-no point-8" data-dismiss="modal" data-toggle="modal" data-target="#plant"><i class="fas fa-times"></i> No</button>
+      </div>
+    </div>
+  </div>
+</div>

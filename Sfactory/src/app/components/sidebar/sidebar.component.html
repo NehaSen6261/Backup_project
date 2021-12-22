@@ -1,0 +1,147 @@
+<div class="sidebar d-flex align-items-start flex-column bd-highlight h-100">
+
+    <div class="align-self-start favicon">
+      <img [src]="imagePathLogo" class="img-fluid cursor btn-focus-none fvicon" height="25" width="25" ngbTooltip= "SFactrix" placement="right" container="body" [routerLink]='logo_route'>
+    </div>
+
+    <div class="mb-auto mt-5 p-2 bd-highlight">
+    <ul class="list-unstyled components" *ngIf="authService.currentUser['role_id'] != 'JB1001'">
+      <!-- Dashboard -->
+      <li class="rounded btn-focus-none side-li mt-2" *ngIf="authService.currentUser['role_id']  != 'PA1001' && authService.currentUser['role_id']  != 'PV1001'"
+      [class.side-li-shadow] = "currentLocation == '/dashboard'" >
+        <a mat-list-item ngbTooltip= "Dashboard" placement="right" container="body" tooltipClass="ngb_tooltip"  routerLink='/dashboard'>
+            <img [src]="imagePathDashboard" height="20" width="24">
+          </a>
+      </li>
+     <!-- Plant Dashboard -->
+      <li class="rounded btn-focus-none side-li mt-2" *ngIf="authService.currentUser['role_id']  == 'PA1001'|| authService.currentUser['role_id']  == 'PV1001'" [class.side-li-shadow] = "currentLocation == '/plantdashboard'" >
+        <a mat-list-item ngbTooltip= "Dashboard" placement="right" container="body" tooltipClass="ngb_tooltip"  routerLink='/plantdashboard'>
+            <img [src]="imagePathDashboard" height="20" width="24">
+          </a>
+      </li>
+      <!-- Metrics -->
+      <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/asset/metrics'" >
+        <a mat-list-item  tooltipClass="ngb_tooltip" ngbTooltip= "Metrics" placement="right" container="body"  routerLink='/asset/metrics'>
+            <img [src]="imagePathMetrics" height="20" width="18"  style="margin-left: 2px;">
+          </a>
+      </li> 
+ 
+           <!-- work order -->
+           <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/workorders'">
+            <a mat-list-item tooltipClass="ngb_tooltip"  ngbTooltip= "Work Orders" placement="right" container="body"  routerLink='/workorders' >
+            <img [src]="imagePathWorkorder" height="20" width="20" style="margin-left: 2px;">
+          </a>
+          </li>
+
+      <!-- jobs -->
+      <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/jobs'">
+        <a mat-list-item tooltipClass="ngb_tooltip"  ngbTooltip= "Jobs" placement="right" container="body"  routerLink='/jobs' >
+        <img [src]="imagePathJobs" height="20" width="20" style="margin-left: 2px;">
+      </a>
+      </li>
+        <!-- Parts -->
+        <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/parts'">
+          <a mat-list-item tooltipClass="ngb_tooltip"  ngbTooltip= "Part / Item" placement="right" container="body"  routerLink='/parts' >
+          <img [src]="imagePathPart" alt="" height="20" width="20" style="margin-left: 2px;">
+        </a>
+        </li>
+
+      <!-- Business Rules -->
+      <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/rules'">
+        <a mat-list-item tooltipClass="ngb_tooltip"  ngbTooltip= "Rules" placement="right" container="body"  routerLink='/rules' >
+        <img [src]="imagePathAssestRule"  height="20" width="20" style="margin-left: 2px;">
+      </a>
+      </li>
+     <!-- maintenance log -->
+     <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/maintenancelog'">
+      <a mat-list-item tooltipClass="ngb_tooltip" ngbTooltip= "Maintenance" placement="right" container="body" routerLink='/maintenancelog' >
+      <img [src]="imagePathMaintenance" height="22" width="22" style="margin-left: 2px;">
+    </a>
+    </li>
+
+     <!-- Reports -->
+     <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/reports'">
+      <a mat-list-item tooltipClass="ngb_tooltip" ngbTooltip= "Reports" placement="right" container="body" routerLink='/reports' >
+      <img [src]="imagePathReport" height="22" width="22" style="margin-left: 2px;">
+    </a>
+    </li>
+
+     <!-- settings -->
+        <li class="rounded btn-focus-none side-li"
+            [class.side-li-shadow] = "currentLocation == '/settings' || currentLocation == '/plant'  || currentLocation == '/workcenter'
+            || currentLocation == '/asset' || currentLocation == '/devicedeployment'  || currentLocation == '/guest'  || currentLocation == '/guest/create'
+            || currentLocation == '/guest/edit' || currentLocation == '/users' || currentLocation == '/customer' ||
+             currentLocation == '/userprofile' || currentLocation == '/command'
+            || currentLocation == '/command/create'  || currentLocation == '/command/info'  || currentLocation == '/activitylogs'
+            || currentLocation == '/notification' || currentLocation == '/datarules'|| currentLocation == '/datarules/create'
+            || currentLocation =='/datarules/view' || currentLocation == '/devices' || currentLocation == '/notification' ">
+          <a mat-list-item tooltipClass="ngb_tooltip"  ngbTooltip= "Settings" placement="right" container="body" routerLink='/settings' >
+            <img [src]="imagePathSetting" alt="" height="20" width="20" style="margin-left: 2px;">
+          </a>
+        </li>
+
+    </ul>
+
+    <!-- Job operator  -->
+
+    <ul class="list-unstyled components" *ngIf="authService.currentUser['role_id'] == 'JB1001'">
+
+          <!-- jobs -->
+      <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/jobs'">
+         <a mat-list-item tooltipClass="ngb_tooltip"  ngbTooltip= "My Jobs" placement="right" container="body"  routerLink='/jobs' >
+            <img [src]="imagePathJobs" alt="" height="20" width="20" style="margin-left: 2px;">
+          </a>
+      </li>
+      <!-- Controls -->
+      <li class="rounded btn-focus-none side-li mt-2" [class.side-li-shadow] = "currentLocation == 'logo_route'" >
+        <a mat-list-item ngbTooltip="Controls " placement="right" container="body" tooltipClass="ngb_tooltip" [routerLink]='logo_route'>
+            <img [src]="imagePathDashboard" height="20" width="24">
+          </a>
+      </li>
+      <!-- Parts -->
+      <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/parts'">
+        <a mat-list-item tooltipClass="ngb_tooltip"  ngbTooltip= "Part / Item" placement="right" container="body"  routerLink='/parts' >
+        <img [src]="imagePathPart" alt="" height="20" width="20" style="margin-left: 2px;">
+      </a>
+      </li>
+         <!-- maintenance log -->
+         <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/maintenancelog'">
+          <a mat-list-item tooltipClass="ngb_tooltip" ngbTooltip= "Maintenance" placement="right" container="body" routerLink='/maintenancelog' >
+          <img [src]="imagePathMaintenance" height="22" width="22" style="margin-left: 2px;">
+        </a>
+        </li>
+        <!-- Metrics -->
+        <li class="rounded btn-focus-none side-li" [class.side-li-shadow] = "currentLocation == '/asset/metrics'" >
+          <a mat-list-item  tooltipClass="ngb_tooltip" ngbTooltip= "Performance Metrics" placement="right" container="body" routerLink='/asset/metrics'>
+              <img [src]="imagePathMetrics" height="20" width="18" style="margin-left: 2px;">
+            </a>
+        </li>
+
+    </ul>
+
+
+  </div>
+  <div class="p-2 bd-highlight">
+    <ul class="list-unstyled components">
+      <li class="rounded btn-focus-none side-li">
+      <div ngbDropdown container="body" class="border-radius-point5 cursor"  placement="top-left" style="margin-left: 10px;">
+        <img [src]="question_mark" alt="" height="20" width="20" ngbDropdownToggle>
+        <div ngbDropdownMenu class="ml-5 mb-n3" style="margin-left: -10px;">
+          <button ngbDropdownItem class="point-7"><a href="https://factana.com/privacy-policy/" target="_blank" class=" text-dark">Privacy policy</a> </button>
+          <button ngbDropdownItem class="point-7"><a href="https://fogwing.io/terms-and-conditions/" target="_blank" class=" text-dark">Terms & Conditions</a></button>
+          <button ngbDropdownItem class="point-7"><a href="https://factana.freshdesk.com/support/login" target="_blank" class=" text-dark">Support</a></button>          
+          <button ngbDropdownItem class="point-7"><a href="https://www.fogwing.io/smart-factory/" target="_blank" class=" text-dark">About us</a></button>
+          <div class="dropdown-divider"></div>
+          <a ngbDropdownItem  class="point-6">Version 1.10</a>
+        </div>
+
+      </div>
+    </li>
+   </ul>
+
+</div>
+
+</div>
+
+
+

@@ -1,0 +1,152 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+
+  <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+          <div class="card flex-fill border-radius-point5">
+              <div class="card-body">
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                  <mat-label>Choose a plant</mat-label>
+                  <mat-select [formControl]="plant" required>
+                    <mat-option *ngFor="let plant of plants" [value]="plant.sf_plant_id" (click)="getplantWorkcenters(plant.sf_plant_id)">
+                      {{plant.sf_plant_name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="plant.invalid">{{PlantMessages()}}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                  <mat-label *ngIf="plant_workcenters.length != 0">Choose a work center</mat-label>
+                  <mat-label *ngIf="plant_workcenters.length == 0">No work center available</mat-label>
+                  <mat-select [formControl]="work_center" required>
+                    <mat-option *ngFor="let workcenter of plant_workcenters" [value]="workcenter.sf_work_centre_id" (click)="getAssets(workcenter.sf_work_centre_id)">
+                      {{workcenter.sf_work_centre_name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="work_center.invalid">{{WCMessages()}}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                  <mat-label *ngIf="assets_list.length != 0">Choose a asset</mat-label>
+                  <mat-label *ngIf="assets_list.length == 0">No assets available</mat-label>
+                  <mat-select [formControl]="assets" required>
+                    <mat-option *ngFor="let asset of assets_list" [value]="asset.sf_asset_id" (click)="getAssetDeviceList(asset.sf_asset_id)">
+                      {{asset.sf_asset_code}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="assets.invalid">{{AssetsMessages()}}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                  <mat-label *ngIf="dev_list.length != 0">Choose a target  device</mat-label>
+                  <mat-label *ngIf="dev_list.length == 0">No device available</mat-label>
+                  <mat-select [formControl]="devices" required>
+                    <mat-option *ngFor="let device of dev_list" [value]="device.sf_asset_id" (click)="captureclientID(device)" >
+                      {{device.sf_device_name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="devices.invalid ">{{DevicesErrorMessages()}}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field  appearance="outline" class="w-100 point-8">
+                  <mat-label>Command Name</mat-label>
+                  <input matInput  maxlength="40" [formControl]="command_name" required>
+                  <mat-error *ngIf="command_name.invalid">{{InputErrorMessages()}}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                  <mat-label>Command Payload</mat-label>
+                  <textarea matInput [formControl]="command_payload" required></textarea>
+                  <mat-error *ngIf="command_payload.invalid">{{InputErrorMessages()}}</mat-error>
+                </mat-form-field>
+               <h6 class="point-7 text-secondary mt-n3">Command should be in JSON format</h6>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+        <div class="card flex-fill border-radius-point5 ">
+          <div class="card-body">
+            <mat-form-field appearance="outline" class="w-100 point-8">
+              <mat-label>Execution Mode</mat-label>
+              <mat-select [formControl]="execution_mode" (selectionChange)="onSelecetionChange($event.value)" required>
+                <mat-option *ngFor="let exe_mode of executionMode" [value]="exe_mode.name">
+                  {{exe_mode.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="work_center.invalid">{{PlantMessages()}}</mat-error>
+            </mat-form-field>
+
+              <p>Frequency</p>
+              <div class="row">
+                    <div class="col-xl-6 col-lg-12 col-md-12  col-sm-12">
+                        <div class="d-flex flex-row point-8 mb-sm-4">
+                              <mat-checkbox  [formControl]="dailyCheck" [checked]="dailyCheck.value"  (change)="checkboxChangedaily($event)" color="primary"> Daily</mat-checkbox>
+                              <mat-checkbox class="ml-5" [formControl]="weeklyCheck" [checked]="weeklyCheck.value" (change)="checkboxChangeweekly($event)" color="primary"> Weekly</mat-checkbox>
+                              <mat-checkbox class="ml-5" [formControl]="monthlyCheck" [checked]="monthlyCheck.value" (change)="checkboxChangemonthly($event)" color="primary"> Monthly</mat-checkbox>
+                          </div>
+                        </div>
+                     <div class="col-xl-6 col-lg-12 col-md-12  col-sm-12">
+                        <mat-form-field appearance="outline"class="w-100 point-8 mt-n3 ml-3 " *ngIf="weekly == true">
+                            <mat-label>Choose a week day</mat-label>
+                           <mat-select [formControl]="week_day">
+                            <mat-option *ngFor="let weekdays of week_Days" [value]="weekdays" >{{weekdays.nameOfday}}</mat-option>
+                           </mat-select>
+                         </mat-form-field>
+                        <mat-form-field appearance="outline"class="w-100 point-8 mt-n3  ml-3 " *ngIf="monthly == true">
+                              <mat-label>Choose a day</mat-label>
+                              <mat-select [formControl]="month_date">
+                                <mat-option  *ngFor="let day of listofdays" [value]="day">{{day}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                       </div>
+                  </div>
+              <div class="separator separator-dashed mb-2"></div>
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field  appearance="outline" class="w-100 point-8">
+                    <mat-label>Start date</mat-label>
+                    <input matInput [matDatepicker]="picker1" [formControl]="start_date" required  [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field  appearance="outline" class="w-100 point-8">
+                    <mat-label>End Date</mat-label>
+                    <input matInput [matDatepicker]="picker2" [formControl]="end_date" required  [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="separator separator-dashed mb-2"></div>
+              <div class="row mb-2">
+                  <div class="col-md">
+                    <p class="point-8">Start time</p>
+                    <ngb-timepicker [formControl]="start_time"  class="mt-n3" required ></ngb-timepicker>
+                  </div>
+                  <div class="col-md">
+                    <p class="point-8">End time</p>
+                    <ngb-timepicker [formControl]="end_time"   class="mt-n3" (click) = "savebtndisabled = true" required></ngb-timepicker>
+                  </div>
+              </div>
+              <div class="separator separator-dashed mb-2"></div>
+              <small class="text-muted point-7">* Please choose date and time in UTC format.</small><br>
+              <small class="text-muted point-7">* The Command will be excecuted only between start and end time.</small>
+          </div>
+          <div class="card-body border-0 bg-transparent">
+            <div class="row">
+              <div class="col">
+              <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-back point-9 mb-2 mb-sm-0 mr-2" routerLink="/command"><i class="fas fa-backward"></i> Back</button>
+              <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-clear point-9 mr-1 mb-2 mb-sm-0" (click)="clear();"><i class="fas fa-undo"></i> Clear</button>
+              <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" (click)="postaddCommand()" [disabled]="!savebtndisabled"  ><i class="far fa-check-circle"></i>  Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+</div>

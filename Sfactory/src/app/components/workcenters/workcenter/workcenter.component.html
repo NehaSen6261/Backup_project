@@ -1,0 +1,461 @@
+<ng-template #prevButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9 "><i class="fas fa-backward"></i></button>
+</ng-template>
+<ng-template #nextButton>
+<button type="button" class="btn bg-theme text-white shadow point-9" data-toggle="modal" data-target="#workcenter" (click)="popup_title= 'Add Work Center'; workcenter_view();"><i class="fas fa-forward"></i></button>
+</ng-template>
+<ng-template #doneButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9">Completed</button>
+  </ng-template>
+<ng-template #addwrkcenter class="point-7">
+  Work Center feature helps manage the various departments / divisions under a Plant !
+</ng-template>
+<ng-template #view_wrkcenter class="point-7" >
+  Work Center feature helps manage the various departments / divisions under a Plant !
+</ng-template>
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor"  ngbTooltip= "Back" placement="right"  routerLink="/settings">arrow_back</mat-icon>
+      <div class="row mb-1">
+        <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12">
+            <mat-form-field appearance="outline"class="w-100 point-8">
+            <mat-label>Search</mat-label>
+            <input matInput (keyup)="search($event)" [formControl]="filter" placeholder="Search">
+            </mat-form-field>
+        </div>
+        <div class="col-xl-9 col-lg-8 col-md-12 col-sm-12" *ngIf="addbutton">
+          <button type="button"class="btn btn-sm fullscreenbtn bg-theme text-white shadow mt-2 btn-focus-none float-right point-9"
+          data-toggle="modal" data-target="#workcenter" (click)="cleardata();popup_title='Add Work Center'" id="autoscroll"
+          joyrideStep="addwrkcenter"
+          title="Add Work Center"
+          [stepContent]="addwrkcenter"  
+          [prevTemplate]="prevButton"
+          [nextTemplate]="nextButton"
+          [doneTemplate]="doneButton"          
+          ><i class="fas fa-plus"></i> Add Work Center </button>
+
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+        <ngx-skeleton-loader  count="04" appearance="circle" animation="progress"
+           [theme]="{  width: '150px', height: '150px',   'border-radius': '10px' }">
+       </ngx-skeleton-loader>
+      </div>
+
+      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError">
+        <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your request please try after some time !!</small>
+      </div>
+
+      <div class="text-center mt-5" *ngIf="no_work_centers">
+        <p><i class="fas fa-grip-horizontal mr-1 fa-3x opacity-point-3"></i></p>
+        <small class="point-8 "> No work centers available  to display !!</small>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 d-flex mb-3" *ngFor="let workcenter of obs | async;index as i ; trackBy:trackById">
+              <div class="card flex-fill hover-shadow borderdesign  border_bottom">
+                <div  class="card-header bg-transparent ht-40" >
+                  <p class="point-9 float-left font-weight-bold">
+                    <ngb-highlight [result]="workcenter.sf_work_centre_name | titlecase" [term]="filter.value"></ngb-highlight> </p>
+                   <p class="float-right"  data-toggle="modal" data-target="#workcenter" (click)="popup_title='Edit Work Center';workcenterInfo(workcenter)" 
+                
+                  ngbTooltip="Edit">
+                    <i class="far fa-edit text-theme cursor"  *ngIf="authService.currentUser['role_id'] == 1 ||authService.currentUser['role_id'] == 'PA1001'|| authService.currentUser['role_id'] == 'MV1001' "></i>
+                  </p>
+                  <p class="float-right" ngbTooltip="View" data-toggle="modal" data-target="#workcenter" 
+                  (click)="workcenterInfo(workcenter);popup_title ='View Work Center';disable_shifthours()"  >
+                    <i class="fas fa-eye fa-md text-theme cursor"  joyrideStep="viewwrkcenter"
+                    title="View Work Center"
+                    [stepContent]="view_wrkcenter"  
+                    [prevTemplate]="prevButton"
+                    [nextTemplate]="nextButton"
+                    [doneTemplate]="doneButton"  *ngIf="authService.currentUser['role_id'] == 2  || authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'WCV1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'ASV1001' "></i>
+                  </p>
+                </div>
+                    <div class="card-body ">
+                      <p class="point-8"><span class="font-weight-bold"> Identifier:  </span>
+                        <ngb-highlight [result]="workcenter.sf_workcenter_identifier || 'NA' " [term]="filter.value"></ngb-highlight>
+                       </p>
+                      <p class="point-8  mt-n2"><span class="font-weight-bold"> Operation:  </span>
+                         <ngb-highlight [result]="workcenter.sf_work_centre_operation" [term]="filter.value"></ngb-highlight>
+                        </p>
+                      <p class="point-8  mt-n2 " ><span class="font-weight-bold"> Assets available:  </span>
+                         <ngb-highlight [result]="workcenter.no_of_asset_associated" [term]="filter.value"></ngb-highlight> &nbsp;<span [hidden]="!addbutton" *ngIf="workcenter.no_of_asset_associated == 0 && (authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'MV1001')"><a  (click)="redirectAsset()"  class="point-8 cursor"
+                       >  Add Asset</a></span>
+                         </p>
+                      <p class="point-8  mt-n2"><span class="font-weight-bold"> Monthly Capacity:  </span>
+                         <ngb-highlight [result]="workcenter.sf_work_centre_capacity" [term]="filter.value"></ngb-highlight>
+                      </p>
+                      <p class="point-8 mt-n2"><span class="font-weight-bold"> UoM: </span>
+                        <ngb-highlight [result]="workcenter.sf_capacity_uom || 'NA' " [term]="filter.value"></ngb-highlight>
+                      </p>
+                      <p class="point-8  mt-n2"><span class="font-weight-bold"> Plant name:  </span>
+                        <ngb-highlight [result]="workcenter.sf_plant_name" [term]="filter.value"></ngb-highlight>
+                       </p>
+                       <p class="point-8  mt-n2 mb-n1"><span class="font-weight-bold"> Time Zone:  </span>
+                        <ngb-highlight [result]="workcenter.plant_tzone" [term]="filter.value"></ngb-highlight>
+                       </p>
+              </div>
+        </div>
+    </div>
+   </div>
+</div>
+
+
+
+<!-- side panel  for Add and Edit workcenter-->
+<div class="modal left fade" id="workcenter" tabindex="" role="dialog" aria-labelledby="workcenterLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal_general_popup" role="document">
+    <button  type="button" class="btn text-white modal-close-btn cursor bg-sidebar" data-dismiss="modal"><span class="cursor"
+        aria-hidden="true" (click)="cleardata()">&times;</span>
+      </button>
+    <div class="modal-content">
+      <div class="modal-header bg-white">
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'MV1001'">{{popup_title}}</h5>
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 2  || authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'WCV1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'ASV1001' ">View Work Center</h5>
+
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto;">
+
+        <!-- Plants dropdown -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Choose a Plant</mat-label>
+          <mat-select [formControl]="sf_plant_name"  required  id="triger">
+            <mat-option *ngFor="let plant of plants" [value]="plant.sf_plant_id" (click)="getTimezonePlantId(plant.sf_plant_id)">
+              {{plant.sf_plant_name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="sf_plant_name.invalid">{{UnitErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- workcenter name -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Work center name</mat-label>
+          <input matInput maxlength="40" [formControl]="work_center_name" required>
+          <mat-error *ngIf="work_center_name.invalid">{{WcNameErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- capacity -->
+        <mat-form-field  appearance="outline" class="w-100 point-8">
+          <mat-label>Capacity</mat-label>
+          <input matInput  maxlength="40" [formControl]="capacity" type="number" min="0" oninput="this.value = Math.abs(this.value)" required>
+          <mat-error *ngIf="capacity.invalid">{{CapacityErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- UOM -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>UoM</mat-label>
+          <input matInput maxlength="10" [formControl]="uom">
+          <mat-error *ngIf="uom.invalid">{{UOMErrorMessages()}}</mat-error>
+        </mat-form-field>
+
+        <!-- operation -->
+          <mat-form-field  appearance="outline" class="w-100 point-8">
+            <mat-label>Operation</mat-label>
+            <input matInput maxlength="40" [formControl]="operation" required>
+            <mat-error *ngIf="operation.invalid">{{OperationErrorMessages()}}</mat-error>
+          </mat-form-field>
+
+           <!-- Plant time zone -->
+          <mat-form-field appearance="outline" class="w-100 point-8" >
+            <mat-label>Time Zone</mat-label>
+            <input matInput maxlength="40" [formControl]="t_zone" >
+          </mat-form-field>
+          
+        
+          <!-- SHIFT Hours Calculation -->
+          <div class="card border-radius-point5">
+            <div class="card-header ht-40">
+              <p class="float-left point-9">Shift Hours</p>
+            </div>
+            <div class="card-boody">
+              <!-- top section -->
+           <div class="row">
+              <div class="col-md-8">               
+               <div class="margintoggle mb-2 ml-3 point-9">
+                 <mat-button-toggle-group (change)="onChange($event)" [value]="weekDays" [formControl]="days_week" [attr.disabled]="week_btn" multiple>
+                  <mat-button-toggle value="sun" ngbTooltip="Sunday" placement="right">S</mat-button-toggle>
+                  <mat-button-toggle value="mon" ngbTooltip="Monday" placement="right">M</mat-button-toggle>
+                  <mat-button-toggle value="tue" ngbTooltip="Tuesday" placement="right">T</mat-button-toggle>
+                  <mat-button-toggle value="wed" ngbTooltip="Wednesday" placement="right">W</mat-button-toggle>
+                  <mat-button-toggle value="thu" ngbTooltip="Thursday" placement="left">T</mat-button-toggle>
+                  <mat-button-toggle value="fri" ngbTooltip="Friday" placement="left">F</mat-button-toggle>
+                  <mat-button-toggle value="sat" ngbTooltip="Saturday" placement="left">S</mat-button-toggle>
+                </mat-button-toggle-group>
+                </div>   
+
+              </div>
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100 point-8 float-left mt-2">
+                    <mat-label>Choose no of Shifts</mat-label>
+                    <mat-select [formControl]="number_of_shifts" (selectionChange)="onChangeShifts($event)" required >
+                      <mat-option *ngFor="let shift of Shifts_list" [value]="shift.value" >
+                        {{shift.viewValue}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="number_of_shifts.invalid">{{numberOfShifts()}}</mat-error>
+                  </mat-form-field>
+                </div>
+              </div> 
+
+              <!-- below section -->
+              <div class="row" *ngIf="shift_1">                  
+                  <div class="col-md-2"><p class="point-8 mt-3 float-right">Shift-1</p></div>
+                  <div class="col-md-2">
+                    <mat-form-field appearance="outline" class="w-100 point-8">
+                      <mat-label>HH</mat-label>
+                      <mat-select panelClass="max-height" [formControl]="shift_1_start_hour" required>
+                        <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                          {{hours.viewValue}}
+                        </mat-option>                       
+                      </mat-select>
+                      <mat-error  class="max_wid" *ngIf="shift_1_start_hour.invalid">Fill hours field!!</mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-2">
+                    <mat-form-field appearance="outline" class="w-100 point-8">
+                      <mat-label>MM</mat-label>
+                      <mat-select  panelClass="max-height" [formControl]="shift_1_start_time" required>
+                        <mat-option *ngFor="let min of shift_min" [value]="min.value" >
+                            {{min.viewValue}}
+                          </mat-option>    
+                      </mat-select>
+                      <mat-error class="max_wid"  *ngIf="shift_1_start_time.invalid">Fill time field!!</mat-error>
+                   
+                  </mat-form-field>
+                  </div>
+
+                  <div class="col-md-2"><p class="point-8 mt-3">To</p></div>
+                  <div class="col-md-2">
+                    <mat-form-field appearance="outline" class="w-100 point-8 float-left">
+                      <mat-label>HH</mat-label>
+                      <mat-select  panelClass="max-height" [formControl]="shift_1_end_hour"  required>                      
+                        <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                          {{hours.viewValue}}
+                        </mat-option>                         
+                      </mat-select>
+                      <mat-error class="max_wid"  *ngIf="shift_1_end_hour.invalid">Fill hours field!!</mat-error>
+                   
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-2">
+                    <mat-form-field appearance="outline" class="w-100 point-8">
+                      <mat-label>MM</mat-label>
+                      <mat-select [formControl]="shift_1_end_time"  panelClass="max-height" required>
+                        <mat-option *ngFor="let min of shift_min" [value]="min.value">
+                          {{min.viewValue}}
+                        </mat-option>    
+                    </mat-select>
+                      <mat-error class="max_wid" *ngIf="shift_1_end_time.invalid">Fill hours field!! !!</mat-error>
+                   
+                  </mat-form-field>
+                  </div>
+              </div>
+              <div class="row" *ngIf="shift_2">                  
+                <div class="col-md-2"><p class="point-8 mt-3 float-right">Shift-2</p></div>
+                <div class="col-md-2">
+                  <mat-form-field appearance="outline" class="w-100 point-8 float-left">
+                    <mat-label>HH</mat-label>
+                    <mat-select [formControl]="shift_2_start_hour"  panelClass="max-height"  required>
+                      <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                        {{hours.viewValue}}
+                      </mat-option>                       
+                    </mat-select>
+                    <mat-error class="max_wid" *ngIf="shift_2_start_hour.invalid">Fill hours field!! !!</mat-error>
+                   
+                  </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>MM</mat-label>
+                    <mat-select [formControl]="shift_2_start_time"  panelClass="max-height"  required>
+                      <mat-option *ngFor="let min of shift_min" [value]="min.value">
+                        {{min.viewValue}}
+                      </mat-option>    
+                  </mat-select>
+                    <mat-error class="max_wid" *ngIf="shift_2_start_time.invalid">Fill time field!! !!</mat-error>
+                   
+                </mat-form-field>
+                </div>
+
+                <div class="col-md-2"><p class="point-8 mt-3 float-left">To</p></div>
+                <div class="col-md-2">
+                  <mat-form-field appearance="outline" class="w-100 point-8 float-left">
+                    <mat-label>HH</mat-label>
+                    <mat-select [formControl]="shift_2_end_hour"  panelClass="max-height"  required>                      
+                      <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                        {{hours.viewValue}}
+                      </mat-option>                       
+                    </mat-select>
+                    <mat-error class="max_wid" *ngIf="shift_2_end_hour.invalid">Fill hours field!! !!</mat-error>
+                   
+                  </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>MM</mat-label>
+                    <mat-select [formControl]="shift_2_end_time"   panelClass="max-height" required>
+                      <mat-option *ngFor="let min of shift_min" [value]="min.value">
+                        {{min.viewValue}}
+                      </mat-option>    
+                  </mat-select>
+                    <mat-error class="max_wid" *ngIf="shift_2_end_time.invalid">Fill time field!! !!</mat-error>
+                   
+                </mat-form-field>
+                </div>
+            </div>
+            <div class="row" *ngIf="shift_3">                  
+              <div class="col-md-2"><p class="point-8 mt-3 float-right">Shift-3</p></div>
+              <div class="col-md-2">
+                <mat-form-field appearance="outline" class="w-100 point-8 float-left">
+                  <mat-label>HH</mat-label>
+                  <mat-select [formControl]="shift_3_start_hour"  panelClass="max-height"  required>
+                    <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                      {{hours.viewValue}}
+                    </mat-option>                       
+                  </mat-select>
+                  <mat-error class="max_wid" *ngIf="shift_3_start_hour.invalid">Fill hours field!! !!</mat-error>
+                   
+                </mat-form-field>
+              </div>
+              <div class="col-md-2">
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                  <mat-label>MM</mat-label>
+                  <mat-select [formControl]="shift_3_start_time"  panelClass="max-height"  required>
+                    <mat-option *ngFor="let min of shift_min" [value]="min.value">
+                      {{min.viewValue}}
+                    </mat-option>    
+                </mat-select>
+                  <mat-error class="max_wid" *ngIf="shift_3_start_time.invalid">Fill time field!! !!</mat-error>
+                   
+              </mat-form-field>
+              </div>
+
+              <div class="col-md-2"><p class="point-8 mt-3 float-left">To</p></div>
+              <div class="col-md-2">
+                <mat-form-field appearance="outline" class="w-100 point-8 float-left">
+                  <mat-label>HH</mat-label>
+                  <mat-select [formControl]="shift_3_end_hour"  panelClass="max-height"  required>                      
+                    <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                      {{hours.viewValue}}
+                    </mat-option>                     
+                  </mat-select>
+                  <mat-error class="max_wid" *ngIf="shift_3_end_hour.invalid">Fill hours field!! !!</mat-error>
+                   
+                </mat-form-field>
+              </div>
+              <div class="col-md-2">
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                  <mat-label>MM</mat-label>
+                  <mat-select [formControl]="shift_3_end_time"  panelClass="max-height" required>
+                    <mat-option *ngFor="let min of shift_min" [value]="min.value">
+                      {{min.viewValue}}
+                    </mat-option>    
+                </mat-select>
+                  <mat-error class="max_wid" *ngIf="shift_3_end_time.invalid">Fill time field!! !!</mat-error>
+                   </mat-form-field>
+              </div>
+          </div>
+          <div class="row" *ngIf="shift_4">                  
+            <div class="col-md-2"><p class="point-8 mt-3 float-right">Shift-4</p></div>
+            <div class="col-md-2">
+              <mat-form-field appearance="outline" class="w-100 point-8 float-left">
+                <mat-label>HH</mat-label>
+                <mat-select [formControl]="shift_4_start_hour"  panelClass="max-height" required>
+                  <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                    {{hours.viewValue}}
+                  </mat-option>                       
+                </mat-select>
+                <mat-error class="max_wid" *ngIf="shift_4_start_hour.invalid">Fill hours field!! !!</mat-error>
+                  
+              </mat-form-field>
+            </div>
+            <div class="col-md-2">
+              <mat-form-field appearance="outline" class="w-100 point-8">
+                <mat-label>MM</mat-label> 
+                <mat-select [formControl]="shift_4_start_time"  panelClass="max-height" required>
+                  <mat-option *ngFor="let min of shift_min" [value]="min.value">
+                    {{min.viewValue}}
+                  </mat-option>    
+              </mat-select>
+                <mat-error class="max_wid" *ngIf="shift_4_start_time.invalid">Fill time field!! !!</mat-error>
+                
+            </mat-form-field>
+            </div>
+
+            <div class="col-md-2"><p class="point-8 mt-3 float-left">To</p></div>
+            <div class="col-md-2">
+              <mat-form-field appearance="outline" class="w-100 point-8 float-left">
+                <mat-label>HH</mat-label>
+                <mat-select [formControl]="shift_4_end_hour"  panelClass="max-height" (selectionChange)="shift1to($event)" required>                      
+                  <mat-option *ngFor="let hours of shift_hours" [value]="hours.value">
+                    {{hours.viewValue}}
+                  </mat-option>                  
+                </mat-select>
+                <mat-error class="max_wid" *ngIf="shift_4_end_hour.invalid">Fill hours field !!</mat-error>
+                
+              </mat-form-field>
+            </div>
+            <div class="col-md-2">
+              <mat-form-field appearance="outline" class="w-100 point-8">
+                <mat-label>MM</mat-label>
+                <mat-select [formControl]="shift_4_end_time"  panelClass="max-height" required>
+                  <mat-option *ngFor="let min of shift_min" [value]="min.value">
+                    {{min.viewValue}}
+                  </mat-option>    
+              </mat-select>
+                <mat-error class="max_wid" *ngIf="shift_4_end_time.invalid">Fill time field!! !!</mat-error>
+                
+            </mat-form-field>
+            </div>
+        </div>
+         </div> 
+     </div>
+
+     <p class="point-7 ml-3 font-italic font-weight-bolder">** Please select proper shift hours for accurate metrics.</p>
+        
+     </div>
+      <div class="modal-footer footer_btn  w-100" *ngIf="popup_title== 'Add Work Center'" [hidden]=!addbutton>
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-clear point-9 mr-1" (click)="cleardata();"><i class="fas fa-undo" ></i> Clear</button>
+        <button type="submit" *ngIf="!disabled_enable_button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" (click)="saveworkcenter()"><i class="far fa-check-circle"></i>  Submit</button>
+        <button class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  type="button" disabled *ngIf="disabled_enable_button" >
+          <i class="fas fa-spinner fa-pulse"></i> Loading
+         </button>
+      </div>
+    <div class="modal-footer  footer_btn w-100" *ngIf="popup_title== 'Edit Work Center'" [hidden]=!addbutton>
+      <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-delete point-9 mr-1" data-toggle="modal"  *ngIf="addbutton"data-target="#exampleModalCenter" data-dismiss="modal" > 
+        <i class="fas fa-trash-alt"></i> Delete</button>
+      <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" (click)="updateworkcenter()" *ngIf="addbutton"><i class="far fa-check-circle"></i>  Update</button>
+  </div>
+  <div class="modal-footer footer_btn w-100" *ngIf="authService.currentUser['role_id'] == 2 ||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'WCV1001' || authService.currentUser['role_id'] == 'ASA1001' || authService.currentUser['role_id'] == 'ASV1001' ">
+    <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" data-dismiss="modal"  ><i class="fas fa-times"></i> Close</button>
+ </div>
+   
+  </div>
+</div>
+</div>
+
+<!-- Delete workcenter Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog " role="document">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header">
+        <h6 class="modal-title" id="exampleModalLongTitle">Delete</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-9">
+        Are you sure to delete <span class="text-danger">{{work_center_name.value}}</span> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-yes point-8" data-dismiss="modal" (click)="deleteWorkcenter()" ><i class="fas fa-check"></i> Yes</button>
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-no point-8" data-dismiss="modal" data-toggle="modal" data-target="#workcenter"><i class="fas fa-times"></i> No</button>
+      </div>
+    </div>
+  </div>
+</div>

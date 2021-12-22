@@ -1,0 +1,473 @@
+<ng-template #prevButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9 "><i class="fas fa-backward"></i></button>
+</ng-template>
+<ng-template #nextButton>
+<button type="button" class="btn bg-theme text-white shadow point-9" data-toggle="modal" data-target="#simulate" ><i class="fas fa-forward"></i></button>
+</ng-template>
+<ng-template #doneButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9">Completed</button>
+</ng-template>
+<ng-template #prodSim class="point-7">
+  We can create a new plant by clicking the add plant button...
+</ng-template>
+
+<!-- ----------------------------------- -->
+<!-- nav bar for non job operators -->
+<!-- ----------------------------------- -->
+<nav class="navbar fixed-top border-bottom navbar-light bg-white py-xl-2 py-lg-2 py-md-0" style="margin-left: 60px;" *ngIf="authService.currentUser['role_id'] != 'JB1001'">
+  <a  class="navbar-brand ml-3 one1-point font-weight-bold"  *ngIf = "currentLocation != '/controlpanel'">{{Title}} </a>
+  <a   class="navbar-brand ml-3 one1-point font-weight-bold" *ngIf = "currentLocation == '/controlpanel'">{{Title}}
+    <div class="spinner-grow spinner-grow-sm text-info" role="status" style="width: 0.7rem;height: 0.7rem;position:relative;top:-4px; left: 5px;">
+    </div>
+  </a>
+
+  <h5 class="text-uppercase text-dark">{{authService.currentUser['tenant_name']}}</h5>
+
+  <form class="form-inline my-2 my-lg-0">
+
+    <a class="navbar-brand ml-3 point-8" *ngIf="connectionStatus == 'OFFLINE'">
+      <div class="spinner-grow text-danger spinner-grow-sm mr-2" role="status"  style="width: 0.7rem;   height: 0.7rem;position: relative;   top: -2px;  left: 5px;" ></div>
+      {{connectionStatus}}
+    </a>
+    <div class="btn-group border-0  mr-4 cursor" *ngIf="!user_disable">
+      <img [src]="img_ctl_room" alt="CR" height="22" width="22"  ngbTooltip= "Control Room" placement="bottom" container="body" tooltipClass="ngb_tooltip"  routerLink='/controlroom' (click)="closeJoyRide()">
+    </div>
+
+    <!-- simulation popup  -->
+    <div class="btn-group border-0 mr-4 cursor" (click)="closeJoyRide();clearSimulator();getProjectList();"
+    data-toggle="modal" data-target="#simulate" *ngIf="authService.currentUser['role_id'] == 0 || authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'PA1001' || this.authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'ASA1001'">      
+      <mat-icon ngbTooltip= "Asset Controller" placement="bottom" container="body" tooltipClass="ngb_tooltip"
+      >view_in_ar</mat-icon>
+    </div>
+
+
+    <!-- notifications dropdown -->
+    <div class="btn-group border-0 btn-focus-none">
+      <img [src]="img_notifications" (click)="toggle_notification();closeJoyRide();" height="20" width="20" alt="NF" class="mr-4 cursor"
+      ngbTooltip= "Notifications" placement="bottom" >
+    </div>
+
+
+
+    <!-- account dropdown -->
+    <div class="btn-group border-0 btn-focus-none" >
+      <button  [matMenuTriggerFor]="menu" style="background-color: #b1c2d9!important; box-shadow: none!important;" mat-mini-fab class="btn-focus-none point-8" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 2 ||authService.currentUser['role_id'] == 'MV1001'
+                       ||authService.currentUser['role_id'] == 'PA1001' ||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASA1001' || this.authService.currentUser['role_id'] == 'ASV1001' " >
+        <span>{{authService.currentUser['tenant_name'][0]}}</span>
+      </button>
+
+      <button [matMenuTriggerFor]="menu" style="background-color: #b1c2d9!important; box-shadow: none!important;" mat-mini-fab class="btn-focus-none point-8" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false" *ngIf="authService.currentUser['role_id'] == 1000 || authService.currentUser['role_id'] == 1001">
+        <span>{{authService.currentUser['sub_tenant_name'][0]}}</span>
+      </button>
+     
+        <mat-menu #menu="matMenu" class="mt-2">
+          <div class="menu_header">
+            <p class="point-8  text-dark  ml-2" ngbTooltip="{{authService.currentUser['first_name']}}" placement="bottom" *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 2 ||authService.currentUser['role_id'] == 'MV1001'
+            ||authService.currentUser['role_id'] == 'PA1001' ||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASA1001' || this.authService.currentUser['role_id'] == 'ASV1001' ">
+              <strong>Welcome</strong> {{authService.currentUser['first_name'] | slice:0:10}}
+          </p>
+          <p class="text-dark  point-8 ml-2" ngbTooltip="{{authService.currentUser['sub_tenant_name']}}" placement="bottom" *ngIf="authService.currentUser['role_id'] == 1000 || authService.currentUser['role_id'] == 1001">
+            <strong >Welcome </strong>{{authService.currentUser['sub_tenant_name'] | slice:0:10 }}
+          </p>
+            <div class="row">
+              <div class="col-3">
+                <span class="text-muted point-9 user_icon">{{authService.currentUser['first_name'][0]}}</span> &nbsp;
+              </div>
+              <div class="col-9">
+              
+              <p class="text-dark point-7  mt-n2 "  *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 2 ||authService.currentUser['role_id'] == 'MV1001' ||authService.currentUser['role_id'] == 'PA1001' ||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASA1001' || this.authService.currentUser['role_id'] == 'ASV1001' ">
+                <strong>Account ID: </strong> {{authService.currentUser['tenant_id']}}
+              </p>
+
+            <p class="text-dark point-7  mt-n2 " *ngIf="authService.currentUser['role_id'] == 1000 || authService.currentUser['role_id'] == 1001">
+              <strong> Account ID: </strong> {{authService.currentUser['subtenant_id']}}
+          </p>
+          <p class="text-dark point-7 mt-n2 mb-n3"  *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 2 ||authService.currentUser['role_id'] == 'MV1001'
+          ||authService.currentUser['role_id'] == 'PA1001' ||authService.currentUser['role_id'] == 'PV1001' || authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASA1001' || this.authService.currentUser['role_id'] == 'ASV1001' ">
+            <strong>Account Name:</strong>  {{authService.currentUser['tenant_name']}}
+          </p>
+
+          <p class="text-dark point-7 mt-n2 mb-n3"  *ngIf="authService.currentUser['role_id'] == 1000 || authService.currentUser['role_id'] == 1001">
+          <strong>Account Name:</strong> {{authService.currentUser['sub_tenant_name']}}
+          </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="d-flex justify-content-center align-items-center">
+            <div class="containerbtn" style="cursor: not-allowed;">
+            <button mat-menu-item class="border-bottom border-right  " routerLink='/accountinfo' style=" pointer-events: none;">
+              <mat-icon>manage_accounts</mat-icon>
+              <span class=" point-8  cursor " >Account Info</span>
+              <div class="overlay point-8">Coming Soon</div>
+            </button>
+          </div>
+
+            <button mat-menu-item class=" border-bottom" routerLink='/settings' (click)="closeJoyRide()">
+              <mat-icon >settings</mat-icon>
+              <span class=" point-8  cursor">Settings</span>
+            </button>   
+          </div>  
+          <div class="d-flex justify-content-center align-items-center">
+            <button mat-menu-item class="border-right " routerLink='/userprofile' (click)="closeJoyRide()">
+              <mat-icon  >account_circle</mat-icon>
+              <span class=" point-8  cursor " >My Profile</span>
+            </button>
+            <button mat-menu-item (click)="authService.logout();closeJoyRide()" ><mat-icon >logout</mat-icon>
+              <span class="point-8 cursor">Logout</span>
+            </button>   
+          </div>     
+        </mat-menu>
+    </div>
+  </form>
+  <notification-sidebar [@slideInOut]="menuState" ></notification-sidebar>
+
+</nav>
+
+
+<!-- side panel for Simulator-->
+<div class="modal left fade" id="simulate" tabindex="" role="dialog" aria-labelledby="simulateLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog cust_dialog" role="document">
+    <button type="button" class="btn text-white modal-close-btn cursor bg-sidebar" data-dismiss="modal"><span class="cursor"
+        aria-hidden="true">&times;</span></button>
+    <div class="modal-content">
+      <div class="modal-header bg-white" style="display: block;">
+        <div class="row">
+          <div class="col-md-6 col-xl-6 col-lg-6 col-sm-6">
+            <h5 class="float-left">Asset in Controller</h5>
+          </div>
+          <div class="col-md-6 col-xl-6 col-lg-6 col-sm-6">
+            <a [href]="img_play_store_ep" target="_blank"> 
+              <img [src]="img_play_store" class="image_res float-right">
+            </a>
+            <a [href]="img_app_store_ep" target="_blank"> 
+              <img [src]="img_app_store" class="image_res float-right mr-1">
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto;">
+
+        <!-- Nav tab production and quality check -->
+        <ul ngbNav #nav="ngbNav" class="nav-tabs">
+          <li [ngbNavItem]="1" class="customnavtab">
+            <a ngbNavLink>Production</a>
+            <ng-template ngbNavContent>
+              <div class="row">
+                <div class="col-md-4 ">
+                  <p class="point-8 mt-2 ml-3"><strong>Part / Item Name: </strong>{{part_name || 'NA' }}</p>
+                  <p class="point-8 mt-2 ml-3"><strong>Quantity Produced: </strong>{{total_Qty_produced_ || 0}}</p>
+                </div>
+                <div class="col-md-4">
+                  <p class="point-8 mt-2"><strong>Order Quantity: </strong>{{job_total_qty || 0}}</p>          
+                  <p class="point-8 mt-2"><strong>Rejection: </strong>{{total_rejection_produced || 0}}</p>       
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100 point-8 float-right">
+                    <mat-label *ngIf="projectList.length != 0">Choose a Job</mat-label>
+                    <mat-label *ngIf="projectList.length == 0">No Job's available !!</mat-label>
+                    <mat-select [formControl]="project"  (selectionChange)="detectjobchange($event)" required>
+                      <mat-option *ngFor="let project_list of projectList" [value]="project_list.project_id" (click)="assetStatus(project_list);orderQtyValidation();">
+                        {{project_list.sf_project_code}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="project.invalid">{{projectErrorMessages()}}</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                 <div class="card flex-fill border-0">
+                   <div class="card-header border-radius-point5 border-0 ht-40">
+                     <div class="text-center">
+                       <h6 class="card-title text-muted point-9">Asset in action : <strong>{{asset_name || 'NA'}}</strong></h6>                  
+                     </div>
+                   </div>
+                   <div class="card-body text-center">
+                     <div class="row mt-1">
+                       <div class="col-md-6 mb-5">
+                         <button mat-button [disabled]='!startbutton'
+                          class="btn btn-lg btn-block one1-point btnclass text-white text-uppercase "
+                          [ngClass]="{'bg-theme': start_btn_text === 'Start' || start_btn_text === 'Resume', 'bg-green' : start_btn_text === 'Running' }"
+                          (click)="startBtn(); simulate('asset_status');">
+                          <i class="far fa-play-circle"></i> &nbsp;{{start_btn_text}}</button>
+                       </div>
+                       <div class="col-md-6 mb-5">
+                         <button mat-button [disabled]='!breakbutton'
+                         class="btn btn-lg btn-block one1-point btnclass text-white text-uppercase ml-lg-3 ml-xl-3 ml-md-0 ml-sm-0"
+                         [ngClass]="{'bg-theme': break_btn_text === 'Break', 'bg-info' : break_btn_text === 'On Break' }"
+                         (click)="breakBtn(); asset_status_info='Break';simulate('asset_status');">
+                         <i class="far fa-clock"></i>&nbsp; {{break_btn_text}}</button>                    
+                       </div>
+                     </div>
+                     <div class="row mt-1">
+                       <div class="col-md-6 mb-5">
+                         <button mat-button [disabled]='!stopbutton'
+                         class="btn btn-lg btn-block one1-point btnclass text-white text-uppercase  "
+                         [ngClass]="{'bg-theme': stop_btn_text === 'Stop', 'bg-yellow' : stop_btn_text === 'Stopped'}"
+                         (click)="stopBtn();asset_status_info='Stop';simulate('asset_status');">
+                         <i class="far fa-pause-circle"></i>&nbsp; {{stop_btn_text}}</button>
+                       </div>
+                       <div class="col-md-6 mb-5">
+                         <button type="button" [disabled]='!faultbutton' data-toggle="modal" data-target="#FaultModal"
+                          class="btn btn-lg btn-block one1-point btnclass text-white text-uppercase ml-lg-3 ml-xl-3 ml-md-0 ml-sm-0 " 
+                          [ngClass]="{'bg-theme': fault_btn_text === 'Fault', 'bg-red' : fault_btn_text === 'Faulty'}"
+                          (click)="asset_status_info='Fault';">
+                          <i class="far fa-times-circle"></i>&nbsp; {{fault_btn_text}}</button>                     
+                       </div>
+                     </div>               
+                   </div>
+                 </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                   <div class="card-body text-center px-1 mt-n4">
+                     <div class="card"  >
+                       <div class="card-header border-0 ht-40">
+                         <div class="text-center">
+                           <h6 class="card-title text-muted point-9" *ngIf="hideTooltip">Quantity Produced</h6>
+                           <h6 class="card-title text-muted point-9" *ngIf="!hideTooltip">You have reached Job order quantity!</h6>
+     
+                         </div>
+                       </div>
+                       <div class="card-body" > 
+                         <div class="row border p-2 border-radius-point5 text-center mb-2">
+                           <div class="col-4">
+                             <button mat-button [class.overlay]="!hideTooltip"
+                             class=" one1-point text-white bg-theme float-left mt-1 calc_btn" [disabled]="counter == 0"                  
+                             (click)="decrement();ifDecremented_Qty();orderQtyValidation();">
+                             <i class="fas fa-minus"></i> </button> 
+                           </div>
+                           <div class="col-4">
+                            <!-- <p class="mt-2 counter_size">{{ counter }}</p>  -->             
+                              <input matInput  class="mt-2 counter_size cursor" [formControl]="counter_field" type="number" [value]="counter"  min="0" oninput="this.value=Math.abs(this.value)" required>
+                           </div>
+                           <div class="col-4">
+                             <button mat-button [class.overlay]="!hideTooltip"
+                             class="one1-point text-white mt-1 float-right bg-theme calc_btn"                    
+                             (click)="increment();orderQtyValidation(); ">
+                             <i class="fas fa-plus"></i> </button>  
+                           </div>
+                         </div>
+                         <a class="point-8 float-right cursor  alink" [class.disabled]="!hideplus10" (click)="asset_quantity='10';incrementbyten();orderQtyValidation();" ><i class="far fa-plus-square fa-3x"></i> <span class="incrment_btn"> Increase  by 10 </span></a> 
+                         <a class="point-8 float-right cursor align_resp alink" [class.disabled]="!hideplus5" (click)="asset_quantity='5';incrementbyfive();orderQtyValidation();"><i class="far fa-plus-square fa-3x"></i><span class="incrment_btn"> Increase by 5</span></a>
+                       </div>
+                       <div class="card-footer border-0 mt-n4 bg-transparent">
+                        <button type="button" class="btn btn-sm  shadow text-white bg-theme w-100 mt-2" (click)=" simulate('asset_qty');"  [disabled]="counter == 0" style="height:3.5em;">Submit</button>
+                        </div>
+
+                     </div><br>
+                   </div>
+                 </div> 
+              </div>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="2" class="customnavtab">
+            <a ngbNavLink>Quality Check</a>
+            <ng-template ngbNavContent>
+              <div class="row px-3">
+                <div class="col-md-4">
+                  <p class="point-8 mt-2"><strong>Part / Item Name: </strong>{{part_name || 'NA' }}</p>
+                  <p class="point-8 mt-2"><strong>Quantity Produced: </strong>{{total_Qty_produced_ || 0}}</p>
+                </div>
+                <div class="col-md-4">
+                  <p class="point-8 mt-2"><strong>Order Quantity: </strong>{{job_total_qty || 0}}</p>          
+                  <p class="point-8 mt-2"><strong>Rejection: </strong>{{total_rejection_produced || 0}}</p>       
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100 point-8 float-right">
+                    <mat-label *ngIf="projectList.length != 0">Choose a Job</mat-label>
+                    <mat-label *ngIf="projectList.length == 0">No Job's available !!</mat-label>
+                    <mat-select [formControl]="project"  (selectionChange)="detectjobchange($event)" required>
+                      <mat-option *ngFor="let project_list of projectList" [value]="project_list.project_id" (click)="assetStatus(project_list);orderQtyValidation();">
+                        {{project_list.sf_project_code}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="project.invalid">{{projectErrorMessages()}}</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row  px-3">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+                  <div class="card">
+                    <div class="card-header border-0 ht-40">
+                      <div class="text-center">
+                        <h6 class="card-title text-muted point-9">Rejection Count</h6>   
+                      </div>
+                    </div>
+                    <div class="card-body"> 
+                      <div class="row border p-2 border-radius-point5 text-center mb-2">
+                        <div class="col-4">
+                          <button mat-button 
+                          class="one1-point text-white float-left bg-theme mt-1 calc_btn" [disabled]="good_qlty == 0"            
+                          (click)="scrap_decrement();">
+                          <i class="fas fa-minus"></i> </button> 
+                        </div>
+                        <div class="col-4">
+                          <!-- <p class="mt-2 counter_size">{{ good_qlty }}</p> -->
+                          <input matInput  class="mt-2 counter_size cursor" [formControl]="good_qlty_field" type="number" [value]="good_qlty"  min="0" oninput="this.value=Math.abs(this.value)" required>
+                        </div>
+                        <div class="col-4">
+                          <button mat-button 
+                          class="one1-point text-white float-right bg-theme mt-1 calc_btn"              
+                          (click)="scrap_increment();">
+                          <i class="fas fa-plus"></i></button> 
+                        </div>
+                      </div>  
+                    </div>
+                    <div class="card-footer border-0 mt-1 bg-transparent">
+                      <a class="point-8 float-right cursor alink" (click)="scrap_incrementbyten();" style="color: black!important;"><i class="far fa-plus-square fa-3x"></i> <span class="incrment_btn"> Increase  by 10 </span></a> 
+                      <a class="point-8 float-right cursor align_resp alink"  (click)="scrap_incrementbytwo();"style="color: black!important;"><i class="far fa-plus-square fa-3x"></i><span class="incrment_btn"> Increase by 5</span></a>
+                      <!-- <a class=" point-8 float-right ml-2 cursor" (click)="asset_quality='2';scrap_incrementbytwo();" style="color: black!important;"><i class="far fa-plus-square fa-3x"></i><span class="incrment_btn"> Increase by 2</span></a> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                  <mat-form-field appearance="outline" class="w-100 point-8" >
+                    <mat-label>Reason for Rejection</mat-label>
+                    <textarea matInput [formControl]="rejection_reason_value" [value]="rejection_reason_value" rows="10" cols="50" required></textarea>
+                  </mat-form-field>
+                  <button type="button" class="btn btn-sm shadow text-white bg-theme w-100" (click)=" simulate('scrap_qty');" [disabled]="good_qlty == 0" style="height:3.5em;">Submit</button>
+
+                </div>
+              
+              </div>
+            
+
+            </ng-template>
+          </li>
+        
+        </ul>
+        
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        
+      
+          
+        
+         
+      </div>
+      <div class="modal-footer footer_btn w-100" >
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save resetBtn mr-1" (click)="clearSimulator();">Reset</button>
+    </div>
+
+
+  </div>
+</div>
+</div>
+
+
+
+<!-- Fault Modal -->
+<div class="modal fade" id="FaultModal" tabindex="-1" aria-labelledby="faultModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header">
+        <h5 class="modal-title point-9" id="faultModalLabel">Fault Reason</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <mat-form-field appearance="outline" class="w-100 point-8" >
+          <mat-label>Fault Reason</mat-label>
+          <textarea matInput [formControl]="payload" [value]="payload" rows="10" cols="50"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary point-8" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn text-white point-8 dashb-save-btn bg-theme" data-dismiss="modal" (click)="faultBtn();simulate('fault_btn');">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ----------------------------------- -->
+<!-- nav bar for job operators -->
+<!-- ----------------------------------- -->
+
+<nav class="navbar fixed-top border-bottom navbar-light bg-white py-xl-2 py-lg-2 py-md-0" style="margin-left: 60px;" *ngIf="authService.currentUser['role_id'] == 'JB1001'">
+  <a class="navbar-brand ml-3 one1-point">{{Title}} </a>
+
+  <h5 class="text-uppercase text-dark">{{authService.currentUser['tenant_name']}}</h5>
+
+  <form class="form-inline my-2 my-lg-0">
+
+    <a class="navbar-brand ml-3 point-8" *ngIf="connectionStatus == 'OFFLINE'">
+      <div class="spinner-grow text-danger spinner-grow-sm mr-2" role="status"  style="width: 0.7rem;   height: 0.7rem;position: relative;   top: -2px;  left: 5px;" ></div>
+      {{connectionStatus}}
+    </a>
+
+    <!-- account dropdown -->
+    <div class="btn-group border-0 btn-focus-none" >
+      <button  [matMenuTriggerFor]="menu" style="background-color: #b1c2d9!important; box-shadow: none!important;" mat-mini-fab class="btn-focus-none point-8" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">
+        <span>{{authService.currentUser['tenant_name'][0]}}</span>
+      </button>
+
+      
+        <mat-menu #menu="matMenu" class="mt-2">
+          <div class="menu_header">
+            <p class="point-8  text-dark  ml-2" ngbTooltip="{{authService.currentUser['first_name']}}" placement="bottom">
+              <strong>Welcome</strong> {{authService.currentUser['first_name'] | slice:0:10}}
+            </p>
+    
+            <div class="row">
+              <div class="col-md-3 col-sm-12">
+                <span class="text-muted point-9 user_icon">{{authService.currentUser['first_name'][0]}}</span> &nbsp;
+              </div>
+              <div class="col-md-9 col-sm-12">
+              
+              <p class="text-dark point-7 mt-n2">
+                <strong>Account ID: </strong> {{authService.currentUser['tenant_id']}}
+              </p>
+            <p class="text-dark point-7 mt-n2 mb-n3">
+              <strong>Account Name:</strong>  {{authService.currentUser['tenant_name']}}
+            </p>
+          
+              </div>
+            </div>
+
+          </div>
+
+          <div class="d-flex justify-content-center align-items-center">
+            <div class="containerbtn" style="cursor: not-allowed;">
+            <button mat-menu-item class="border-bottom border-right" routerLink='/accountinfo'
+             style=" pointer-events: none;">
+              <mat-icon>manage_accounts</mat-icon>
+              <span class="point-8  cursor " >Account Info</span>
+              <div class="overlay point-8">Coming Soon</div>
+            </button>
+          </div>
+
+            <button mat-menu-item class="border-bottom" *ngIf="buttonDisabledJob"
+              routerLink='/settings' (click)="closeJoyRide()">
+              <mat-icon >settings</mat-icon>
+              <span class=" point-8  cursor" >Settings </span>
+              
+            </button> 
+            
+            <button mat-menu-item class="border-bottom" 
+            *ngIf="buttonDisabled"  (click)="closeJoyRide()">
+              <mat-icon >settings</mat-icon>
+              <span class="point-8  cursor" >Settings</span>
+              
+            </button>  
+          </div>  
+          <div class="d-flex justify-content-center align-items-center">
+            <button mat-menu-item class="border-right" routerLink='/userprofile' (click)="closeJoyRide()">
+              <mat-icon>account_circle</mat-icon>
+              <span class=" point-8  cursor " >My Profile</span>
+            </button>
+            <button mat-menu-item (click)="authService.logout();closeJoyRide()" ><mat-icon >logout</mat-icon>
+              <span class="point-8 cursor">Logout</span>
+            </button>   
+          </div>     
+        </mat-menu>
+    </div>
+  </form>
+
+  
+  <notification-sidebar [@slideInOut]="menuState" ></notification-sidebar>
+
+</nav>

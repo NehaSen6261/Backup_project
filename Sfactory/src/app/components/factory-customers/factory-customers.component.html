@@ -1,0 +1,267 @@
+<ng-template #prevButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9 "><i class="fas fa-backward"></i></button>
+</ng-template>
+<ng-template #nextButton>
+<button type="button" class="btn bg-theme text-white shadow point-9" data-toggle="modal" data-target="#customer" (click)="popup_title='Add Customer'; callfunction_req()"><i class="fas fa-forward"></i></button>
+</ng-template>
+<ng-template #doneButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9">Completed</button>
+  </ng-template>
+<ng-template #addcus class="point-7">
+  Adding customers can help track the status of given business orders !
+</ng-template>
+<ng-template #viewcus class="point-7">
+  Viewing customers can help track the status of given business orders !
+</ng-template>
+
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor"  ngbTooltip= "Back" placement="right"  routerLink="/settings">arrow_back</mat-icon>
+  <div class="card border-radius-point5" style="min-height: 50vh;">
+    <div class="card-header bg-transparent border-0">
+      <div class="row mb-1">
+        <div class="col-md-3">
+          <div class="input-group input-group-flush rounded">
+            <input type="text" class="form-control point-8 border-radius-point5" (keyup)="search($event)" [formControl]="filter"
+              placeholder="Search" aria-describedby="basic-addon1">
+          </div>
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-3" *ngIf="addbutton">
+          <!-- tour guide Add Customer-->
+          <button type="button"
+            class="btn btn-sm fullscreenbtn max_wid bg-theme text-white shadow mt-2 btn-focus-none float-right point-9"
+            data-toggle="modal" data-target="#customer" (click)="cleardata();popup_title='Add Customer'"  id="autoscroll"            
+            joyrideStep="addCustomer"
+            title="Add Customer"
+            [stepContent]="addcus"
+            [prevTemplate]="prevButton"
+            [nextTemplate]="nextButton"
+            [doneTemplate]="doneButton"            
+            ><i class="fas fa-plus"></i> Add Customer </button>
+            
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <mat-progress-bar mode="indeterminate" *ngIf="spinner"></mat-progress-bar>
+      <table class="table table-hover" matSort>
+        <thead class="point-8 cursor">
+          <tr>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_company_name" mat-sort-header>Company Name</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_customer_name" mat-sort-header>Contact Name</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_customer_website" mat-sort-header>Customer Website</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_customer_email" mat-sort-header>Customer Email</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_customer_type" mat-sort-header>Customer type</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="action" mat-sort-header>Action</th>
+          </tr>
+        </thead>
+        <tbody class="point-8">
+          <tr *ngFor="let customer_details of obs | async; index as i">
+            <td *ngIf = "customer_details.sf_company_name != null ">
+              <p *ngIf = "customer_details.sf_company_name.length > 15" ngbTooltip = {{customer_details.sf_company_name}}>
+                <ngb-highlight [result]="customer_details.sf_company_name | slice:0:15" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf = "customer_details.sf_company_name.length < 15">
+                <ngb-highlight [result]="customer_details.sf_company_name " [term]="filter.value"></ngb-highlight>
+              </p>
+
+            </td>
+            <td *ngIf = "customer_details.sf_company_name == null">
+              <p > NA
+               </p>
+            </td>
+            <td>
+              <p *ngIf = "customer_details.sf_customer_name.length > 15" ngbTooltip = {{customer_details.sf_customer_name}}>
+                <ngb-highlight [result]="customer_details.sf_customer_name | slice:0:15" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf = "customer_details.sf_customer_name.length < 15">
+                <ngb-highlight [result]="customer_details.sf_customer_name || 'NA' " [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+
+            <td *ngIf = "customer_details.sf_customer_website != null ">
+              <p *ngIf = "customer_details.sf_customer_website.length >= 15" ngbTooltip = {{customer_details.sf_customer_website}}>
+                <ngb-highlight [result]="customer_details.sf_customer_website | slice:0:15" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf = "customer_details.sf_customer_website.length < 15">
+                <ngb-highlight [result]="customer_details.sf_customer_website || 'NA'" [term]="filter.value"></ngb-highlight>
+              </p>
+
+            </td>
+            <td *ngIf = "customer_details.sf_customer_website == null ">
+              <p  ngbTooltip = {{customer_details.sf_customer_website}}>
+                    NA
+              </p>
+            </td>
+
+            <td>
+              <p *ngIf = "customer_details.sf_customer_email.length >= 15" ngbTooltip = {{customer_details.sf_customer_email}}>
+                <ngb-highlight [result]="customer_details.sf_customer_email | slice:0:15" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf = "customer_details.sf_customer_email.length < 15">
+                <ngb-highlight [result]="customer_details.sf_customer_email" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td>
+              <p *ngIf = "customer_details.sf_customer_type.length >= 15" ngbTooltip = {{customer_details.sf_customer_type}}>
+                <ngb-highlight [result]="customer_details.sf_customer_type | slice:0:15" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf = "customer_details.sf_customer_type.length < 15">
+                <ngb-highlight [result]="customer_details.sf_customer_type" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td>
+              <span class="cursor" ngbTooltip="Edit" data-toggle="modal" data-target="#customer"
+                (click)=" customerInfo(customer_details);popup_title='Edit Customer'"
+                *ngIf="authService.currentUser['role_id'] == 1  || authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'MV1001' || this.authService.currentUser['role_id'] == 'WCA1001' "><i class="far fa-edit text-theme"></i></span>
+              <span class="cursor" ngbTooltip="View" data-toggle="modal" data-target="#customer"
+              joyrideStep="viewCustomer"
+              title="View Customer"
+              [stepContent]="viewcus"
+              [prevTemplate]="prevButton"
+              [nextTemplate]="nextButton"
+              [doneTemplate]="doneButton" 
+                (click)=" customerInfo(customer_details);popup_title='Edit Customer'"
+                *ngIf="authService.currentUser['role_id'] == 2 ||authService.currentUser['role_id'] == 'PV1001' || this.authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASV1001'|| this.authService.currentUser['role_id'] == 'ASA1001'"><i
+                  class="fas fa-eye fa-lg text-theme"></i></span>
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+      <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+        <ngx-skeleton-loader class="w-100" count="5" animation="pulse"
+          [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+        </ngx-skeleton-loader>
+      </div>
+
+      <div class="text-center mt-5" *ngIf="no_customer_details">
+        <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+        <small class="point-8 "> No Customers available to display !!</small>
+      </div>
+
+      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="custdetail_internalError">
+        <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process your
+          request please try after some time !!</small>
+      </div>
+
+      <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- side panel  for Add and Edit Plant-->
+<div class="modal left fade" id="customer" tabindex="" role="dialog" aria-labelledby="customerLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal_general_popup" role="document">
+    <button type="button" class="btn text-white modal-close-btn cursor bg-sidebar" data-dismiss="modal"><span
+        class="cursor" aria-hidden="true">&times;</span></button>
+    <div class="modal-content">
+      <div class="modal-header bg-white">
+
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'MV1001' || authService.currentUser['role_id'] == 'PA1001' || this.authService.currentUser['role_id'] == 'WCA1001' ">{{popup_title}}</h5>
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 2  || authService.currentUser['role_id'] == 'PV1001' || this.authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASV1001'|| this.authService.currentUser['role_id'] == 'ASA1001'">View Customers</h5>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto;">
+        <!-- company name -->
+        <mat-form-field appearance="outline"class="w-100 point-8">
+        <mat-label>Company Name</mat-label>
+        <input matInput minlength="3"maxlength="40"[formControl]="comp_name"required id="auto_trigger">
+        <mat-error *ngIf="comp_name.touched && comp_name.invalid">{{compName()}}</mat-error>
+        </mat-form-field>
+
+        <!-- customer name -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>  Contact Name</mat-label>
+          <input matInput minlength="3" maxlength="40" [formControl]="cust_name"  required>
+          <mat-error *ngIf="cust_name.touched && cust_name.invalid">{{customerName()}}</mat-error>
+        </mat-form-field>
+        <!-- customer address -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label> Address</mat-label>
+          <textarea matInput  [formControl]="cust_addr" rows="4" cols="5" required></textarea>
+          <mat-error *ngIf=" cust_addr.touched && cust_addr.invalid">{{customerAddrress()}}</mat-error>
+        </mat-form-field>
+        <!-- Mobile Number -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label> Contact Number</mat-label>
+          <input matInput minlength="10" maxlength="10" [formControl]="mobile_num" >
+
+          <mat-error  *ngIf="mobile_num.touched && mobile_num.invalid">Invalid Number</mat-error>
+        </mat-form-field>
+        <!--Email-->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Email</mat-label>
+          <input matInput minlength="3" maxlength="40" [formControl]="email" required>
+          <mat-error *ngIf="email.touched &&  email.invalid">{{customerEmail()}}</mat-error>
+        </mat-form-field>
+          <!--Websites-->
+          <mat-form-field appearance="outline" class="w-100 point-8">
+            <mat-label>Website URL</mat-label>
+            <input matInput minlength="3" maxlength="40" [formControl]="web_url" >
+            <mat-error *ngIf="web_url.touched && web_url.invalid">{{webURL()}}</mat-error>
+          </mat-form-field>
+        <!--Customer Type-->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Customer Type</mat-label>
+          <input matInput minlength="3" maxlength="40" [formControl]="cust_type" required>
+          <mat-error *ngIf="cust_type.touched && cust_type.invalid">{{custType()}}</mat-error>
+        </mat-form-field>
+        <!--Customer Desc-->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Description</mat-label>
+          <textarea matInput  [formControl]="cust_desc" rows="4" cols="5"></textarea>
+          <mat-error *ngIf="cust_desc.touched && cust_desc.invalid">{{custdesc()}}</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="modal-footer footer_btn w-100" *ngIf="popup_title== 'Add Customer' "[hidden]="!addbutton" >
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-clear point-9 mr-1"
+          (click)="cleardata();"><i class="fas fa-undo"></i> Clear</button>
+        <button type="submit" *ngIf="!disabled_enable_button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"
+          (click)="saveCustomers();"><i class="far fa-check-circle"></i> Submit</button>
+          <button class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  type="button" disabled *ngIf="disabled_enable_button" >
+            <i class="fas fa-spinner fa-pulse"></i> Loading
+           </button>
+      </div>
+
+      <div class="modal-footer footer_btn  w-100" *ngIf="popup_title== 'Edit Customer' " [hidden]="!addbutton">
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-delete point-9 mr-1" data-toggle="modal" data-target="#exampleModalCenter" data-dismiss="modal"> <i class="fas fa-trash-alt"></i> Delete</button>
+        <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  (click)="updateCustomerinfo();"><i class="far fa-check-circle"></i>  Update</button>
+    </div>
+    <div class="modal-footer footer_btn w-100" *ngIf="authService.currentUser['role_id'] == 2  || authService.currentUser['role_id'] == 'PV1001' || this.authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASV1001' || this.authService.currentUser['role_id'] == 'ASA1001'" >
+      <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
+   </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete customer Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog border-radius-point5" role="document">
+    <div class="modal-content ">
+      <div class="modal-header bg-white border_top">
+        <h6 class="modal-title" id="exampleModalLongTitle">Delete</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-9">
+        Are you sure to delete <span class="text-danger">{{cust_name.value}}</span> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-yes point-8" data-dismiss="modal" (click)="deleteCustomer();" ><i class="fas fa-check"></i> Yes</button>
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-no point-8" data-dismiss="modal" data-toggle="modal" data-target="#customer"><i class="fas fa-times"></i> No</button>
+      </div>
+    </div>
+  </div>
+</div>

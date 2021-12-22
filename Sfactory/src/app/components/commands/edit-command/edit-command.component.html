@@ -1,0 +1,132 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+            <div class="card flex-fill border-radius-point5">
+                <div class="card-body">
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>Plant Name</mat-label>
+                    <input matInput [(ngModel)]="plant" disabled>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label> Workcenter Name</mat-label>
+                    <input matInput [(ngModel)]="wrk_center" disabled>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label> Asset Name </mat-label>
+                    <input matInput [(ngModel)]="assets" disabled>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label> Target Device </mat-label>
+                    <input matInput [(ngModel)]="target_device" disabled>
+                  </mat-form-field>
+
+                  <mat-form-field  appearance="outline" class="w-100 point-8">
+                    <mat-label>Command Name</mat-label>
+                    <input matInput [(ngModel)]="cmd_name" disabled>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>Command</mat-label>
+                    <textarea matInput [(ngModel)]="cmd" disabled></textarea>
+                  </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+          <div class="card flex-fill border-radius-point5 ">
+            <div class="card-body">
+              <mat-form-field appearance="outline" class="w-100 point-8">
+                <mat-label>Execution Mode</mat-label>
+                <input matInput [(ngModel)]="exe_mode" disabled>
+              </mat-form-field>
+
+                <p>Frequency</p>
+                <div class="row">
+                      <div class="col-xl-6 col-lg-12 col-md-12  col-sm-12">
+                          <div class="d-flex flex-row point-8 mb-sm-4">
+                                <mat-checkbox class=""     [(ngModel)]="daily"   color="primary" disabled> Daily</mat-checkbox>
+                                <mat-checkbox class="ml-5" [(ngModel)]="weekly"   color="primary" disabled> Weekly</mat-checkbox>
+                                <mat-checkbox class="ml-5" [(ngModel)]="monthly"  color="primary" disabled> Monthly</mat-checkbox>
+
+                            </div>
+                          </div>
+                    </div>
+                <div class="separator separator-dashed mb-2"></div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field  appearance="outline" class="w-100 point-8">
+                      <mat-label>Start date </mat-label>
+                      <input matInput [(ngModel)]="start_date" disabled >
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-6">
+
+                    <mat-form-field  appearance="outline" class="w-100 point-8">
+                      <mat-label>End date </mat-label>
+                      <input matInput [(ngModel)]="end_date" disabled >
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="separator separator-dashed mb-2"></div>
+
+                <div class="row mb-2">
+                  <div class="col-md">
+                    <mat-form-field  appearance="outline" class="w-100 point-8">
+                    <mat-label>Start time</mat-label>
+                    <input matInput [(ngModel)]="startTime" disabled>
+                  </mat-form-field>
+                  </div>
+                  <div class="col-md">
+                    <mat-form-field  appearance="outline" class="w-100 point-8">
+                    <mat-label>End time</mat-label>
+                    <input matInput [(ngModel)]="endTime"  disabled>
+                  </mat-form-field>
+                  </div>
+              </div>
+                <div class="separator separator-dashed mb-2"></div>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+              <div class="row">
+                <div class="col">
+                <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-back point-9 mb-2 mb-sm-0 mr-2" routerLink="/command"><i class="fas fa-backward"></i> Back</button>
+                <button type="button" class="btn btn-sm float-right shadow text-white point-9 mr-1 mb-2 mb-sm-0 btn-delete" 
+                    data-toggle="modal" data-target="#deleteModal" *ngIf="authService.currentUser['role_id'] == 1"><i class="fas fa-trash-alt"></i>  Delete</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header">
+        <h5 class="modal-title point-9" id="deleteModalLabel">Delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-8">
+        Are you sure to delete <span class="text-danger">{{cmd_name}}</span> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm shadow text-white  point-8 btn-delete-yes" data-dismiss="modal"
+              (click)="deleteCommand()"><i class="fas fa-check"></i> Yes</button>
+        <button type="button" class="btn btn-sm shadow text-white btn-delete-no point-8" data-dismiss="modal"
+       > <i class="fas fa-times"></i> No</button>
+      </div>
+    </div>
+  </div>
+</div>

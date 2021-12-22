@@ -1,0 +1,70 @@
+// /* Scrollbar Styling */
+::-webkit-scrollbar {
+width: 8px;
+height: 5px;
+}
+
+::-webkit-scrollbar-track {
+background-color: #ebebeb;
+-webkit-border-radius: 10px;
+border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+-webkit-border-radius: 10px;
+border-radius: 10px;
+background: #cacaca;
+}
+
+
+.table thead th{
+  border-top: 1px solid #dee2e6!important;
+  vertical-align: bottom;
+  border-bottom: 1px solid #dee2e6!important;
+  font-weight: 400;
+  z-index: 1;
+  background-color: #F9FBFD;
+}
+
+th{
+  color: #95AAC9!important;
+}
+
+.input-group-text{
+  background-color: #f2f3f3!important;
+  border:none!important;
+  padding-left: 10px!important;
+  color: rgb(149, 149, 149)!important;
+}
+.form-control{
+  border:none!important;
+  box-shadow: none!important;
+  background-color: #f2f3f3;
+
+}
+.form-control:focus{
+  background-color: #f2f3f3!important;
+}
+.mat-sort-header-container {
+  width: max-content;
+  }
+
+  .table-container{
+    height: 400px;
+  }
+  .max_wid{
+    width: max-content !important;
+  }
+
+.ngb-highlight {
+    background-color: yellow;
+}
+
+.tableFixHead{
+  overflow-y: auto;
+  height: 40vh!important;
+}
+.tableFixHead thead th{
+  position: sticky; top: -1px;
+}
+

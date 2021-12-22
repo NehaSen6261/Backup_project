@@ -1,0 +1,78 @@
+
+@import '~@angular/material/theming';
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+@include mat-core();
+
+
+$custom-typography: mat-typography-config($font-family: '"Poppins", sans-serif;');
+@include mat-core($custom-typography);
+
+
+$Foglytics-primary: mat-palette($mat-blue);
+$Foglytics-accent: mat-palette($mat-pink, A200, A100, A400);
+$Foglytics-warn: mat-palette($mat-red);
+
+
+$Foglytics-theme: mat-light-theme((
+  color: (
+    primary: $Foglytics-primary,
+    accent: $Foglytics-accent,
+    warn: $Foglytics-warn,
+  )
+));
+
+@include angular-material-theme($Foglytics-theme);
+
+
+html, body { height: 100%; }
+body {
+  font-family: "Poppins", sans-serif!important ;
+  overflow-x:hidden!important;
+  background-color: #ebeff3!important;
+}
+
+// ng bootstrap tool tip config
+.tooltip .tooltip-inner {
+  color: whitesmoke;
+  background-color: #000410!important;
+  border-radius:5px;
+}
+
+.bs-tooltip-auto[x-placement^=top] .arrow::before, .bs-tooltip-top .arrow::before{
+  border-top-color: #000410!important;
+}
+
+
+.tooltip-inner{
+  background-color:#000410!important;
+  color:whitesmoke!important;
+  padding:-1px 2px -1px 5px;
+}
+
+.bs-tooltip-auto[x-placement^=right] .arrow::before, .bs-tooltip-right .arrow::before{
+  border-right-color:#000410!important;
+  margin-left: -20%;
+}
+
+.timecls::-webkit-calendar-picker-indicator {
+  background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+
+.timecls {
+  border: none;
+    box-sizing: border-box;
+    outline: 0;
+    padding: .75rem;
+    position: relative;
+    width: 100%;
+  }

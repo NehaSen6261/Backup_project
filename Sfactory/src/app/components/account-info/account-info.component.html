@@ -1,0 +1,82 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <!-- account info -->
+  <div class="row">
+    <div class="col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-2">
+      <div class="card flex-fill box-shadow border-radius-point5 ">
+        <div class="card-header bg-transparent ht-40 point-9">
+          <p class="float-left">Account</p>
+          <p class="float-right point-7" >Account id: {{userprofile_id}}</p>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-lg-3 col-md-3 col-sm-3">
+            </div>
+            <div class="col-xl-9 col-lg-9 col-lg-9 col-md-9 col-sm-9 ">
+              <p class="">{{username}}</p>
+              <p class="point-7 mt-n3"><span class="font-weight-bold">Email ID :</span> {{email}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-2">
+      <div class="card flex-fill box-shadow  border-radius-point5 ">
+        <div class="card-header bg-transparent ht-40 point-9">
+          <p class="float-left">Subscription</p>
+          <p class="float-right point-7" ngbTooltip="Status"><span><i class="fas fa-circle"
+                style="color: green;"></i></span> Active</p>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-lg-3 col-md-3 col-sm-3 ">
+              <div class="">
+                <i class="fas fa-users fa-2x ml-3" style="opacity: 0.5;"></i>
+              </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-lg-9 col-md-9 col-sm-9 ">
+              <p class="">Community</p>
+              <p class=" point-7 mt-n3"><span class="font-weight-bold">Subscribed From :</span> 18 Dec 2020</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- data table -->
+  <div class="mb-2">
+    <div class="card border-radius-point5" style="min-height: 50vh;">
+      <div class="card-header bg-transparent border-0">
+            <p class="point-9">Usage Indicator</p>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover" matSort>
+          <thead class="point-8 cursor">
+            <tr>
+              <th scope="col" matColumnDef="sf_asset_code" mat-sort-header> Subscribed features</th>
+              <th scope="col" matColumnDef="sf_asset_serial_number" mat-sort-header>Total Availability</th>
+              <th scope="col" matColumnDef="sf_asset_brand" mat-sort-header> Total Usage</th>
+              <th scope="col" matColumnDef="sf_asset_model" mat-sort-header>Usage Levels </th>
+            </tr>
+          </thead>
+          <tbody class="point-8 ">
+            <tr>
+              <td>Inbound/Data</td>
+              <td>432000</td>
+              <td>27943</td>
+              <td>
+                <div class="progress" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

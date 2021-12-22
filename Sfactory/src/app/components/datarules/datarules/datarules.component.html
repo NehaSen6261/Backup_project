@@ -1,0 +1,100 @@
+<sidebar></sidebar>
+<navbar ></navbar>
+
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor "  ngbTooltip= "Back" placement="right" routerLink="/settings">arrow_back</mat-icon>
+  <div class="card border-radius-point5" style="min-height: 50vh;">
+    <div class="card-header bg-transparent border-0">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="input-group input-group-flush border-radius-point5">
+              <input type="text" class="form-control point-8" [formControl]="filter" placeholder="Search"   aria-describedby="basic-addon1">
+            </div>
+          </div>
+          <div class="col-md-6"></div>
+          <div class="col-md-3">
+            <button mat-button class="text-white shadow mt-2  float-right btn-focus-none bg-theme2" routerLink="/datarules/create" *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 1000"
+            > <i class="fas fa-plus"></i>  Add Data Rule</button>
+          </div>
+        </div>
+      </div>
+              <div class="table-responsive" >
+                <table class="table table-hover" matSort>
+                  <thead class="point-8 cursor">
+                    <tr>
+                      <th scope="col" matColumnDef="gateway_name" mat-sort-header>  Device Name</th>
+                      <th scope="col" matColumnDef="inbound_data" mat-sort-header>Inbound Data</th>
+                      <th scope="col" matColumnDef="data_rule" mat-sort-header>Data Rule </th>
+                      <th scope="col" matColumnDef="value" mat-sort-header>Value</th>
+                      <th scope="col" matColumnDef="action" mat-sort-header>  Sent To</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="point-8">
+                    <tr *ngFor="let dataRules of obs | async ;" >
+                      <td>
+                        <p  *ngIf = "dataRules.gateway_name.length > 25"   ngbTooltip = {{dataRules.gateway_name}}>
+                          <ngb-highlight [result]="dataRules.gateway_name  | slice:0:25" [term]="filter.value"></ngb-highlight>
+                        </p>
+                        <p  *ngIf = "dataRules.gateway_name.length <= 25">
+                          <ngb-highlight [result]="dataRules.gateway_name " [term]="filter.value"></ngb-highlight>
+                        </p>
+                      </td>
+                      <td>
+                        <p *ngIf ="dataRules.inbound_data .length >15" ngbTooltip = {{dataRules.inbound_data}}>
+                          <ngb-highlight [result]="dataRules.inbound_data | slice:0:15" [term]="filter.value"></ngb-highlight>
+                        </p>
+                        <p *ngIf ="dataRules.inbound_data .length <=15">
+                          <ngb-highlight [result]="dataRules.inbound_data" [term]="filter.value"></ngb-highlight>
+                        </p>
+
+                      </td>
+                      <td>
+                        <p *ngIf = "dataRules.data_rule.length > 15" ngbTooltip = {{dataRules.data_rule}}>
+                          <ngb-highlight [result]="dataRules.data_rule | slice:0:15" [term]="filter.value"></ngb-highlight>
+                        </p>
+                        <p *ngIf = "dataRules.data_rule.length <= 15">
+                          <ngb-highlight [result]="dataRules.data_rule" [term]="filter.value"></ngb-highlight>
+                        </p>
+                      </td>
+                      <td>
+                        <p *ngIf = "dataRules.value.length > 15" ngbTooltip = {{dataRules.value}}>
+                          <ngb-highlight [result]="dataRules.value | slice:0:15" [term]="filter.value"></ngb-highlight>
+                        </p>
+                        <p *ngIf = "dataRules.value.length <= 15">
+                          <ngb-highlight [result]="dataRules.value " [term]="filter.value"></ngb-highlight>
+                        </p>
+                      </td>
+                      <td>
+                        <div ngbTooltip = {{dataRules.email_notification||dataRules.sms_notification||dataRules.command_name||dataRules.url_webhook}} *ngIf="dataRules.action ==  'Email || Sms'||'Webhook'||'Command' " >
+                          <p>{{ dataRules.email_notification ||dataRules.sms_notification|| dataRules.command_name || dataRules.url_webhook | slice:0:15 }}...</p>
+                       </div>
+                      </td>
+                      <td>
+                        <span class="cursor" ngbTooltip="View"  (click)="redirectViewTenant(dataRules)"><i class="fas fa-eye fa-lg" [ngClass]="{'text-theme': dataRules.inactive == true, 'text-warning': dataRules.inactive == false}" ></i></span>
+                      </td>
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+                <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError">
+                  <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your request please try after some time !!</small>
+                </div>
+                <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="noDataRules">
+                  <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>No Data rules available to display !!</small>
+                </div>
+
+                <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+                  <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+                      [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+                </ngx-skeleton-loader>
+                </div>
+
+              </div>
+              <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
+    </div>
+    </div>
+

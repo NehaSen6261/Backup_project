@@ -1,0 +1,421 @@
+<ng-template #prevButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9 "><i class="fas fa-backward"></i></button>
+</ng-template>
+<ng-template #nextButton>
+<button type="button" class="btn bg-theme text-white shadow point-9" data-toggle="modal" data-target="#wrkorder" (click)="popup_title='Add Work Order';workorder_view();"><i class="fas fa-forward"></i></button>
+</ng-template>
+<ng-template #doneButton>
+  <button type="button" class="btn bg-theme text-white shadow point-9">Completed</button>
+  </ng-template>
+<ng-template #addwrkorder class="point-7">
+  Add Work Orders in order to manage the progress in production regarding specific customers and keep up with timelines !
+</ng-template>
+<ng-template #viewwrkorder class="point-7">
+  Add Work Orders in order to manage the progress in production regarding specific customers and keep up with timelines !
+</ng-template>
+<sidebar></sidebar>
+<navbar></navbar>
+
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor"  ngbTooltip= "Back" placement="right"  routerLink="/settings">arrow_back</mat-icon>
+  <div class="card border-radius-point5" style="min-height: 50vh;">
+    <div class="card-header bg-transparent border-0">
+      <div class="row mb-1">
+        <div class="col-md-3">
+          <div class="input-group input-group-flush rounded">
+            <input type="text" class="form-control point-8 border-radius-point5" (keyup)="search($event)" [formControl]="filter"
+              placeholder="Search" aria-describedby="basic-addon1">
+          </div>
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-3">
+          <button type="button" *ngIf="addbutton"
+            class="btn btn-sm fullscreenbtn max_wid bg-theme text-white shadow mt-2 btn-focus-none float-right point-9"
+            data-toggle="modal" data-target="#wrkorder" (click)="cleardata();popup_title='Add Work Order'" id="autoscroll"
+            joyrideStep="addwrkorder"
+            title="Add WorkOrder"
+            [stepContent]="addwrkorder"  
+            [prevTemplate]="prevButton"
+            [nextTemplate]="nextButton"
+            [doneTemplate]="doneButton"><i
+              class="fas fa-plus"></i> Add Work Order </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <mat-progress-bar mode="indeterminate" *ngIf="spinner"></mat-progress-bar>
+      <table class="table table-hover" matSort>
+        <thead class="point-8 cursor">
+          <tr>
+           <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="work_order_name" mat-sort-header>Work Order Name</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="work_order_code" mat-sort-header>Work Order Code</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="part_code" mat-sort-header>Part / Item Code</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_customer_name" mat-sort-header>Customer Name</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_priority" mat-sort-header>Priority</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="status" mat-sort-header>Status</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="work_order_qty" mat-sort-header> Order Qty</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="start_date" mat-sort-header>Start Date </th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="end_date" mat-sort-header>End Date</th>
+            <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="action" >Action</th>
+          </tr>
+        </thead>
+        <tbody class="point-8">
+          <tr *ngFor="let workorder_details of obs | async; index as i">
+          
+            <td>
+              <p *ngIf="workorder_details.work_order_name.length > 15" ngbTooltip={{workorder_details.work_order_name}}>
+                <ngb-highlight [result]="workorder_details.work_order_name | slice:0:15" [term]="filter.value">
+                </ngb-highlight>
+              </p>
+              <p *ngIf="workorder_details.work_order_name.length <= 15">
+                <ngb-highlight [result]="workorder_details.work_order_name" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td>
+              <p *ngIf="workorder_details.work_order_code.length > 15" ngbTooltip={{workorder_details.work_order_code}}>
+                <ngb-highlight [result]="workorder_details.work_order_code | slice:0:15" [term]="filter.value">
+                </ngb-highlight>
+              </p>
+              <p *ngIf="workorder_details.work_order_code.length <= 15">
+                <ngb-highlight [result]="workorder_details.work_order_code" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td *ngIf="workorder_details.part_code != null">
+              <p *ngIf="workorder_details.part_code.length > 15" ngbTooltip={{workorder_details.part_code}}>
+                <ngb-highlight [result]="workorder_details.part_code | slice:0:15" [term]="filter.value">
+                </ngb-highlight>
+              </p>
+              <p *ngIf="workorder_details.part_code.length <= 15" >
+                <ngb-highlight [result]="workorder_details.part_code" [term]="filter.value">
+                </ngb-highlight>
+              </p>
+              
+            </td>
+            <td *ngIf="workorder_details.part_code == null">
+              <p>NA</p>
+            </td>
+
+
+            <td>
+              <p *ngIf="workorder_details.sf_customer_name.length > 15"
+                ngbTooltip={{workorder_details.sf_customer_name}}>
+                <ngb-highlight [result]="workorder_details.sf_customer_name | slice:0:15" [term]="filter.value">
+                </ngb-highlight>
+              </p>
+              <p *ngIf="workorder_details.sf_customer_name.length <= 15">
+                <ngb-highlight [result]="workorder_details.sf_customer_name" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td>
+                <p class="max_wid" *ngIf="workorder_details.sf_priority == 'High' " ><span class="badge badge-pill badge-warning" >High</span> </p>
+                <p class="max_wid" *ngIf="workorder_details.sf_priority == 'Medium' "> <span class="badge badge-pill badge-primary">Medium</span></p>
+                <p class="max_wid" *ngIf="workorder_details.sf_priority == 'Low' "><span class="badge badge-pill badge-success" >Low</span> </p>
+            </td>
+            <td>
+                <p class="max_wid" *ngIf="workorder_details.status == 'inprogress' " ><span class="badge badge-pill badge-primary" >In progress</span> </p>
+                <p class="max_wid" *ngIf="workorder_details.status == 'In Progress' " ><span class="badge badge-pill badge-primary" >In progress</span> </p>
+                <p class="max_wid" *ngIf="workorder_details.status == 'notstarted' "> <span class="badge badge-pill badge-warning" >Yet to start</span></p>
+                <p class="max_wid" *ngIf="workorder_details.status == 'completed' "><span class="badge badge-pill badge-success" >Completed</span> </p>
+                <p class="max_wid" *ngIf="workorder_details.status == 'cancel' "><span class="badge badge-pill badge-danger" >Cancelled </span> </p>
+                <p class="max_wid" *ngIf="workorder_details.status == 'expired' "><span class="badge badge-pill badge-danger" >Pending </span> </p>
+            </td>
+            <td>
+              <ngb-highlight [result]="workorder_details.work_order_qty" [term]="filter.value"></ngb-highlight>
+            </td>
+            <td>
+              <p *ngIf="workorder_details.start_date.length > 15" ngbTooltip={{workorder_details.start_date}}>
+                <ngb-highlight [result]="workorder_details.start_date | slice:0:15" [term]="filter.value">
+                </ngb-highlight>
+              </p>
+              <p *ngIf="workorder_details.start_date.length < 15">
+                <ngb-highlight [result]="workorder_details.start_date" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+            <td>
+              <p *ngIf="workorder_details.end_date.length > 15" ngbTooltip={{workorder_details.end_date}}>
+                <ngb-highlight [result]="workorder_details.end_date | slice:0:15" [term]="filter.value"></ngb-highlight>
+              </p>
+              <p *ngIf="workorder_details.end_date.length < 15">
+                <ngb-highlight [result]="workorder_details.end_date" [term]="filter.value"></ngb-highlight>
+              </p>
+            </td>
+
+            <td>
+              <span class="cursor" ngbTooltip="Edit" data-toggle="modal" data-target="#wrkorder"
+                (click)=" workOrderInfo(workorder_details);popup_title='Edit Work Order'"
+                *ngIf="(authService.currentUser['role_id'] == 1 ||
+                 authService.currentUser['role_id'] == 'PA1001' ||
+                  this.authService.currentUser['role_id'] == 'WCA1001' ||
+                   this.authService.currentUser['role_id'] == 'ASA1001') && workorder_details.status != 'completed'"
+                   >
+                <i class="far fa-edit text-theme"></i></span>
+             
+                <span class="cursor" ngbTooltip="View" data-toggle="modal" data-target="#wrkorder"
+              joyrideStep="viewwrkorder"
+              title="View WorkOrder"
+              [stepContent]="viewwrkorder"  
+              [prevTemplate]="prevButton"
+              [nextTemplate]="nextButton"
+              [doneTemplate]="doneButton"
+                (click)="workOrderInfo(workorder_details);popup_title='View Work Order'"
+                *ngIf="(authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 'MV1001' ||
+                authService.currentUser['role_id'] == 'PV1001'||
+                authService.currentUser['role_id'] == 'WCV1001'||
+                 this.authService.currentUser['role_id'] == 'ASV1001') ||
+                 workorder_details.status == 'completed'"><i
+                  class="fas fa-eye fa-lg text-theme"></i></span>
+
+       
+                </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+      <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+        <ngx-skeleton-loader class="w-100" count="5" animation="pulse"
+          [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+        </ngx-skeleton-loader>
+      </div>
+
+      <div class="text-center mt-5" *ngIf="no_wordorder_details">
+        <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+        <small class="point-8 "> No work orders available to display !!</small>
+      </div>
+
+      <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="wordorder_internalError">
+        <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process your
+          request please try after some time !!</small>
+      </div>
+
+      <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- side panel  for Add and Edit Plant-->
+<div class="modal left fade" id="wrkorder" tabindex="" role="dialog" aria-labelledby="customerLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal_general_popup" role="document">
+    <button type="button" class="btn text-white modal-close-btn cursor bg-sidebar" data-dismiss="modal"><span
+        class="cursor"  (click)="cleardata()" aria-hidden="true">&times;</span></button>
+    <div class="modal-content">
+      <div class="modal-header bg-white">
+        <h5 class="modal-title"*ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 'PA1001' || this.authService.currentUser['role_id'] == 'WCA1001' || this.authService.currentUser['role_id'] == 'ASA1001'">{{popup_title}}</h5>
+        <h5 class="modal-title" *ngIf="authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 'MV1001' ||authService.currentUser['role_id'] == 'PV1001' ||authService.currentUser['role_id'] == 'WCV1001' || this.authService.currentUser['role_id'] == 'ASV1001'">View Work Order</h5>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto;">
+        <!-- work order name -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label> Work Order Name</mat-label>
+          <input matInput  minlength="3" maxlength="40" [formControl]="work_order_name" id="auto_trigger" required>
+          <mat-error *ngIf="work_order_name.touched ||  work_order_name.invalid">{{work_order_nameError()}}</mat-error>
+        </mat-form-field>
+        <!--  work order code -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label> Work Order Code</mat-label>
+          <input matInput  minlength="3" maxlength="40" [formControl]="work_order_code" (input)="validateWorkCode($event.target.value)" required>
+          <mat-error *ngIf="work_order_code.touched ||  work_order_code.invalid">{{work_order_codeerror()}}</mat-error>
+        </mat-form-field>
+        <!-- desc  -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Description</mat-label>
+          <textarea matInput  [formControl]="desc" rows="4" cols="5"></textarea>
+          <mat-error *ngIf="desc.touched && desc.invalid">{{custdesc()}}</mat-error>
+        </mat-form-field>
+        <!--customer name-->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label *ngIf="cust_list.length !=0">Choose a Customer </mat-label>
+          <mat-label *ngIf="cust_list.length ==0">No Customer available </mat-label>
+          <mat-select [formControl]="cust_name"  minlength="3" maxlength="40" required >
+            <mat-option *ngFor="let customer of cust_list" [value]="customer.sf_customer_id">
+              {{customer.sf_company_name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="cust_name.touched && cust_list.length !=0">Choose the customer name !!</mat-error>
+          <mat-error *ngIf="cust_name.touched && cust_list.length ==0">No Customer available please create one !!</mat-error>
+        </mat-form-field>
+        <!-- work order owner -->
+        <mat-form-field appearance="outline" id="width_exm" class="w-100 float-left point-8">
+          <mat-label>Work Order Owner</mat-label>
+          <mat-select  [formControl]="work_order_owner"  panelClass="max-height"   minlength="3" maxlength="40" required >
+            <mat-option *ngFor="let userlists of userlist" [value]="userlists.user_email_id">
+              {{userlists.user_first_name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="work_order_owner.touched ||  work_order_owner.invalid">{{workorderEror()}}</mat-error>
+
+        </mat-form-field>
+        <!--work order quantity-->
+        <mat-form-field appearance="outline" class="w-100 point-8" *ngIf="popup_title=='Add Work Order'" >
+          <mat-label>Work Order Quantity <span class="point-7">(units)</span></mat-label>
+          <input matInput type="number" [formControl]="work_order_qty" min="0"  oninput="this.value = Math.abs(this.value)" required>
+          <mat-error *ngIf="work_order_qty.touched ||  work_order_qty.invalid">{{work_order_qtyerror()}}</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="w-100 point-8" *ngIf="popup_title=='Edit Work Order'" >
+            <mat-label>Work Order Quantity <span class="point-7">(units)</span></mat-label>
+            <input matInput type="number" [formControl]="work_order_qty" min="0"  oninput="this.value = Math.abs(this.value)"   (input)="quantityCheck($event)" required>
+            <mat-error *ngIf="work_order_qty.touched ||  work_order_qty.invalid">{{work_order_qtyerror()}}</mat-error>
+            </mat-form-field>
+          <!--Pard Code-->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label *ngIf="workorder_partcode.length !=0">Part / Item Code</mat-label>
+          <mat-label *ngIf="workorder_partcode.length ==0">No Part / Item Code available </mat-label>
+           <mat-select  [formControl]="part_code"  minlength="3" maxlength="40" required >
+            <mat-option *ngFor="let workorder_partcodes of workorder_partcode" [value]="workorder_partcodes.part_id" (click)="time_estimated_calculate(workorder_partcodes.part_lead_time_mins);">
+            <span >{{workorder_partcodes.part_code}} 
+              <span class="point-8" *ngIf="workorder_partcodes.part_is_child == false"> (Parent Part / Item)</span>
+             </span>
+           </mat-option>
+          </mat-select>
+          <mat-error *ngIf="part_code.touched ||  part_code.invalid">{{partCodeError()}}</mat-error>
+       </mat-form-field>
+        
+
+        <!-- Priority -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label> Priority</mat-label>
+          <mat-select [formControl]="sf_priority" required>
+            <mat-option *ngFor="let data of Priority" [value]="data.name" >
+              {{data.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="sf_priority.touched"> Choose the  Priority</mat-error>
+        </mat-form-field>
+
+
+        <!-- Status -->
+        <div  *ngIf="this.status_progress == 'expired'">
+        <mat-form-field appearance="outline" class="w-100 point-8" *ngIf="status_dropdwon">
+          <mat-label>Choose the Status</mat-label>
+          <mat-select [formControl]="status"   required>
+            <mat-option  [disabled]="statuss.value == 'expired' || statuss.value == 'notstarted'" *ngFor="let statuss of status_select"  [value]="statuss.value">
+              {{statuss.viewValue}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        </div>
+        <div  *ngIf="this.status_progress == 'notstarted'">
+          <mat-form-field appearance="outline" class="w-100 point-8" *ngIf="status_dropdwon">
+            <mat-label>Choose the Status</mat-label>
+            <mat-select [formControl]="status"   required>
+              <mat-option  [disabled]="statuss.value == 'expired'" *ngFor="let statuss of status_select"  [value]="statuss.value">
+                {{statuss.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          </div>
+
+          <div  *ngIf=" this.status_progress == 'cancel'||this.status_progress == 'completed'||this.status_progress == 'inprogress'">
+            <mat-form-field appearance="outline" class="w-100 point-8" *ngIf="status_dropdwon">
+              <mat-label>Choose the Status</mat-label>
+              <mat-select [formControl]="status"   required>
+                <mat-option  [disabled]="statuss.value == 'notstarted' || statuss.value == 'expired'" *ngFor="let statuss of status_select"  [value]="statuss.value">
+                  {{statuss.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            </div>
+
+           <!--time estimated-->
+           <mat-form-field appearance="outline" class="w-100 point-8">
+            <mat-label>Time Estimated <span class="point-7">(minutes)</span></mat-label>          
+            <input matInput  [formControl]="time_estimation"  type ="number" min="0" oninput="this.value = Math.abs(this.value)"  required>
+            <mat-error *ngIf="time_estimation.touched || time_estimation.invalid">{{time_estimationerror()}}</mat-error>
+          </mat-form-field>
+
+
+
+        <!--start and end date -->
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100 point-8"  (click)="start_picker.open()">
+                <mat-label>Start date</mat-label>
+                <input matInput [matDatepicker]="start_picker"  [formControl]="start_date" [min]="startDate" [max]="end_date.value" required>
+                <mat-datepicker-toggle matSuffix [for]="start_picker"></mat-datepicker-toggle>
+                <mat-datepicker #start_picker></mat-datepicker>
+                <mat-error *ngIf="start_date.touched ||  start_date.invalid">Please enter a valid start date</mat-error>
+              </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100 point-8" (click)="end_picker.open()">
+                <mat-label>End date</mat-label>
+                <input matInput [matDatepicker]="end_picker" [formControl]="end_date" [min]="start_date.value" required>
+                <mat-datepicker-toggle matSuffix [for]="end_picker"></mat-datepicker-toggle>
+                <mat-datepicker #end_picker></mat-datepicker>
+                <mat-error *ngIf="end_date.touched ||  end_date.invalid">Please enter a valid end date</mat-error>
+              </mat-form-field>
+          </div>
+        </div>
+     
+        <!-- Batch number -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label> Batch Number</mat-label>
+          <input matInput  minlength="3" maxlength="40"  [formControl]="batch_num"  (input)="validateBatchNum($event.target.value)">
+          <mat-error *ngIf="batch_num.touched &&  batch_num.invalid">{{batch_numError()}}</mat-error>
+        </mat-form-field>
+        <!-- Lot number -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label> Lot Number</mat-label>
+          <input matInput  minlength="3" maxlength="40"  [formControl]="lot_num">
+          <mat-error *ngIf="lot_num.touched &&  lot_num.invalid">{{lot_numError()}}</mat-error>
+        </mat-form-field>
+        <!-- Sales order Number -->
+        <mat-form-field appearance="outline" class="w-100 point-8">
+          <mat-label>Sales Order Number</mat-label>
+          <input matInput  minlength="3" maxlength="40"  [formControl]="sales_ordr_num">
+          <mat-error *ngIf="sales_ordr_num.touched &&  sales_ordr_num.invalid">{{sales_Order_numberError()}}</mat-error>
+        </mat-form-field>
+        
+      </div>
+      <div class="modal-footer footer_btn w-100" *ngIf="popup_title== 'Add Work Order' " [hidden]="!addbutton">
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-clear point-9 mr-1"
+          (click)="cleardata();"><i class="fas fa-undo"></i> Clear</button>
+        <button type="submit" *ngIf="!disabled_enable_button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"
+          (click)="saveWorkOrder();"><i class="far fa-check-circle"></i> Submit</button>
+          <button class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  type="button" disabled *ngIf="disabled_enable_button" >
+            <i class="fas fa-spinner fa-pulse"></i> Loading
+           </button>
+      </div>
+
+      <div class="modal-footer footer_btn  w-100" *ngIf="popup_title== 'Edit Work Order';" [hidden]="!addbutton">
+        <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-delete point-9 mr-1" data-toggle="modal" data-target="#exampleModalCenter" data-dismiss="modal"> <i class="fas fa-trash-alt"></i> Delete</button>
+        <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" (click) ="updatewrkOrderinfo();"><i class="far fa-check-circle"></i>  Update</button>
+      </div>
+
+    <div class="modal-footer footer_btn w-100" *ngIf="popup_title == 'View Work Order'" >
+      <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
+   </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete customer Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog border-radius-point5" role="document">
+    <div class="modal-content ">
+      <div class="modal-header bg-white border_top">
+        <h6 class="modal-title" id="exampleModalLongTitle">Delete</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-9">
+        Are you sure to delete <span class="text-danger">{{work_order_name.value}}</span> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-yes point-8" data-dismiss="modal" (click)="deleteWorkOrder();" ><i class="fas fa-check"></i> Yes</button>
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-no point-8" data-dismiss="modal" data-toggle="modal" data-target="#wrkorder" ><i class="fas fa-times"></i> No</button>
+      </div>
+    </div>
+  </div>
+</div>

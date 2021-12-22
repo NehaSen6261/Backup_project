@@ -1,0 +1,383 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+    <mat-icon class="mr-5 btn-focus-none cursor" ngbTooltip="Back" placement="right" (click)="backloc();">arrow_back
+    </mat-icon>
+    <div class="card border-radius-point5" style="min-height: 50vh;">
+        <div class="card-header bg-transparent border-0">
+            <div class="row mb-1">
+                <div class="col-md-3">
+                    <div class="input-group input-group-flush rounded">                         
+                        <input type="text" class="form-control point-8 border-radius-point5" (keyup)="search($event)" [formControl]="filter"
+                            placeholder="Search" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col-md-6"></div>
+                <div class="col-md-3">
+                    <button type="button" *ngIf="addbutton"
+                        class="btn btn-sm fullscreenbtn max_wid bg-theme text-white shadow mt-2 btn-focus-none float-right point-9"
+                        data-toggle="modal" data-target="#maintenance"
+                        (click)="cleardata();removeTimeDuplicates();popup_title='Add Maintenance';userRolefunction()"><i class="fas fa-plus"></i> Add Maintenance </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover" matSort>
+                <thead class="point-8 cursor">
+                    <tr>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_plant_name" mat-sort-header>Plant Name</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_work_centre_name" mat-sort-header>Work Center Name</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_asset_name" mat-sort-header>Asset Name</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_maintenance_type" mat-sort-header>Maintenance Type</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_service_start_date" mat-sort-header> Service Start Date</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_service_end_date" mat-sort-header> Service End Date</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_duration" mat-sort-header>Duration</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_next_maintenance_cycle" mat-sort-header>Next Cycle</th>
+                        <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="action">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="point-8">
+                    <tr *ngFor="let maintenancelog of obs | async;index as i">
+                        <td>  
+                            <p  *ngIf="maintenancelog.sf_plant_name.length > 10"
+                            ngbTooltip={{maintenancelog.sf_plant_name}}>
+                            <ngb-highlight [result]="maintenancelog.sf_plant_name | slice:0:10"
+                                [term]="filter.value">
+                            </ngb-highlight>
+                        </p>
+                            <p class="max_wid" *ngIf="maintenancelog.sf_plant_name.length <= 10">
+                            <ngb-highlight [result]="maintenancelog.sf_plant_name || 'NA'" [term]="filter.value">
+                            </ngb-highlight>
+                            </p>
+                        </td>
+                        <td>
+                            <p  *ngIf="maintenancelog.sf_work_centre_name.length > 10"
+                                ngbTooltip={{maintenancelog.sf_work_centre_name}}>
+                                <ngb-highlight [result]="maintenancelog.sf_work_centre_name | slice:0:10"
+                                    [term]="filter.value">
+                                </ngb-highlight>
+                            </p>
+                            <p class="max_wid"  *ngIf="maintenancelog.sf_work_centre_name.length <= 10">
+                            <ngb-highlight [result]="maintenancelog.sf_work_centre_name || 'NA'"
+                                [term]="filter.value">
+                            </ngb-highlight>
+                        </p>
+                        </td>
+                        <td>
+                            <p  *ngIf="maintenancelog.sf_asset_name.length > 10"
+                                ngbTooltip={{maintenancelog.sf_asset_name}}>
+                                <ngb-highlight [result]="maintenancelog.sf_asset_name | slice:0:10"
+                                    [term]="filter.value">
+                                </ngb-highlight>
+                            </p>
+                          <p class="max_wid"  *ngIf="maintenancelog.sf_asset_name.length <= 10">
+                            <ngb-highlight [result]="maintenancelog.sf_asset_name || 'NA' " [term]="filter.value">
+                            </ngb-highlight>
+                        </p>
+                        </td>
+                        <td>
+                            <p class="max_wid" *ngIf="maintenancelog.sf_maintenance_type == null ">NA</p>
+                            <p class="max_wid" *ngIf="maintenancelog.sf_maintenance_type == 'Fault repair' "> <span
+                                    class="badge badge-pill badge-danger">Fault repair</span></p>
+                            <p class="max_wid" *ngIf="maintenancelog.sf_maintenance_type == 'Regular' "><span
+                                    class="badge badge-pill badge-info">Regular</span> </p>
+                            <p class="max_wid" *ngIf="maintenancelog.sf_maintenance_type == 'On Demand'"><span
+                                    class="badge badge-pill badge-success">On Demand </span> </p>
+                        </td>
+
+
+                        <td>
+                            <p *ngIf="maintenancelog.sf_service_start_date.length > 20"
+                                ngbTooltip={{maintenancelog.sf_service_start_date}}>
+                                <ngb-highlight [result]="maintenancelog.sf_service_start_date | slice:0:20"
+                                    [term]="filter.value">
+                                </ngb-highlight>
+                            </p>
+                            <p *ngIf="maintenancelog.sf_service_start_date.length <= 20">
+                                <ngb-highlight [result]="maintenancelog.sf_service_start_date" [term]="filter.value">
+                                </ngb-highlight>
+                            </p>
+                        </td>
+
+                        <td>
+                            <p *ngIf="maintenancelog.sf_service_end_date.length > 20"
+                                ngbTooltip={{maintenancelog.sf_service_end_date}}>
+                                <ngb-highlight [result]="maintenancelog.sf_service_end_date | slice:0:20"
+                                    [term]="filter.value">
+                                </ngb-highlight>
+                            </p>
+                            <p *ngIf="maintenancelog.sf_service_end_date.length <= 20">
+                                <ngb-highlight [result]="maintenancelog.sf_service_end_date" [term]="filter.value">
+                                </ngb-highlight>
+                            </p>
+                        </td>
+
+                        <td>
+                            <p class="max_wid">
+                            <ngb-highlight *ngIf="maintenancelog.sf_duration != 'NA'" [result]="maintenancelog.sf_duration + ' mins' " [term]="filter.value">
+                            </ngb-highlight>
+                            <ngb-highlight *ngIf="maintenancelog.sf_duration == 'NA'" [result]="maintenancelog.sf_duration" [term]="filter.value">
+                            </ngb-highlight></p>
+                        </td>
+                        <td>
+                            <ngb-highlight [result]="maintenancelog.sf_next_maintenance_cycle || 'NA'"
+                                [term]="filter.value">
+                            </ngb-highlight>
+
+                        </td>
+
+                        <td>
+                            <span class="cursor" ngbTooltip="Edit" data-toggle="modal" data-target="#maintenance"
+                                (click)="maintanencelog_info(maintenancelog);popup_title='Edit Maintenance '; getplantWorkcenters(maintenancelog.sf_plant_id)"
+                                *ngIf="(authService.currentUser['role_id'] == 1||authService.currentUser['role_id'] == 0||
+                                 this.authService.currentUser['role_id'] == 'ASA1001') && maintenancelog.maintenance_status!='closed'"><i
+                                    class="far fa-edit text-theme"></i></span>
+                            <span class="cursor" ngbTooltip="View" data-toggle="modal" data-target="#maintenance"
+                                (click)=" maintanencelog_info(maintenancelog);popup_title='Edit Maintenance '"
+                                *ngIf="(authService.currentUser['role_id'] == 2 ||authService.currentUser['role_id'] == 'PA1001'||
+                                authService.currentUser['role_id'] == 'MV1001' ||
+                                authService.currentUser['role_id'] == 'PV1001'||
+                                authService.currentUser['role_id'] == 'WCV1001'||  authService.currentUser['role_id'] == 'WCA1001'|| this.authService.currentUser['role_id']=='JB1001'||
+                                 this.authService.currentUser['role_id'] == 'ASV1001') && maintenancelog.maintenance_status!='closed'"><i
+                                    class="fas fa-eye fa-lg text-theme"></i></span>
+                                    <span class="cursor" ngbTooltip="Closed" data-toggle="modal" data-target="#maintenance"
+                                    (click)=" maintanencelog_info(maintenancelog);popup_title='Edit Maintenance '"
+                                    *ngIf="maintenancelog.maintenance_status=='closed'"><i
+                                    class="fas fa-eye fa-lg"></i></span>
+                                </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+            <div class="d-flex justify-content-center mt-2 " *ngIf="spinner">
+                <ngx-skeleton-loader class="w-100" count="5" animation="pulse"
+                    [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+                </ngx-skeleton-loader>
+            </div>
+
+            <div class="text-center mt-5" *ngIf="no_maintenancelog">
+                <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+                <small class="point-8 "> No Maintenance Register available to display !!</small>
+            </div>
+
+            <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError">
+                <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process
+                    your request please try after some time !!</small>
+            </div>
+
+            <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- side panel  for Add and Edit Maintenance-->
+<div class="modal left fade" id="maintenance" tabindex="" role="dialog" aria-labelledby="customerLabel"
+    aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal_general_popup" role="document">
+        <button type="button" class="btn text-white modal-close-btn cursor bg-sidebar" data-dismiss="modal"><span
+                class="cursor" (click)="cleardata()" aria-hidden="true">&times;</span></button>
+        <div class="modal-content">
+            <div class="modal-header bg-white">
+
+                <h5 class="modal-title"
+                    *ngIf="(authService.currentUser['role_id'] == 1||authService.currentUser['role_id'] == 0 || this.authService.currentUser['role_id'] == 'ASA1001') && status!='closed'">
+                    {{popup_title}}</h5>
+                <h5 class="modal-title"
+                    *ngIf="(authService.currentUser['role_id'] == 2|| authService.currentUser['role_id'] == 'PA1001' || authService.currentUser['role_id'] == 'WCA1001' || authService.currentUser['role_id'] == 'WCV1001' || authService.currentUser['role_id'] == 'MV1001' ||authService.currentUser['role_id'] == 'PV1001'|| this.authService.currentUser['role_id'] == 'ASV1001'|| this.authService.currentUser['role_id']=='JB1001') && status!='closed'">
+                    View Maintenance </h5>
+                    <h5 class="modal-title"
+                    *ngIf="status =='closed'">
+                    View Maintenance<span class="badge badge-pill badge-background badgetext ml-2" *ngIf="status=='closed'"><span><i class="fas fa-circle fa-xs icon-color" ></i>  Closed</span></span> </h5>
+                    <div *ngIf="popup_title== 'Edit Maintenance ' && status!='closed';"
+                    [hidden]="!addbutton">
+                    <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1" [FormControl]="closed"
+                    (click)="maintenancelogstatus()"><i class="fas fa-times"></i> Close Record</button>
+                    </div>
+                     </div>
+
+            <div class="modal-body" style="overflow-y: auto;">
+
+                <!-- Plants dropdown -->
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>Choose a Plant</mat-label>
+                    <mat-select [formControl]="plant" (selectionChange)="ifchange($event)" required>
+                        <mat-option *ngFor="let plant of plants" [value]="plant.sf_plant_id"
+                            (click)="getplantWorkcenters(plant.sf_plant_id)">
+                            {{plant.sf_plant_name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="plant.invalid">{{PlantErrorMessages()}}</mat-error>
+                </mat-form-field>
+
+                <!-- workcenter -->
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label *ngIf="plant_workcenters.length != 0">Choose a work center</mat-label>
+                    <mat-label *ngIf="plant_workcenters.length == 0" >No work center available</mat-label>
+                    <mat-select [formControl]="work_center" required>
+                        <mat-option *ngFor="let workcenter of plant_workcenters" [value]="workcenter.sf_work_centre_id"
+                            (click)="getWCAssets(workcenter.sf_work_centre_id)">
+                            {{workcenter.sf_work_centre_name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="plant_workcenters.length != 0">{{WorkcentersErrorMessages()}}</mat-error>
+                    <mat-error *ngIf="plant_workcenters.length == 0" >No work center available please create workcenter</mat-error>
+
+               </mat-form-field>
+
+                <!-- assets -->
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label *ngIf="workcenter_asset.length != 0">Choose a asset</mat-label>
+                    <mat-label *ngIf="workcenter_asset.length == 0">No asset available</mat-label>
+                    <mat-select [formControl]="asstes" required>
+                        <mat-option *ngFor="let asset of workcenter_asset" [value]="asset.sf_asset_id">
+                            {{asset.sf_asset_name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="workcenter_asset.length != 0">{{AsstesErrorMessages()}}</mat-error>
+                    <mat-error *ngIf="workcenter_asset.length == 0" >No assest available please create assest</mat-error>
+
+                </mat-form-field>
+
+                <!--Maitainence type-->
+                <mat-form-field appearance="outline" class="w-100 point-8">
+                    <mat-label>Maintenance Type</mat-label>
+                    <mat-select [formControl]="maintenance_type">
+                        <mat-option *ngFor="let maitainence_selects of maitainence_select"
+                            [value]="maitainence_selects.value">
+                            {{maitainence_selects.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="maintenance_type.invalid">{{maintenance_typeerror()}}</mat-error>
+                </mat-form-field>
+
+                <!--start and end date -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100 point-8" (click)="start_picker.open()">
+                            <mat-label>Start Date</mat-label>
+                            <input matInput [matDatepicker]="start_picker" [max]="startDate" [formControl]="start_date" required>
+                            <mat-datepicker-toggle matSuffix [for]="start_picker"></mat-datepicker-toggle>
+                            <mat-datepicker #start_picker ></mat-datepicker>
+                            <mat-error *ngIf="start_date.touched || start_date.invalid">Please enter a valid start date</mat-error>
+                          </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100 point-8">
+                            <mat-label>Start Time</mat-label>
+                            <mat-select [formControl]="starttime" required>                                 
+                                <mat-option *ngFor="let timeselects of timeselect"
+                                    [value]="timeselects.value">
+                                    {{timeselects.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="starttime.invalid">Please enter a valid end Time</mat-error>
+                        </mat-form-field>
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100 point-8" (click)="end_picker.open();" >
+                            <mat-label>End Date</mat-label>
+                            <input matInput [matDatepicker]="end_picker" [formControl]="end_date"  [min]="start_date.value"  >
+                            <mat-datepicker-toggle matSuffix [for]="end_picker"></mat-datepicker-toggle>
+                            <mat-datepicker #end_picker></mat-datepicker>
+                            <mat-error *ngIf="end_date.invalid || end_date.touched">{{enddateerror()}}</mat-error>
+                          </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100 point-8">
+                            <mat-label>End Time</mat-label>
+                            <mat-select [formControl]="endtime" > 
+                                <mat-option *ngFor="let timeselects of timeselect"
+                                    [value]="timeselects.value">
+                                    {{timeselects.viewValue}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="endtime.invalid || endtime.touched">{{endtimeerror()}}</mat-error>
+                        </mat-form-field>               
+                    </div>
+                </div>
+                <!-- Maintenance note -->
+                <mat-form-field appearance="outline" class="w-100 point-8" >
+                    <mat-label>Maintenance Note</mat-label>
+                  
+                    <textarea matInput  [formControl]="maintenance_note" rows="4" cols="5"></textarea>
+                    <mat-error *ngIf="maintenance_note.invalid || maintenance_note.touched">{{maintenancenoteerror()}}</mat-error>
+                </mat-form-field>
+
+                <!--Next cycle-->
+
+                <mat-form-field appearance="outline" class="w-100 point-8" (click)="next_cyclepicker.open()">
+                    <mat-label>Next cycle</mat-label>
+                    <input matInput [matDatepicker]="next_cyclepicker"  [formControl]="next_cycle" [min]="end_date.value">
+                    <mat-datepicker-toggle matSuffix [for]="next_cyclepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #next_cyclepicker ></mat-datepicker>
+                    <mat-error *ngIf="next_cycle.invalid || next_cycle.touched">{{nextcycleerror()}}</mat-error>
+                  </mat-form-field>
+            </div>
+            <div class="modal-footer footer_btn w-100" *ngIf="popup_title == 'Add Maintenance'"
+                [hidden]="!addbutton">
+                <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-clear point-9 mr-1"
+                    (click)="cleardata();"><i class="fas fa-undo"></i> Clear</button>
+                <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"
+                *ngIf="!disabled_enable_button"    (click)="saveMaintenancelogs();"><i class="far fa-check-circle"></i> Submit</button>
+                <button class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"  type="button" disabled  *ngIf="disabled_enable_button" >
+                    <i class="fas fa-spinner fa-pulse"></i> Loading
+                   </button>
+            </div>
+
+            <div class="modal-footer footer_btn  w-100" *ngIf="popup_title== 'Edit Maintenance ' && status!='closed';"
+                [hidden]="!addbutton">
+                <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-delete point-9 mr-1"
+                    data-toggle="modal" data-target="#exampleModalCenter" data-dismiss="modal"> <i
+                        class="fas fa-trash-alt"></i> Delete</button>
+                <button type="submit" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"
+                    (click)="updatemaintanencelog()"><i class="far fa-check-circle" ></i> Update</button>
+            </div>
+            <div class="modal-footer footer_btn w-100"
+            *ngIf="authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 'PA1001'||
+            authService.currentUser['role_id'] == 'MV1001' ||
+            authService.currentUser['role_id'] == 'PV1001'|| authService.currentUser['role_id'] == 'WCA1001'||
+            authService.currentUser['role_id'] == 'WCV1001'||
+             this.authService.currentUser['role_id'] == 'ASV1001'|| this.authService.currentUser['role_id']=='JB1001'||status=='closed'"> <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-save point-9 mr-1"
+                    data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete maintenance Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog border-radius-point5" role="document">
+        <div class="modal-content ">
+            <div class="modal-header bg-white border_top">
+                <h6 class="modal-title" id="exampleModalLongTitle">Delete</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body point-9">
+                Are you sure to delete <span class="text-danger">Maintenance for {{assest_name.value | titlecase}}
+                </span> ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-yes point-8"
+                    data-dismiss="modal" (click)="deleteMaintenancelogs();"><i class="fas fa-check"></i> Yes</button>
+                <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-no point-8"
+                    data-dismiss="modal" data-toggle="modal" data-target="#maintenance"><i class="fas fa-times"></i>
+                    No</button>
+            </div>
+        </div>
+    </div>
+</div>

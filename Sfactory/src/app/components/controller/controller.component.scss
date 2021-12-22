@@ -1,0 +1,85 @@
+
+.controller-full-view{
+    margin-top: 130px !important;
+  }
+
+  .overlay {
+    bottom: 0; 
+    transition: .5s ease;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    pointer-events: none;
+    cursor:not-allowed;
+  }
+  .overlay:before{
+    background: #808080ad!important;
+  }
+  
+  .mat-form-field-appearance-outline.mat-form-field-disabled .mat-form-field-outline {
+    opacity: 0!important;
+    }
+    /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+  .disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    color: grey!important;
+  }
+
+  .calc_btn{
+    height: 60px;
+  }
+  .incrment_btn{
+    position: relative;
+    bottom: 8px;
+    left: 4px;
+  }
+  
+  .align_resp{
+    position: relative;
+    right:10%;
+  }
+  .counter_size{
+    font-size: 38px;
+  }
+  // .customnavtab{
+  //   width: 50%;
+  //   text-align: center;
+  //   border: none!important;
+  //   background-color: #f7f8f9;
+  // }
+  
+  // .nav-tabs {
+  //   border: none!important;}
+  
+  // .nav-tabs .nav-link {
+  //   border: none!important;
+  // }
+
+  // .nav-tabs .nav-link.active{
+  //   background-color: #EBEFF3;
+  // }
+  
+    .alink{
+      color: rgb(17, 17, 17);
+      font-weight: 500;
+    }
+    .alink:hover{
+      color: rgb(17, 17, 17);
+      font-weight: 500;
+    }
+  .button_style_sim{
+    height: 4em;
+      width: 8em;
+  }
+  

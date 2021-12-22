@@ -1,0 +1,206 @@
+<sidebar></sidebar>
+<navbar ></navbar>
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor " ngbTooltip= "Back" placement="right" routerLink="/datarules">arrow_back</mat-icon>
+  <div class="row mb-2">
+    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+      <mat-form-field appearance="outline" class="float-right w-100 point-8" >
+        <mat-label>Choose a plant</mat-label>
+        <input matInput  [(ngModel)]="plant" disabled>
+
+      </mat-form-field>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+    <mat-form-field appearance="outline" class="float-right w-100 point-8" >
+      <mat-label>Work center Name</mat-label>
+     <input matInput  [(ngModel)]="work_center" disabled>
+    </mat-form-field>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+    <mat-form-field appearance="outline" class="float-right w-100 point-8" >
+      <mat-label>Asset Name</mat-label>
+     <input matInput  [(ngModel)]="assets" disabled>
+    </mat-form-field>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+    <mat-form-field appearance="outline" class="float-right w-100 point-8" >
+      <mat-label>Device Name</mat-label>
+     <input matInput  [(ngModel)]="devices" disabled>
+    </mat-form-field>
+  </div>
+  </div>
+
+  <div class="row mb-3">
+      <div class="col-xl-3 col-lg-6 col-md-12 col-sm-12 d-flex mb-2 mb-sm-3">
+            <div class="card flex-fill hover-shadow">
+                  <div class="card-header">
+                    <h6 class="card-title text-muted point-9">Inbound Data Key </h6>
+                  </div>
+                  <div class="card-body">
+                    <mat-checkbox [(ngModel)]="inbound_data" disabled>{{inbound_data}}</mat-checkbox>
+                  </div>
+            </div>
+      </div>
+      <div class="col-xl-3 col-lg-6 col-md-12 col-sm-12 d-flex mb-2 mb-sm-3">
+        <div class="card flex-fill hover-shadow">
+              <div class="card-header">
+                <h6 class="card-title text-muted point-9">Data Rules </h6>
+              </div>
+              <div class="card-body">
+
+
+                <mat-list>
+                  <mat-list-item>
+                    <mat-checkbox [(ngModel)]="greater_than" disabled>Greater Than</mat-checkbox>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                  <mat-list-item>
+                    <mat-checkbox [(ngModel)]="lesser_than" disabled> Lesser Than </mat-checkbox>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                  <mat-list-item>
+                    <mat-checkbox [(ngModel)]="equal" disabled>Equal To </mat-checkbox>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                  <mat-list-item>
+                    <mat-checkbox [(ngModel)]="contain" disabled> Contains</mat-checkbox>
+                  </mat-list-item>
+                </mat-list>
+              </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-6 col-md-12 col-sm-12 d-flex mb-2 mb-sm-3">
+        <div class="card flex-fill hover-shadow">
+              <div class="card-header">
+                <h6 class="card-title text-muted point-9">Data value </h6>
+              </div>
+              <div class="card-body">
+                    <mat-list >
+                      <mat-list-item>
+                        <mat-form-field appearance="outline"  class=" w-100 float-left point-8">
+                          <mat-label>custom Entry</mat-label>
+                          <input matInput [(ngModel)]="custom_data_value" disabled>
+                        </mat-form-field>
+                      </mat-list-item>
+                      <mat-divider></mat-divider>
+                      <mat-list-item >
+                        <mat-checkbox [(ngModel)]="yes" disabled class="point-9">Yes </mat-checkbox>
+                      </mat-list-item>
+                      <mat-divider></mat-divider>
+                      <mat-list-item>
+                        <mat-checkbox  [(ngModel)]="no" disabled class="point-9">No </mat-checkbox>
+                      </mat-list-item>
+                      <mat-divider></mat-divider>
+                      <mat-list-item>
+                        <mat-checkbox  [(ngModel)]="on" disabled class="point-9">On </mat-checkbox>
+                        </mat-list-item>
+                        <mat-divider></mat-divider>
+                      <mat-list-item>
+                        <mat-checkbox  [(ngModel)]="off" disabled class="point-9">OFF </mat-checkbox>
+                      </mat-list-item>
+                    </mat-list>
+              </div>
+        </div>
+     </div>
+     <div class="col-xl-3 col-lg-6 col-md-12 col-sm-12 d-flex mb-2 mb-sm-3">
+        <div class="card flex-fill hover-shadow">
+              <div class="card-header">
+                <h6 class="card-title text-muted point-9 float-left">Action </h6>
+                <mat-slide-toggle color="primary" class="float-right" (click)="act_inact_drule()" [(ngModel)]="isActivedrule"  [disabled]="authService.currentUser['role_id'] == 2 || authService.currentUser['role_id'] == 2000" >
+                  {{drule_status}}
+                </mat-slide-toggle>
+              </div>
+              <div class="card-body">
+                <mat-list>
+                  <mat-list-item>
+                    <div  (mouseover)="tooltipStatus=true">
+                      <mat-form-field  [matTooltipDisabled]="!tooltipStatus"
+                      matTooltip="{{alert_type}}"
+                      matTooltipClass="custom-tooltip-blue"
+                      matTooltipPosition='below'
+                      #tooltip="matTooltip" class="point-8 w-100">
+                      <input matInput placeholder="Alert type" [(ngModel)]="alert_type" disabled>
+                    </mat-form-field>
+                    </div>
+                   </mat-list-item>
+                    <mat-divider></mat-divider><br>
+                    <div *ngIf="is_email_enabled">
+                          <mat-list-item>
+                          <div  (mouseover)="tooltipStatus=true">
+                            <mat-form-field  [matTooltipDisabled]="!tooltipStatus"
+                            matTooltip="{{email}}"
+                            matTooltipClass="custom-tooltip-blue"
+                            matTooltipPosition='below'
+                            #tooltip="matTooltip" class="point-8 w-100">
+                            <input matInput placeholder="Email" [(ngModel)]="email" disabled>
+                          </mat-form-field >
+                          </div>
+                          </mat-list-item>
+                          <mat-divider></mat-divider><br>
+                      </div>
+                    <div *ngIf="is_sms_enabled">
+                        <mat-list-item>
+                          <div  (mouseover)="tooltipStatus=true">
+                            <mat-form-field  [matTooltipDisabled]="!tooltipStatus"
+                            matTooltip="{{sms}}"
+                            matTooltipClass="custom-tooltip-blue"
+                            matTooltipPosition='below'
+                            #tooltip="matTooltip" class="point-8 w-100">
+                            <ngx-mat-intl-tel-input  #phoneNumber="ngModel"  [preferredCountries]="['in', 'us', 'gb' ]" [(ngModel)]="sms" name = "Sms"   disabled style="pointer-events:none;">
+                          </ngx-mat-intl-tel-input>
+                        </mat-form-field>
+                        </div>
+                        </mat-list-item>
+                      <mat-divider></mat-divider><br>
+                    </div>
+                  <mat-list-item *ngIf="is_webhook_enabled">
+                    <div  (mouseover)="tooltipStatus=true">
+                      <mat-form-field  [matTooltipDisabled]="!tooltipStatus"
+                      matTooltip="{{webhook}}"
+                      matTooltipClass="custom-tooltip-blue"
+                      matTooltipPosition='below'
+                      #tooltip="matTooltip" class="point-8 w-100">
+                      <input matInput placeholder="Webhook" [(ngModel)]="webhook" disabled>
+                  </mat-form-field>
+                  </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider><br>
+                  <mat-list-item>
+                    <div  (mouseover)="tooltipStatus=true">
+                      <mat-form-field  [matTooltipDisabled]="!tooltipStatus"
+                      matTooltip="{{command}}"
+                      matTooltipClass="custom-tooltip-blue"
+                      matTooltipPosition='below'
+                      #tooltip="matTooltip" class="point-8 w-100">
+                      <input matInput placeholder="command" [(ngModel)]="command" disabled>
+                  </mat-form-field>
+                  </div>
+                  </mat-list-item>
+                </mat-list>
+              </div>
+        </div>
+      </div>
+  </div>
+  <button type="button" class="btn btn-sm float-right shadow text-white bg-theme btn-delete point-9 ml-1 mb-2 mb-sm-0 " data-toggle="modal" data-target="#deleteModal" *ngIf="authService.currentUser['role_id'] == 1 || authService.currentUser['role_id'] == 1000"><i class="fas fa-trash-alt"></i> Delete</button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered ">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header bg-white">
+        <h5 class="modal-title point-9" id="deleteModalLabel">Delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-8">
+        Are you sure to delete Inbound Data Key : <span class="text-danger">{{inbound_data}}</span> ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-yes point-8" data-dismiss="modal" (click)="deleteDataRule()" ><i class="fas fa-check"></i>  Yes</button>
+        <button type="button" class="btn btn-sm shadow text-white bg-theme btn-delete-no point-8" data-dismiss="modal"><i class="fas fa-times"></i> No</button>
+      </div>
+    </div>
+  </div>
+</div>

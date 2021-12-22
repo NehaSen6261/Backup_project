@@ -1,0 +1,721 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+
+
+<div class="main-window" *ngIf="db_internal_error">
+  <div class="d-flex justify-content-center flex-wrap mt-5">
+    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your request
+      please try after some time !!</small>
+  </div>
+</div>
+
+<div class="main-window" *ngIf="!db_internal_error">
+
+  <!------------------------------- DF 1001 -------------------------->
+
+  <!-- cards 1,2,3,4 -->
+  <div class="row mb-2">
+    <!-------------------------------------------------------- CARD 1 ---------------------------------------------------------------->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-flex">
+      <div class="card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold">{{df_1001_card1_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card1menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card1menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card1_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="card-body">
+          <div class=" align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="(!is_db_configured || !is_df_1001_card1_configured) && !no_df_1001_card1_data&&!df_1001_card1_internal_err"
+              (click)="df1001_card1_config()"><i class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+            <div *ngIf="card1_factory_data" class="mb-n4 mt-n4">
+              <apx-chart [series]="card1_factory_series" [chart]="chartOptions.chart"
+                [plotOptions]="chartOptions.plotOptions" [labels]="card1_factory_label" [stroke]="chartOptions.stroke"
+                [fill]="chartOptions.fill"></apx-chart>
+            </div>
+            <div class="text-center mt-2" *ngIf="no_df_1001_card1_data">
+              <p><i class="fas fa-chart-area mr-1 fa-3x opacity-point-3"></i></p>
+              <small class="point-8 "> {{no_df_1001_card1_data_txt}} </small>
+            </div>
+            <div class="d-flex justify-content-center flex-wrap mt-5"
+              *ngIf="is_df_1001_card1_configured&&df_1001_card1_internal_err">
+              <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>{{error_msg}}</small>
+            </div>
+            <!-- Spinner -->
+            <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card1_spinner">
+              <spinner></spinner>
+            </div>
+          </div>
+          <span class="text-muted float-right font-weight-bold point-7 mt-n2 mb-n4"
+            *ngIf="card1_has_device">{{df_1001_card1_subtitle}}</span>
+        </div>
+        <div class="card-footer  ht-40" *ngIf="card1_factory_data">
+          <p class="float-right text-muted point-7"> Updated on : {{timecard1}}</p>
+        </div>
+      </div>
+    </div>
+    <!-------------------------------------------------------- CARD 2 ---------------------------------------------------------------->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-flex">
+      <div class="card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold">{{df_1001_card2_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card2menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card2menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card2_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="card-body">
+          <div class=" align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="(!is_db_configured || !is_df_1001_card2_configured) && !no_df_1001_card2_data&&!df_1001_card2_internal_err"
+              (click)="df1001_card2_config()"><i class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+            <div *ngIf="card2_factory_data" class="mb-n4 mt-n4">
+              <apx-chart [series]="card2_factory_series" [chart]="chartOptions.chart"
+                [plotOptions]="chartOptions.plotOptions" [labels]="card2_factory_label" [stroke]="chartOptions.stroke"
+                [fill]="chartOptions.fill"></apx-chart>
+            </div>
+            <div class="text-center mt-2" *ngIf="no_df_1001_card2_data">
+              <p><i class="fas fa-chart-area mr-1 fa-3x opacity-point-3"></i></p>
+              <small class="point-8 "> {{no_df_1001_card2_data_txt}} </small>
+            </div>
+            <div class="d-flex justify-content-center flex-wrap mt-5"
+              *ngIf="is_df_1001_card2_configured&&df_1001_card2_internal_err">
+              <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                your
+                request please try after some time !!</small>
+            </div>
+            <!-- Spinner -->
+            <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card2_spinner">
+              <spinner></spinner>
+            </div>
+          </div>
+          <span class="text-muted float-right font-weight-bold point-7 mt-n2 mb-n4"
+            *ngIf="card2_has_device">{{df_1001_card2_subtitle}}</span>
+        </div>
+        <div class="card-footer  ht-40" *ngIf="card2_factory_data">
+          <p class="float-right text-muted point-7"> Updated on : {{timecard2}}</p>
+        </div>
+      </div>
+    </div>
+    <!-------------------------------------------------------- CARD 3 ---------------------------------------------------------------->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-flex">
+      <div class="card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold">{{df_1001_card3_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card3menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card3menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card3_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="card-body">
+          <div class=" align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="(!is_db_configured || !is_df_1001_card3_configured)&& !no_df_1001_card3_data && !df_1001_card3_internal_err"
+              (click)="df1001_card3_config()"><i class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+            <div *ngIf="card3_factory_data" class="mb-n4 mt-n4">
+              <apx-chart [series]="card3_factory_series" [chart]="chartOptions.chart"
+                [plotOptions]="chartOptions.plotOptions" [labels]="card3_factory_label" [stroke]="chartOptions.stroke"
+                [fill]="chartOptions.fill"></apx-chart>
+            </div>
+            <div class="text-center mt-2" *ngIf="no_df_1001_card3_data">
+              <p><i class="fas fa-chart-area mr-1 fa-3x opacity-point-3"></i></p>
+              <small class="point-8 "> {{no_df_1001_card3_data_txt}} </small>
+            </div>
+            <div class="d-flex justify-content-center flex-wrap mt-5"
+              *ngIf="is_df_1001_card3_configured&&df_1001_card3_internal_err">
+              <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                your
+                request please try after some time !!</small>
+            </div>
+            <!-- Spinner -->
+            <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card3_spinner">
+              <spinner></spinner>
+            </div>
+          </div>
+          <span class="text-muted float-right font-weight-bold point-7 mt-n2 mb-n4"
+            *ngIf="card3_has_device">{{df_1001_card3_subtitle}}</span>
+        </div>
+        <div class="card-footer  ht-40" *ngIf="card3_factory_data">
+          <p class="float-right text-muted point-7"> Updated on : {{timecard3}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-------------------------------------------------------- CARD 4 ---------------------------------------------------------------->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-flex">
+      <div class="card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold">{{df_1001_card4_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card4menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card4menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card4_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="card-body">
+          <div class=" align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="(!is_db_configured || !is_df_1001_card4_configured)&& !no_df_1001_card4_data&&!df_1001_card4_internal_err"
+              (click)="df1001_card4_config()"><i class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+            <div *ngIf="card4_factory_data" class="mb-n4 mt-n4">
+              <apx-chart [series]="card4_factory_series" [chart]="chartOptions.chart"
+                [plotOptions]="chartOptions.plotOptions" [labels]="card4_factory_label" [stroke]="chartOptions.stroke"
+                [fill]="chartOptions.fill"
+                ></apx-chart>
+            </div>
+            <div class="text-center mt-2" *ngIf="no_df_1001_card4_data">
+              <p><i class="fas fa-chart-area mr-1 fa-3x opacity-point-3"></i></p>
+              <small class="point-8 "> {{no_df_1001_card4_data_txt}} </small>
+            </div>
+            <div class="d-flex justify-content-center flex-wrap mt-5"
+              *ngIf="is_df_1001_card4_configured&&df_1001_card4_internal_err">
+              <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process
+                your request please try after some time !!</small>
+            </div>
+            <!-- Spinner -->
+            <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card4_spinner">
+              <spinner></spinner>
+            </div>
+          </div>
+          <span class="text-muted float-right font-weight-bold point-7 mt-n2 mb-n4"
+            *ngIf="card4_has_device">{{df_1001_card4_subtitle}}</span>
+        </div>
+        <div class="card-footer  ht-40" *ngIf="card4_factory_data">
+          <p class="float-right text-muted point-7"> Updated on : {{timecard4}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-------------------------------------------------------- CARD 5  and CARD 6---------------------------------------------------------------->
+  <div class="row">
+    <!-------------------------------------------------------- CARD 5---------------------------------------------------------------->
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-fle d-flex">
+      <div class="card card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold">{{df_1001_card5_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card5menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card5menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card5_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="card-body">
+          <div class=" align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="!is_db_configured || !is_df_1001_card5_configured" (click)="df1001_card5_config()"><i
+                class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+          </div>
+          <!-- Spinner -->
+          <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card5_spinner">
+            <spinner></spinner>
+          </div>
+          <div *ngIf="card5_factory_data && !df_1001_card5_spinner && !df_1001_card5_internal_err" class="mb-n5">
+            <apx-chart [series]="card5ChartOptions.series" [chart]="card5ChartOptions.chart"
+              [xaxis]="card5ChartOptions.xaxis" [stroke]="card5ChartOptions.stroke"
+              [tooltip]="card5ChartOptions.tooltip" [dataLabels]="card5ChartOptions.dataLabels"
+              [legend]="card5ChartOptions.legend" [markers]="card5ChartOptions.markers" [grid]="card5ChartOptions.grid"
+              [yaxis]="card5ChartOptions.yaxis"
+               [title]="card5ChartOptions.title"
+                [fill]="card5ChartOptions.fill"
+                [plotOptions]="card5ChartOptions.plotOptions"
+                >
+            </apx-chart>
+          </div>
+          <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="df_1001_card5_internal_err">
+            <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+              request please try after some time !!</small>
+          </div>
+        </div>
+        <div class="card-footer  ht-40" *ngIf="card5_factory_data">
+          <p class="float-left text-muted point-7">Last 12 hours Run Time vs Downtime  !!</p>
+          <p class="float-right text-muted point-7"> Updated on : {{timecard5}}</p>
+        </div>
+      </div>
+    </div>
+    <!-------------------------------------------------------- CARD 6---------------------------------------------------------------->
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-fle d-flex">
+      <div class="card card hover-shadow flex-fill border-radius-point5 min-card-h40 ">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold">{{df_1001_card6_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card6menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card6menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card6_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+
+        <div class="card-body">
+          <div class=" align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="(!is_db_configured || !is_df_1001_card6_configured)&& !df_1001_card6_spinner"
+              (click)="df1001_card6_config()"><i class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+          </div>
+          <!-- Spinner -->
+          <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card6_spinner">
+            <spinner></spinner>
+          </div>
+          <div *ngIf="card6_factory_data && !df_1001_card6_spinner && !df_1001_card6_internal_err" class="mb-n5">
+            <apx-chart 
+            [series]="card6ChartOptions.series"
+            [chart]="card6ChartOptions.chart"
+            [dataLabels]="card6ChartOptions.dataLabels"
+            [plotOptions]="card6ChartOptions.plotOptions"
+            [yaxis]="card6ChartOptions.yaxis"
+            [legend]="card6ChartOptions.legend"
+            [fill]="card6ChartOptions.fill"
+            [stroke]="card6ChartOptions.stroke"
+            [tooltip]="card6ChartOptions.tooltip"
+             [xaxis]="card6ChartOptions.xaxis">
+            </apx-chart>
+          </div>
+          <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="df_1001_card6_internal_err">
+            <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your
+              request please try after some time !!</small>
+          </div>
+        </div>
+        <div class="card-footer  ht-40" *ngIf="card6_factory_data">
+          <p class="float-left text-muted point-7"> Last 12 hours Quality and Rejection !!</p>
+          <p class="float-right text-muted point-7"> Updated on: {{timecard6}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-------------------------------------------------------- CARD 7 ---------------------------------------------------------------->
+  <div class="row mb-2">
+    <div class="col-12">
+      <div class="card card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold">WO Progress: {{df_1001_card7_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card7menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card7menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card7_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="card-body">
+          <div class=" align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="!is_db_configured || !is_df_1001_card7_configured" (click)="df1001_card7_config()"><i
+                class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+          </div>
+          <div *ngIf="card7_factory_data && !no_workorder_performance && !df_1001_card7_spinner">
+            <apx-chart [series]="card7ChartOptions.series" [chart]="card7ChartOptions.chart"
+              [dataLabels]="card7ChartOptions.dataLabels" [markers]="card7ChartOptions.markers"
+              [fill]="card7ChartOptions.fill" [yaxis]="card7ChartOptions.yaxis" [xaxis]="card7ChartOptions.xaxis"
+              [tooltip]="card7ChartOptions.tooltip" [autoUpdateSeries]="true" [stroke]="card7ChartOptions.stroke">
+            </apx-chart>
+          </div>
+
+          <div class="text-center mt-5" *ngIf="no_workorder_performance">
+            <p><i class="fas fa-chart-area mr-1 fa-3x opacity-point-3"></i></p>
+            <small class="point-8 "> No work order performance available to display !!</small>
+          </div>
+         
+
+
+          <!-- Spinner -->
+          <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card7_spinner">
+            <spinner></spinner>
+          </div>
+        </div>
+        <div class="card-footer  ht-40" *ngIf="card7_factory_data">
+          <p class="float-left text-muted point-7">WO Performance: {{df_1001_card7_title}}</p>
+          <p class="float-right text-muted point-7"> Updated on : {{browset_time}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-------------------------------------------------------- CARD 8 and CARD 9 ---------------------------------------------------------------->
+  <div class="row mb-2">
+    <!-------------------------------------------------------- CARD 8  ---------------------------------------------------------------->
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-flex">
+      <div class="card card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark font-light-bold text-capitalize">{{df_1001_card8_title}} <span class="point-8"
+              *ngIf="is_db_configured && is_df_1001_card8_configured && !df_1001_card8_spinner && !no_wo_job_progress">Jobs
+              performance</span></p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card8menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card8menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card8_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div>
+          <div class="align-items-center d-flex justify-content-center"
+            *ngIf="!is_db_configured || !is_df_1001_card8_configured">
+            <span class="point-8 cursor mt-3" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card8_config()"><i class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+          </div>
+          <div *ngIf="is_db_configured && is_df_1001_card8_configured && !df_1001_card8_spinner && !no_wo_job_progress">
+            <div class="table-responsive tableFixHead">
+              <table class="table table-hover" matSort>
+                <thead class="point-8 cursor">
+                  <tr>
+                    <th scope="col" class="one1-point text-dark font-light-bold" mat-sort-header disabled matColumnDef="sf_project_code">Job Code</th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" mat-sort-header disabled matColumnDef="part_code">Part/Item</th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" mat-sort-header disabled matColumnDef="order_quantity">Order Qty</th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" mat-sort-header disabled matColumnDef="sf_project_status"> Status </th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" mat-sort-header disabled matColumnDef="sf_job_progressed">Progressed</th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" mat-sort-header disabled matColumnDef="updated_by_date">Updated on</th>
+                  </tr>
+                </thead>
+                <tbody class="point-8">
+                  <tr *ngFor="let job_progress of wo_jobprogress">
+
+                    <!-- sf_project_code -->
+                    <td>
+                      <p class="max_wid" *ngIf="job_progress.sf_project_code.length > 15" ngbTooltip={{job_progress.sf_project_code}}>
+                        {{job_progress.sf_project_code| slice:0:15}}... </p>
+                      <p *ngIf="job_progress.sf_project_code.length <= 15">{{job_progress.sf_project_code}}</p>
+                    </td>
+                      <!-- Part Code -->
+                      <td>
+                        <p class="max_wid" *ngIf="job_progress.part_code.length > 15" ngbTooltip={{job_progress.part_code}}>
+                          {{job_progress.part_code| slice:0:15}}... </p>
+                        <p *ngIf="job_progress.part_code.length <= 15">{{job_progress.part_code}}</p>
+                      </td>
+                        <!-- Order Quantity -->
+                    <td>
+                      <p class="max_wid">{{job_progress.order_quantity}}</p>
+                    </td>
+                    <!-- job_progress -->
+                    <td>
+                      <p class="max_wid" *ngIf="job_progress.sf_project_status == 'inprogress' "><span
+                          class="badge badge-pill badge-primary">In progress</span> </p>
+                      <p class="max_wid" *ngIf="job_progress.sf_project_status == 'notstarted' "> <span
+                          class="badge badge-pill badge-warning">Yet to start</span></p>
+                      <p class="max_wid" *ngIf="job_progress.sf_project_status == 'completed' "><span
+                          class="badge badge-pill badge-success">Completed</span> </p>
+                      <p class="max_wid" *ngIf="job_progress.sf_project_status == 'cancel' "><span
+                          class="badge badge-pill badge-danger">Cancelled </span> </p>
+                      <p class="max_wid point-8" *ngIf="job_progress.sf_project_status == 'halt' "><span
+                          class="badge badge-pill badge-danger">Halt</span> </p>
+                      <p class="max_wid" *ngIf="job_progress.sf_project_status == 'expired' "><span
+                            class="badge badge-pill badge-danger">Expired </span> </p>
+                    </td>
+                    <!-- sf_job_progressed -->
+                    <td>
+                      <p class="mt-2" ngbTooltip=' {{job_progress.sf_job_progressed}}%'>
+                        <mat-progress-bar mode="determinate" value={{job_progress.sf_job_progressed}}>
+                        </mat-progress-bar>
+                      </p>
+                    </td>
+                    <!-- last_date -->
+                    <td>
+                      <p class="max_wid">{{job_progress.updated_by_date || "Just now" }}</p>
+                    </td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="text-center mt-5" *ngIf="no_wo_job_progress">
+            <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+            <small class="point-8 "> No jobs available to display the status !!</small>
+          </div>
+
+          <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="df_1001_card6_internal_err">
+            <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process
+              your request please try after some time !!</small>
+          </div>
+          <!-- Spinner -->
+          <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card8_spinner">
+            <ngx-skeleton-loader class="w-100" count="5" animation="pulse"
+              [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+            </ngx-skeleton-loader>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-------------------------------------------------------- CARD 9 ---------------------------------------------------------------->
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-md-2 mb-2 mb-sm-0 d-flex">
+      <div class="card card hover-shadow flex-fill border-radius-point5 min-card-h40">
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left one-point text-dark text-capitalize font-light-bold">{{df_1001_card9_title}}</p>
+          <button mat-icon-button [matMenuTriggerFor]="df_1001_card9menu"
+            class="float-right btn-focus-none card-menu-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #df_1001_card9menu="matMenu">
+            <button mat-menu-item class=" btn-focus-none" data-toggle="modal" data-target="#AttributesModal"
+              (click)="df1001_card9_config()">
+              <mat-icon>settings</mat-icon>
+              <span>Settings</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div>
+          <div class="align-items-center d-flex justify-content-center">
+            <span class="point-8 cursor mt-3" data-toggle="modal" data-target="#AttributesModal"
+              *ngIf="!is_db_configured || !is_df_1001_card9_configured" (click)="df1001_card9_config()"><i
+                class="fas fa-tools text-theme mr-1 fa-lg"></i> Configure</span>
+          </div>
+          <div *ngIf="is_db_configured && is_df_1001_card9_configured && !no_asset_list_info">
+            <div class="table-responsive tableFixHead">
+              <table class="table table-hover">
+                <thead class="point-8 cursor">
+                  <tr>
+                    <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_asset_name">Asset Name</th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_asset_code">Asset Code</th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_asset_status">Status</th>
+                    <th scope="col" class="one1-point text-dark font-light-bold" matColumnDef="sf_work_centre_name">Work Center</th>
+                  </tr>
+                </thead>
+                <tbody class="point-8">
+                  <tr *ngFor="let asset of assets_list_info">
+
+                    <!-- sf_asset_name -->
+                    <td>
+                      <p *ngIf="asset.sf_asset_name.length > 15" ngbTooltip={{asset.sf_asset_name}}>
+                        {{asset.sf_asset_name| slice:0:15}}... </p>
+                      <p *ngIf="asset.sf_asset_name.length <= 15">{{asset.sf_asset_name}}</p>
+                    </td>
+                    <!-- sf_asset_code -->
+                    <td>
+                      <p *ngIf="asset.sf_asset_code.length > 15" ngbTooltip={{asset.sf_asset_code}}>
+                        {{asset.sf_asset_code| slice:0:15}}... </p>
+                      <p *ngIf="asset.sf_asset_code.length <= 15">{{asset.sf_asset_code}}</p>
+                    </td>
+
+                    <!-- asset_status -->
+                    <td>
+                      <p class="max_wid" *ngIf="asset.sf_asset_status == null ">NA</p>
+                      <p class="max_wid" *ngIf="asset.sf_asset_status == 'Stop' "><span
+                          class="badge badge-pill badge-warning">Stopped</span> </p>
+                      <p class="max_wid" *ngIf="asset.sf_asset_status == 'Fault' "> <span
+                          class="badge badge-pill badge-danger">Fault</span></p>
+                      <p class="max_wid" *ngIf="asset.sf_asset_status == 'Break' "><span
+                          class="badge badge-pill badge-info">Break</span> </p>
+                      <p class="max_wid"
+                        *ngIf="asset.sf_asset_status == 'Start' || asset.sf_asset_status == 'Resume' || asset.sf_asset_status == 'Running' ">
+                        <span class="badge badge-pill badge-success">Running </span> </p>
+
+                       
+                    </td>
+
+                    <!-- sf_work_centre_name -->
+                    <td>
+                      <p *ngIf="asset.sf_work_centre_name.length > 15" ngbTooltip={{asset.sf_work_centre_name}}>
+                        {{asset.sf_work_centre_name | slice:0:15}}... </p>
+                      <p *ngIf="asset.sf_work_centre_name.length <= 15">{{asset.sf_work_centre_name }}</p>
+                    </td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="text-center mt-5" *ngIf="no_asset_list_info">
+            <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+            <small class="point-8 "> No assets available to display the status !!</small>
+          </div>
+
+          <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="df_1001_card9_internal_err">
+            <small class="point-8 "> <i class="fas fa-exclamation-triangle text-warning mr-1"></i> Unable to process
+              your request please try after some time !!</small>
+          </div>
+          <!-- Spinner -->
+          <div class="d-flex justify-content-center mt-2 " *ngIf="df_1001_card9_spinner">
+            <ngx-skeleton-loader class="w-100" count="5" animation="pulse"
+              [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }">
+            </ngx-skeleton-loader>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<!--Attributes Modal -->
+<div class="modal fade" id="AttributesModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dia  log"
+  aria-labelledby="AttributesModalTitle" aria-hidden="true" cdkDrag>
+  <div class="modal-dialog " role="document">
+    <div class="modal-content border-radius-point5">
+      <div class="modal-header border-radius-point5">
+        <p class="modal-title point-9" id="AttributesModalTitle">{{df_1001_card_clicked}}: Asset Productivity Indicator</p>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body point-8">
+
+        <!-- only for df 1001 card 1, card 2, card 3, card 4-->
+        <div
+          *ngIf="df_1001_card_clicked == 'Card1' || df_1001_card_clicked == 'Card2' || df_1001_card_clicked == 'Card3'  || df_1001_card_clicked == 'Card4' ">
+          <div class="row">
+            <div class="col-md">
+              <mat-form-field appearance="outline" class="float-right w-100">
+                <mat-label *ngIf="(no_user_assets && !asset_internal_err)">Choose a Asset</mat-label>
+                <mat-label *ngIf="!no_user_assets">No Assets Available</mat-label>
+                <mat-select [formControl]="assets">
+                  <mat-option *ngFor="let asstes of user_assets" [value]="asstes.sf_asset_id"
+                    (click)="asset_metric.enable()">
+                    {{asstes.sf_asset_name || 'NA' }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md">
+              <mat-form-field appearance="outline" class="float-right w-100">
+                <mat-label>Choose an attribute</mat-label>
+                <mat-select name="asset_metric" [formControl]="asset_metric">
+                  <mat-option *ngFor="let ass_mtrs of asset_metrics" [value]="ass_mtrs.value"
+                    (click)='disable_save_btn = false'>
+                    {{ass_mtrs.viewValue}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- only for df 1001 card 5 and card 6-->
+        <div *ngIf="df_1001_card_clicked == 'Card5' || df_1001_card_clicked == 'Card6' ">
+          <div class="row">
+            <div class="col-md">
+              <mat-form-field appearance="outline" class="float-right w-100">
+                <mat-label *ngIf="(no_user_assets && !asset_internal_err)">Choose a Asset</mat-label>
+                <mat-label *ngIf="!no_user_assets">No Assets Available</mat-label>
+                <mat-select [formControl]="assets">
+                  <mat-option *ngFor="let asstes of user_assets" [value]="asstes.sf_asset_id"
+                    (click)="disable_save_btn = false">
+                    {{asstes.sf_asset_name || 'NA' }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md">
+              <p class="point-9 text-muted mt-3" *ngIf="df_1001_card_clicked == 'Card5'">Last 12 hours Runtime vs Down
+                time !!</p>
+              <p class="point-9 text-muted mt-3" *ngIf="df_1001_card_clicked == 'Card6'">Last 12 hours Quantity vs
+                Quality !!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- only for df 1001 card 7 and card 8-->
+        <div *ngIf="df_1001_card_clicked == 'Card7' || df_1001_card_clicked == 'Card8' ">
+          <div class="row">
+            <div class="col-md">
+              <mat-form-field appearance="outline" class="float-right w-100">
+                <mat-label *ngIf="workorders_list.length != 0">Choose a Work order</mat-label>
+                <mat-label *ngIf="workorders_list.length == 0">No Work order  available</mat-label>
+                <mat-select [formControl]="workorder">
+                  <mat-option *ngFor="let workordr of workorders_list" [value]="workordr.sf_workorder_id"
+                    (click)='disable_save_btn = false'>
+                    {{workordr.work_order_name || 'NA' }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- only for df 1001 card 9-->
+        <div *ngIf="df_1001_card_clicked == 'Card9' ">
+          <mat-slide-toggle color="primary" [formControl]="assets_status">Assets Status</mat-slide-toggle>
+        </div>
+
+
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-warning text-white point-8"
+          (click)='resetCardpopup();disable_save_btn = true;'>Clear all</button>
+        <button type="button" class="btn btn-secondary point-8" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn text-white point-8 dashb-save-btn bg-theme"  (click)="saveUserTheme()">
+          Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Welcome Screen -->
+
+<ng-template #content let-modal>
+  <div class="modal-header p-0">
+  </div>
+  <div class="modal-body border-0 text-center">
+    <h4>Welcome to SFactrix!</h4>
+    <p class="point-9 mx-3">Congratulations for your first step towards smart factory,  
+      <br>let's explore the SFactrix.
+    </p>
+    <button type="button" class="btn bg-theme text-white text-center"
+     (click)="modal.close('Save click');redirectSettings();">
+      START TOUR</button>
+      <p class="mt-2">
+      <a class="text-primary point-8 cursor" (click)="closeTourGuide();closeWelcomeScreen();" >Skip Tour</a></p>
+  </div>
+  <div class="modal-footer border-0 p-0" id="customstyle">
+  </div>
+
+</ng-template>

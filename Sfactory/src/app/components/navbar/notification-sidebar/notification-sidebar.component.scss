@@ -1,0 +1,44 @@
+:host {
+  background: white;
+  position: fixed;
+  left: auto;
+  top:52px;
+  right: 0;
+  bottom: 0;
+  width: 20%;
+  min-width: 500px;
+  z-index: 9999;
+  box-shadow: rgb(16 7 104 / 8%) -4px 0px 12px 0px;
+}
+
+.view{
+  background-color: #c1c5c1;
+  padding: 1px 8px;
+  border-radius: 7px;
+  color: white;
+}
+
+.scroll-content  {
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .info_icon{
+    background-color: #a3e6fa;
+  }
+  .warning_icon{
+    background-color: #ffeea1;
+  }
+  .critical_icon{
+    background-color: #fa9999;
+  }
+  .user_icon_badge{
+    display: inline-block;
+    width: 2.6em;
+    padding-top: 7px;
+    height: 2.6em;
+    text-align: center;
+    vertical-align: middle;
+    margin-right: 1em;
+  }
+

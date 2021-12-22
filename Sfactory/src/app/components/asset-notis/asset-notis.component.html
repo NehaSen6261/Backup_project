@@ -1,0 +1,146 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+<div class="main-window">
+    <mat-icon class="mr-5 btn-focus-none cursor" ngbTooltip= "Back" placement="right" routerLink="/settings">arrow_back</mat-icon>
+    <div class="row mt-2 mb-2">
+      <!-- total alerts -->
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+          <!-- text -->
+          <div class="card flex-fill box-shadow border-radius-point5">
+            <div class="card-header bg-transparent border-0 point-9">Total
+              <h5 class="mt-2"> {{total_alert_num}}</h5>
+                <h5 class="mt-n5 float-right"><img [src]="img_total" height="30" width="30"></h5>
+            </div>
+
+        </div>
+        </div>
+        <!-- info alerts -->
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+          <!-- text -->
+          <div class="card flex-fill box-shadow border-radius-point5" >
+            <div class="card-header bg-transparent border-0 point-9">Info
+              <h5 class="mt-2">  {{info_alert_num}}</h5>
+                <h5 class="mt-n5 float-right"><img [src]="img_info" height="30" width="30"></h5>
+            </div>
+
+        </div>
+        </div>
+        <!-- warning alerts -->
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+          <!-- text -->
+          <div class="card flex-fill box-shadow border-radius-point5" >
+            <div class="card-header bg-transparent border-0 point-9">Warning
+              <h5 class="mt-2">  {{warning_alert_num}}</h5>
+                <h5 class="mt-n5 float-right"><img [src]="img_warning" height="30" width="30"></h5>
+            </div>
+
+        </div>
+        </div> 
+        <!-- critical alerts -->
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 d-flex mb-md-2 mb-2 mb-sm-0">
+          <!-- text -->
+          <div class="card flex-fill box-shadow border-radius-point5">
+            <div class="card-header bg-transparent border-0 point-9">Critical  
+              <h5 class="mt-2">  {{critical_alert_num}}</h5>
+                <h5 class="mt-n5 float-right"><img [src]="img_critical" height="30" width="30"></h5>
+            </div>
+
+        </div>
+        </div>
+          
+    </div>          
+   <!-- table -->
+   <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+          <div  class="card  border-0  border-radius-point5">
+            <div class="row mt-2" >
+              <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12">
+                  <h6 class="point-9 ml-3 mt-2">Notifications Sent</h6>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                  <div class="input-group input-group-flush rounded  mt-2 border-radius-point5">
+                    <input type="text" class="form-control point-8 float-right" (keyup)="search($event)" [formControl]="filter" placeholder="Search"   aria-describedby="basic-addon1">
+                  </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12">
+              <button class="btn text-white point-8 bg-theme float-left  mt-2"  (click)="export_CSV()"><i class="fas fa-download"></i> Export</button>
+            </div>
+          </div>
+            <div class="card-body notification-container">
+              <div class="d-flex justify-content-center mt-2 " *ngIf="list_spinner">
+                <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+                    [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+              </ngx-skeleton-loader>
+              </div>
+
+              <div class="text-center mt-5" *ngIf="no_notis">
+                <p><i class="fas fa-table mr-1 fa-3x opacity-point-3"></i></p>
+                <small class="point-8 ">  No notifications available to display !!</small>
+              </div>
+
+              <div class=" align-items-center d-flex justify-content-center" *ngIf="list_internalError">                                                
+                <span class="point-8 cursor" ><i class="fas fa-exclamation-triangle text-warning mr-1"></i>  Unable to process your request, please try after some time</span>
+              </div>
+              <ul class="list-group list-group-flush"  *ngIf="!no_notis">
+                    <li  class="list-group-item ">
+                    <mat-accordion >
+                      <mat-expansion-panel hideToggle class="mat-elevation-z0"  *ngFor="let notification_list of obs | async " style="margin-top: 20px; border-bottom: 1px solid rgb(212, 210, 210);">
+                        <mat-expansion-panel-header   (click)="message_id=notification_list.sf_factory_msg_id; getinfo(notification_list)" [collapsedHeight]="'auto'" [expandedHeight]="'auto'">    
+                          <mat-panel-description>
+                            <span class="text-muted point-9"
+                                      [ngClass]="{'warningicon': notification_list.event_name == 'Warning', 'criticalicon':notification_list.event_name == 'Critical' , 'infoicon':notification_list.event_name == 'Info'}" ><ngb-highlight [result]="notification_list.event_name[0]" [term]="filter.value"></ngb-highlight></span>
+                            <p class="point-9 mb-n1 mt-3"><ngb-highlight [result]="notification_list.sf_asset_name  | slice:0:7" [term]="filter.value"></ngb-highlight>&nbsp; <span class="text-primary cursor" >
+                                <ngb-highlight [result]="notification_list.sf_rule_data" [term]="filter.value"></ngb-highlight>     alert value is  <ngb-highlight [result]="notification_list.sf_value" [term]="filter.value"></ngb-highlight>  but live value is  <ngb-highlight [result]="notification_list.sf_live_value" [term]="filter.value"></ngb-highlight>,&nbsp;</span>
+                                <span class="font-weight-bold text-uppercase point-8"> <ngb-highlight [result]="notification_list.event_name | slice:0:4" [term]="filter.value"></ngb-highlight> NOTICE </span>
+                                <span class="float-right ml-5 point-9"> Resolution Type:
+                                  <span class="badge point-8"  [ngClass]="{'badge-success': notification_list.resolution_type != null, 'badge-danger':notification_list.resolution_type == null }" >  <ngb-highlight [result]="notification_list.resolution_type  || 'Pending' | slice:0:7" [term]="filter.value"></ngb-highlight></span>
+                                  <span class="text-bold ml-2"> Resolution: <span class="point-9">  <ngb-highlight [result]="notification_list.resolution_desc  || 'NA' | slice:0:7 " ngbTooltip="{{notification_list.resolution_desc}}" placement="right" [term]="filter.value"></ngb-highlight></span></span>
+                                </span>
+                              </p>
+                              <p class=" mt-3 ml-5">   <small class=" text-muted point-7"> <ngb-highlight [result]="notification_list.received_on" [term]="filter.value"></ngb-highlight></small></p>
+                          </mat-panel-description>
+                        </mat-expansion-panel-header>
+                        <div class="row mt-3 point-9">
+                          <div class="col-md-6">
+                            <p ><strong>Asset name :</strong>  <ngb-highlight [result]="notification_list.sf_asset_name" [term]="filter.value"></ngb-highlight></p>                            
+                            <p><strong>Inbound data key : </strong><ngb-highlight [result]="notification_list.sf_rule_data" [term]="filter.value"></ngb-highlight></p>
+                            <p><strong>Data rule : </strong><ngb-highlight [result]="notification_list.sf_rule_condition" [term]="filter.value"></ngb-highlight> &nbsp;<ngb-highlight [result]="notification_list.sf_value" [term]="filter.value"></ngb-highlight></p>
+                            <p><strong>Live Value : </strong><ngb-highlight [result]="notification_list.sf_live_value" [term]="filter.value"></ngb-highlight></p>
+                            <p><strong>Event name : </strong><ngb-highlight [result]="notification_list.event_name" [term]="filter.value"></ngb-highlight></p>
+                            <p><strong>Received On:</strong><ngb-highlight [result]="notification_list.received_on" [term]="filter.value"></ngb-highlight></p>
+                          </div>
+                          <div class="col-md-6" *ngIf="authService.currentUser['role_id'] == 1 ">
+                            <mat-form-field appearance="outline">
+                              <mat-label>Resolution Type</mat-label>
+                              <input matInput  [formControl]="resolution_type">
+                            </mat-form-field><br>
+                            <mat-form-field appearance="outline" class="mt-n1 w-100">
+                              <mat-label>Resolution</mat-label>
+                              <textarea matInput   cdkTextareaAutosize  cdkAutosizeMinRows="5" cdkAutosizeMaxRows="8"
+                                    [formControl]="resolution"  required>
+                                </textarea>
+                                </mat-form-field>
+                                <button class="btn bg-theme text-white float-right" (click)="Setresolution()">Update</button>
+                              </div>
+                          </div>
+                      </mat-expansion-panel>
+                    </mat-accordion>
+                  </li>
+
+              </ul>
+              <div class="d-flex justify-content-center mt-2 " *ngIf="list_spinner">
+                <ngx-skeleton-loader class = "w-100"  count="5" animation = "pulse"
+                    [theme]="{'border-radius': '5px', height: '50px', 'animation-duration': '2s' }" >
+              </ngx-skeleton-loader>
+              </div>
+              <mat-paginator  [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
+            </div>
+          </div>
+    </div>
+   </div>
+</div>
+    
+
+ 
+  

@@ -1,0 +1,79 @@
+<sidebar></sidebar>
+<navbar></navbar>
+
+
+<div class="main-window">
+  <mat-icon class="mr-5 btn-focus-none cursor " ngbTooltip= "Back" placement="right" routerLink="/devices">arrow_back</mat-icon>
+  <div  class="row">
+    <div class="col-lg-8 col-md-6 col-sm-12">
+       <p class="point-8 mt-3"><span class="font-weight-bold">Application Name: </span>{{app_name}}</p>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-12">
+    <mat-form-field appearance="outline" class="float-right w-100 point-8" >
+      <mat-label *ngIf="(displayDevice && !deviceInternalError)">Choose a Device</mat-label>
+      <mat-label *ngIf="!displayDevice">No Devices Available</mat-label>
+      <mat-label *ngIf="deviceInternalError">Unable to process</mat-label>
+      <mat-select name="device" [(ngModel)]="device" required >
+        <mat-option *ngFor="let devices of devicesList" [value]="devices.sf_dev_eui" (click)="getAnalysis(devices.sf_dev_eui, devices.sf_application_name); app_name = devices.sf_application_name">
+          {{devices.sf_device_name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  </div>
+
+  <div class="row" *ngIf="!noAnalysis">
+    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-md-2 mb-2 mb-sm-0 " *ngFor="let parameter of data ">
+      <div class="card hover-shadow db-sm-card-min-height border-radius-point5" matRipple>
+        <div class="card-header bg-transparent ht-40">
+          <p class="float-left point-9">{{parameter.parameter}}</p>
+        </div>
+          <div class="card-body">
+
+
+            <div class="align-items-center d-flex justify-content-center" *ngIf="parameter.data_type == 'Number' && parameter.value != 'Data Error' ">
+              <ngx-gauge [type]="gaugeType" [value]="parameter.value" [cap]="cap" [foregroundColor]="Color" [thick]="thick"
+                      [label]="parameter.UOM" [max]= "parameter.attr_max_value">
+              </ngx-gauge>
+            </div>
+            <div class="align-items-center d-flex justify-content-center" *ngIf="parameter.data_type == 'Number' && (parameter.value == 'Data Error' )">
+              <div class="ChartCircleAnalysis">
+                <p class="text-white ChartDataAnalysis" >{{parameter.value}}</p>
+              </div>
+            </div>
+            <div class="align-items-center d-flex justify-content-center" *ngIf="parameter.data_type == 'String'">
+              <div class="ChartCircleAnalysis">
+                <p class="text-white ChartDataAnalysis" >{{parameter.value}}</p>
+              </div>
+
+            </div>
+
+          </div>
+          <div class="card-footer card-footer-bg" >
+            <p class="float-left text-muted mb-n1  point-7" *ngIf="parameter.received_on != 'NA'"> Received on: {{parameter.received_on | date:"short" }}</p>
+            <p class="float-left text-muted mb-n1  point-7" *ngIf="parameter.received_on == 'NA' "> Received on: {{parameter.received_on}}</p>
+            <span (click)="detailedView(parameter)" class="badge text-white float-right point-7 cursor bg-theme2">more..</span>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center mt-5 "  *ngIf="spinner">
+    <ngx-skeleton-loader  count="4" appearance="circle" animation="progress"
+          [theme]="{  width: '150px', height: '150px',   'border-radius': '10px' }">
+  </ngx-skeleton-loader>
+  </div>
+
+
+  <!-- <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="internalError || deviceInternalError">
+    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>Unable to process your request please try after some time !!</small>
+  </div> -->
+
+  <div class="d-flex justify-content-center flex-wrap mt-5" *ngIf="noAnalysis">
+    <small class="point-8 "><i class="fas fa-exclamation-triangle text-warning mr-1"></i>No data analysis available for the device !!</small>
+  </div>
+
+
+
+
+</div>

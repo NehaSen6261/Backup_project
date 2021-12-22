@@ -1,0 +1,30 @@
+#customstyle {
+    position: relative;
+  }
+
+  #customstyle::after {
+    content: "";
+    position: absolute;
+    bottom: -27.8675px;
+    left: 35px;
+    width: 0;
+    height: 0px;
+    border-left: 14rem solid transparent;
+    border-right: 14rem solid transparent;
+    border-top: 29.8675px solid white;
+  }
+  ::ng-deep .customDialog {
+    .modal-content{
+        border-radius: 3.3rem!important;
+        margin: 64px;
+  }
+  .modal-header {
+    border-radius: 2.3rem 2.3rem 0.3rem 0.3rem !important;
+    height:16rem;
+    background-size: cover;
+    background-image: url(https://cdn.fogwing.net/sfactory/images/welcome_screen.svg);
+  }
+  }
+  .font-light-bold{
+    font-weight: 550;
+}

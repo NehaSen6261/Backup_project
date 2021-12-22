@@ -1,0 +1,43 @@
+#autoscroll {
+    overflow:auto;
+}
+
+.toggle_btn{
+    width: 38px;
+    height: 38px;
+}
+.mat-button-toggle-checked{
+    background-color:#ffe505;
+}
+
+.border-1{
+    border-left-color:rgb(4, 189, 4);
+    border-left-width: 3.5px;
+}
+.border-2{
+    border-left-color:orange;
+    border-left-width: 3.5px;
+}
+.border-3{
+    border-left-color:red;
+    border-left-width: 3.5px;
+}
+.border-4{
+    border-left-color:rgb(0, 132, 255);
+    border-left-width: 3.5px;
+}
+.bottomsticky{
+    position: sticky;
+    bottom: 0%;
+    background-color: transparent;
+}
+
+.border-radius{
+   border-radius: 10px;
+}
+.mat-paginator{
+    background-color: transparent!important;
+}
+.font-light-bold{
+    font-weight: 550;
+}

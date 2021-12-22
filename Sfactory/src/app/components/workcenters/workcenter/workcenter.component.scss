@@ -1,0 +1,26 @@
+#autoscroll {
+    overflow:auto;
+}
+.shiftAlign{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+  }
+  .example-chip-list {
+    width: 100%;
+  }
+  
+  .mat-button-toggle{
+    width: 44px;
+    height:44px;
+  }
+  .mat-button-toggle-checked{
+    background-color:#4892f3;
+    color:white;
+  }
+  .margintoggle{
+
+    margin-top: 12px;
+
+  }

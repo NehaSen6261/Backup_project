@@ -1,0 +1,70 @@
+
+$white:white!important;
+$black:black!important;
+$nav-blue:#000410!important;
+$dark-grey: #404040!important;
+$yellow: #FAD02E!important;
+$red:#D63031!important;
+$lite-grey:#616C6F!important;
+$green-color: #00923f!important;
+$mint-leaf: #00b894 !important;
+$wizard_grey: #535c68!important;
+$sidebar:#000410!important;
+$body_color: #ebeff3!important;
+$lite_blue: #98c5f5 !important;
+
+
+.bg-theme{
+  background: #000410;
+}
+
+.bg-theme2{
+  background: $nav-blue;
+}
+
+.bg-sidebar{
+  background: $sidebar;
+}
+.bg-theme2:hover{
+  background: $lite-grey;
+}
+
+.text-red{
+  color: $red;
+}
+
+.text-theme{
+  color: $nav-blue;
+}
+
+.text-lite-grey{
+  color: #ebeff3;
+}
+
+.card-footer-bg{
+  background-color: #ebeff3;
+}
+
+.text-theme-black{
+  color: #000410;
+}
+
+.bg-green{
+  background-color: $green-color;
+}
+
+.bg-yellow{
+  background-color: $yellow;
+}
+
+.bg-red{
+  background-color: $red;
+}
+
+.bg-body-background{
+  background-color: $body_color;
+}
+
+.bg_lite_blue{
+  background-color: $lite_blue;
+}
